@@ -1,0 +1,19 @@
+{
+  "name": "capitan-beto",
+  "version": "1.0.0",
+  "description": "Capitán Beto · Gastro Taberna · Madrid",
+  "private": true,
+  "homepage": "https://capitan-beto.es",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablomalce/capitan-beto.git"
+  },
+  "scripts": {
+    "dev": "python3 -m http.server 5173 --bind 127.0.0.1",
+    "deploy": "vercel --prod",
+    "preview": "vercel"
+  },
+  "devDependencies": {
+    "vercel": "^54.13.0"
+  }
+}

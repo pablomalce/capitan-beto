@@ -143,10 +143,6 @@
       "pride.text": "Todos son bienvenidos · All are welcome",
       "pride.short": "Todos son bienvenidos",
       "gallery.photoBy": "Fotografía por",
-      "pet.b1": "Cuencos de agua siempre llenos",
-      "pet.b2": "Snacks caseros sin sal ni azúcar",
-      "pet.b3": "Sombra, ventiladores y rincones tranquilos",
-      "pet.b4": "Transportines y peludos bienvenidos en todo el local",
       "hours.eyebrow": "Doble turno madrileño",
       "hours.title": "Horarios",
       "contact.eyebrow": "Pasa a vernos",
@@ -165,7 +161,19 @@
       "dash.nav.payments": "Pagos & Integraciones",
       "dash.nav.pets": "Peludos",
       "dash.nav.backup": "Backup CMS",
+      "dash.nav.stats": "Estadísticas",
+      "dash.nav.consumption": "Consumos",
       "dash.title.backup": "Backup del contenido",
+      "dash.title.stats": "Estadísticas y proyecciones",
+      "dash.title.consumption": "Registro de consumos",
+      "dash.stats.title": "📊 Estadísticas en tiempo real",
+      "dash.stats.sub": "Datos directos del backend Supabase. Cambian al loguear consumos.",
+      "dash.stats.daily": "Revenue diario + proyección",
+      "dash.stats.top": "Top platos por revenue",
+      "dash.stats.heatmap": "Heatmap horario · día × hora (Madrid)",
+      "dash.consumption.title": "🧾 Registro de consumos",
+      "dash.consumption.sub": "Logueá ventas manualmente o importá CSV de tu POS. Alimenta el panel de Estadísticas.",
+      "dash.consumption.add": "+ Registrar consumo",
       "dash.backup.title": "💾 Backup del contenido editable",
       "dash.backup.sub": "Descargá un JSON con TODO lo que editaste desde el dashboard. Importá para restaurar en otro navegador o tras reinstalar.",
       "dash.backup.export": "⬇️ Descargar backup (.json)",
@@ -428,7 +436,6 @@
       "bpic.submit": "Publish photo",
       "crew.eyebrow": "Run by the owners",
       "crew.title": "The Crew",
-      "crew.lead": "Behind every plate and every vermouth, two people who live the taberna like their own home. Nobody walks through the kitchen here without a story.",
       "crew.lead": "Behind every tapa, every cocktail and every Fernet & Coke, a couple who lives the taberna like their own home. Madrid and Buenos Aires at the same bar.",
       "crew.cap1": "Face to face",
       "crew.cap2": "Behind the bar",
@@ -524,10 +531,6 @@
       "pride.text": "All are welcome · Todos son bienvenidos",
       "pride.short": "All are welcome",
       "gallery.photoBy": "Photography by",
-      "pet.b1": "Water bowls always full",
-      "pet.b2": "Homemade salt-free, sugar-free treats",
-      "pet.b3": "Shade, fans and quiet corners",
-      "pet.b4": "Carriers and pets welcome throughout the whole place",
       "hours.eyebrow": "Madrid double-shift",
       "hours.title": "Opening hours",
       "contact.eyebrow": "Come see us",
@@ -546,7 +549,19 @@
       "dash.nav.payments": "Payments & Integrations",
       "dash.nav.pets": "Furry friends",
       "dash.nav.backup": "CMS Backup",
+      "dash.nav.stats": "Stats",
+      "dash.nav.consumption": "Sales log",
       "dash.title.backup": "Content backup",
+      "dash.title.stats": "Stats & forecast",
+      "dash.title.consumption": "Sales log",
+      "dash.stats.title": "📊 Real-time stats",
+      "dash.stats.sub": "Live from the Supabase backend. Updates as you log sales.",
+      "dash.stats.daily": "Daily revenue + forecast",
+      "dash.stats.top": "Top dishes by revenue",
+      "dash.stats.heatmap": "Hourly heatmap · day × hour (Madrid)",
+      "dash.consumption.title": "🧾 Sales log",
+      "dash.consumption.sub": "Log sales manually or import CSV from your POS. Feeds the Stats panel.",
+      "dash.consumption.add": "+ Log sale",
       "dash.backup.title": "💾 Backup of editable content",
       "dash.backup.sub": "Download a JSON with EVERYTHING you've edited from the dashboard. Import to restore in another browser or after a reinstall.",
       "dash.backup.export": "⬇️ Download backup (.json)",
@@ -1135,7 +1150,9 @@
       design: "dash.title.design",
       payments: "dash.title.payments",
       pets: "dash.title.pets",
-      backup: "dash.title.backup"
+      backup: "dash.title.backup",
+      stats: "dash.title.stats",
+      consumption: "dash.title.consumption"
     };
     if (map[tab]) {
       titleEl.setAttribute("data-i18n", map[tab]);
@@ -1151,6 +1168,8 @@
     if (tab === "payments") renderPaymentsPanel();
     if (tab === "pets") renderPetsModeration();
     if (tab === "backup") renderBackupPanel();
+    if (tab === "stats") renderStatsPanel();
+    if (tab === "consumption") renderConsumptionPanel();
   }
 
   // ---------- Role ----------
@@ -1483,8 +1502,62 @@
   }
 
   /**
-   * Lee CUALQUIER imagen y devuelve un dataURL.
-   * - JPG / PNG / GIF / WebP / AVIF / SVG → lectura directa + preview real.
+   * Comprime un dataURL a JPEG con dimensión máxima y calidad dada.
+   * Esencial para que las fotos quepan en localStorage (~5 MB quota).
+   * Una foto iPhone (3-5 MB HEIC/JPEG) baja a ~150-300 KB sin pérdida visible.
+   */
+  function compressDataURL(dataURL, maxDim = 1400, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width: w, height: h } = img;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        const ctx = c.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          resolve(c.toDataURL("image/jpeg", quality));
+        } catch (e) {
+          // SVG en canvas tainted o algo raro → devolvemos el original
+          resolve(dataURL);
+        }
+      };
+      img.onerror = () => resolve(dataURL); // si la imagen no se puede decodificar (HEIC en Chrome) → original
+      img.src = dataURL;
+    });
+  }
+
+  /**
+   * Wrapper de localStorage.setItem con manejo de QuotaExceededError.
+   * Devuelve true si guardó, false si falló por quota.
+   */
+  function safeSetItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (e) {
+      const isQuota =
+        e && (e.name === "QuotaExceededError" ||
+              e.code === 22 ||
+              e.code === 1014 ||
+              /quota/i.test(e.message || ""));
+      if (isQuota) {
+        toast(state.lang === "es"
+          ? "⚠️ Espacio agotado en el navegador. Hacé backup desde Dashboard → Backup CMS y borrá fotos viejas."
+          : "⚠️ Browser storage is full. Export a backup from Dashboard → Backup CMS and remove old photos.");
+      }
+      console.warn("safeSetItem failed:", key, e);
+      return false;
+    }
+  }
+
+  /**
+   * Lee CUALQUIER imagen y devuelve un dataURL OPTIMIZADO (comprimido).
+   * - JPG / PNG / GIF / WebP / AVIF / SVG → lectura directa + compresión a 1400px JPEG q0.82.
    * - HEIC / HEIF (Safari sí lo renderiza, otros no) → guarda el original
    *   pero usa un placeholder visual para que el preview no esté roto.
    * Promesa: { dataURL, originalDataURL, file, converted, fallback }
@@ -1496,11 +1569,12 @@
       r.onload = () => {
         const original = r.result;
         if (isHeicFile(file)) {
-          // Safari renderiza HEIC, Chrome no. Damos placeholder pero
-          // guardamos el dataURL original para backend futuro.
           const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
           if (isSafari) {
-            resolve({ dataURL: original, originalDataURL: original, file, converted: false, fallback: false });
+            // Safari renderiza HEIC en canvas → podemos comprimir.
+            compressDataURL(original, 1400, 0.82).then((compressed) => {
+              resolve({ dataURL: compressed, originalDataURL: original, file, converted: true, fallback: false });
+            });
           } else {
             toast(state.lang === "es"
               ? "Foto HEIC guardada (preview no disponible en este navegador)."
@@ -1514,7 +1588,10 @@
             });
           }
         } else {
-          resolve({ dataURL: original, originalDataURL: original, file, converted: false, fallback: false });
+          // Comprimir a JPEG 1400px q0.82 para entrar en localStorage quota.
+          compressDataURL(original, 1400, 0.82).then((compressed) => {
+            resolve({ dataURL: compressed, originalDataURL: original, file, converted: true, fallback: false });
+          });
         }
       };
       r.onerror = () => reject(new Error("read_failed"));
@@ -1898,108 +1975,6 @@
   /* =====================================================
      INSTAGRAM FEED (legacy — todavía existe pero se quita del init)
      ===================================================== */
-  const IG_PROFILE = "https://www.instagram.com/capitanbeto.bardetapas?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
-  const IG_FALLBACKS = [
-    "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=600&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1604908554049-29ef7ec45b87?w=600&h=600&fit=crop"
-  ];
-  // Try the local /instagram folder first; if a file is missing, fall back
-  // to a curated photo so the grid never breaks.
-  const IG_FEED = IG_FALLBACKS.map((fb, i) => ({
-    src: `instagram/${String(i + 1).padStart(2, "0")}.jpg`,
-    fallback: fb
-  }));
-
-  const IG_STORAGE_KEY = "cb_ig_feed_v1";
-  let igEditMode = false;
-  let igUserFeed = null; // array of {src: dataURL} when user uploaded photos
-
-  function loadIgFeedFromStorage() {
-    try {
-      const raw = localStorage.getItem(IG_STORAGE_KEY);
-      if (raw) igUserFeed = JSON.parse(raw);
-    } catch (_) { igUserFeed = null; }
-  }
-  function persistIgFeed() {
-    try {
-      if (igUserFeed && igUserFeed.length) localStorage.setItem(IG_STORAGE_KEY, JSON.stringify(igUserFeed));
-      else localStorage.removeItem(IG_STORAGE_KEY);
-    } catch (_) {}
-  }
-  function currentIgFeed() {
-    // Build a 9-slot feed: user uploads first, fallbacks fill the rest
-    const result = [];
-    for (let i = 0; i < 9; i++) {
-      const userPic = igUserFeed && igUserFeed[i];
-      result.push(userPic ? { src: userPic.src, isUser: true } : { src: IG_FEED[i].src, fallback: IG_FEED[i].fallback, isUser: false });
-    }
-    return result;
-  }
-
-  function renderInstagramFeed() {
-    const grid = $("#igGrid");
-    if (!grid) return;
-    const items = currentIgFeed();
-    grid.innerHTML = items.map((p, i) => {
-      if (igEditMode) {
-        return `
-          <div class="ig-tile" data-slot="${i}" role="button" tabindex="0">
-            <img src="${p.src}" data-fallback="${p.fallback || ''}" alt="Capitán Beto"
-                 onerror="if(!this.dataset.fb&&this.dataset.fallback){this.dataset.fb=1;this.src=this.dataset.fallback}" loading="lazy" />
-            ${p.isUser ? `<button class="ig-tile__del" data-ig-del="${i}" aria-label="delete">×</button>` : ""}
-          </div>`;
-      }
-      return `
-        <a class="ig-tile" href="${IG_PROFILE}" target="_blank" rel="noopener" aria-label="Instagram @capitanbeto.bardetapas">
-          <img src="${p.src}" data-fallback="${p.fallback || ''}" alt="Capitán Beto · Instagram"
-               onerror="if(!this.dataset.fb&&this.dataset.fallback){this.dataset.fb=1;this.src=this.dataset.fallback}" loading="lazy" />
-          <div class="ig-tile__overlay" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-          </div>
-        </a>`;
-    }).join("");
-  }
-
-  function toggleIgEdit() {
-    igEditMode = !igEditMode;
-    const wrap = $(".ig-wrap");
-    const btn = $("#igEditBtn");
-    if (wrap) wrap.classList.toggle("is-editing", igEditMode);
-    if (btn) {
-      btn.innerHTML = igEditMode
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>${t("ig.done")}</span>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span>${t("ig.edit")}</span>`;
-    }
-    renderInstagramFeed();
-  }
-
-  function handleIgFiles(files, startSlot) {
-    if (!files || !files.length) return;
-    if (!igUserFeed) igUserFeed = new Array(9).fill(null);
-    let slot = startSlot != null ? startSlot : igUserFeed.findIndex((x) => !x);
-    if (slot < 0) slot = 0;
-    let added = 0;
-    Array.from(files).forEach((file) => {
-      if (!isImageFile(file)) return;
-      if (file.size > 25 * 1024 * 1024) {
-        toast(t("gallery.tooBig").replace("{{name}}", file.name));
-        return;
-      }
-      const targetSlot = slot;
-      slot = (slot + 1) % 9;
-      readImageToDataURL(file).then(({ dataURL }) => {
-        igUserFeed[targetSlot] = { src: dataURL };
-        if (added === 1) toast(t("ig.added").replace("{{n}}", added));
-      }).catch(() => {});
-    });
-  }
 
   /* =====================================================
      CONTENT STORE · todo lo editable desde el dashboard
@@ -2112,28 +2087,63 @@
       return setTimeout(initGoogleSignIn, 500);
     }
     if (!GOOGLE_CLIENT_ID) {
-      // Modo demo: botón manual para devs/preview
+      // Sin Google OAuth → usamos Supabase Auth con email + password (REAL)
       slot.innerHTML = `
-        <button type="button" class="btn btn--primary" id="demoLoginBtn">
-          🔐 Demo login (configurá Client ID en script.js)
-        </button>`;
-      slot.querySelector("#demoLoginBtn").addEventListener("click", () => {
-        const email = prompt("Email admin (debe estar en ADMIN_EMAILS):", "capitanbetomadrid@gmail.com");
-        if (!email) return;
-        if (!ADMIN_EMAILS.includes(email.trim().toLowerCase())) {
-          toast("Email no autorizado");
+        <form id="supaLoginForm" class="supa-login">
+          <label class="field">
+            <small>Email del admin</small>
+            <input type="email" name="email" required placeholder="capitanbetomadrid@gmail.com" autocomplete="username" />
+          </label>
+          <label class="field">
+            <small>Contraseña</small>
+            <input type="password" name="password" required autocomplete="current-password" />
+          </label>
+          <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center">
+            🔐 Entrar
+          </button>
+          <small class="supa-login__note" style="display:block;margin-top:10px;font-size:11px;color:var(--ink-mute);text-align:center">
+            Sólo los emails autorizados como admin pueden entrar.<br/>
+            ¿Primera vez? Pedile a Pablo la contraseña temporal y cámbiala en el dashboard.
+          </small>
+        </form>`;
+      const form = slot.querySelector("#supaLoginForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector("button[type='submit']");
+        const email = form.email.value.trim().toLowerCase();
+        const password = form.password.value;
+        if (!ADMIN_EMAILS.includes(email)) {
+          toast("Email no autorizado como admin");
           return;
         }
-        currentUser = {
-          email: email.trim().toLowerCase(),
-          name: "Demo Admin",
-          picture: "",
-          exp: Date.now() + 12 * 60 * 60 * 1000
-        };
-        persistAuth(currentUser);
-        updateAuthUI();
-        closeLoginOverlay();
-        toast("Sesión demo iniciada");
+        if (!window.cbBackend || !window.cbBackend.signInWithPassword) {
+          toast("Backend no disponible");
+          return;
+        }
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Entrando…";
+        try {
+          const data = await window.cbBackend.signInWithPassword(email, password);
+          currentUser = {
+            email,
+            name: (data.user && data.user.user_metadata && data.user.user_metadata.display_name) || email,
+            picture: "",
+            exp: data.expires_at ? data.expires_at * 1000 : (Date.now() + 12 * 60 * 60 * 1000)
+          };
+          persistAuth(currentUser);
+          updateAuthUI();
+          closeLoginOverlay();
+          toast(state.lang === "es" ? `Bienvenido, ${currentUser.name}` : `Welcome, ${currentUser.name}`);
+        } catch (err) {
+          console.warn("login failed", err);
+          toast(state.lang === "es"
+            ? "Credenciales incorrectas o backend offline."
+            : "Wrong credentials or backend offline.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalLabel;
+        }
       });
       return;
     }
@@ -2199,6 +2209,9 @@
   function logout() {
     if (!confirm("¿Cerrar sesión?")) return;
     clearAuth();
+    if (window.cbBackend && window.cbBackend.signOut) {
+      window.cbBackend.signOut().catch(() => {});
+    }
     updateAuthUI();
     setView("public");
     toast("Sesión cerrada");
@@ -2412,7 +2425,7 @@
     renderBpicWall();
   }
   function persistBpicWall() {
-    try { localStorage.setItem(BPIC_KEY, JSON.stringify(bpicStore)); } catch (_) {}
+    safeSetItem(BPIC_KEY, JSON.stringify(bpicStore));
   }
   function renderBpicWall() {
     const wall = $("#bpicWall");
@@ -2508,18 +2521,37 @@
       return false;
     }
     const handle = (formData.get("bpicHandle") || "").toString().trim();
+    const guestName = (formData.get("bpicName") || "").toString().trim() || (state.lang === "es" ? "Anónimo" : "Anonymous");
+    const cleanHandle = handle ? (handle.startsWith("@") ? handle : "@" + handle) : "";
+    const caption = (formData.get("bpicCaption") || "").toString().trim();
+
+    // Local store (cache + offline fallback)
     bpicStore.unshift({
       id: "p" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
       src: bpicPendingDataURL,
-      name: (formData.get("bpicName") || "").toString().trim() || (state.lang === "es" ? "Anónimo" : "Anonymous"),
-      handle: handle ? (handle.startsWith("@") ? handle : "@" + handle) : "",
-      caption: (formData.get("bpicCaption") || "").toString().trim(),
+      name: guestName,
+      handle: cleanHandle,
+      caption,
       ts: Date.now(),
       likes: 0,
       likedBy: []
     });
     persistBpicWall();
     renderBpicWall();
+
+    // Backend → guarda en Supabase como pending
+    if (window.cbBackend && window.cbBackend.uploadBpicPhoto) {
+      window.cbBackend.uploadBpicPhoto({
+        dataURL: bpicPendingDataURL,
+        guestName,
+        igHandle: cleanHandle,
+        caption
+      }).then(() => {
+        toast(state.lang === "es"
+          ? "¡Gracias! Tu foto pasa por moderación antes de ir al muro 📸"
+          : "Thanks! Your photo goes through moderation before hitting the wall 📸");
+      }).catch((e) => console.warn("backend bpic upload failed", e));
+    }
     return true;
   }
   function bindBpic() {
@@ -2899,6 +2931,16 @@
     persistCustomers();
     persistCustomerSession();
     updateCustomerUI();
+
+    // Backend: upsert al backend para que el lead viva en la DB.
+    if (window.cbBackend && window.cbBackend.upsertCustomer) {
+      window.cbBackend.upsertCustomer({
+        email: newCustomer.email,
+        full_name: newCustomer.name,
+        phone: newCustomer.phone,
+        marketing_consent: !!(newCustomer.optEmail || newCustomer.optWhatsapp)
+      }).catch((e) => console.warn("backend customer upsert failed", e));
+    }
     return true;
   }
   function signinCustomer(email) {
@@ -2959,30 +3001,62 @@
   function renderCustomersPanel() {
     const list = document.getElementById("custList");
     const badge = document.getElementById("dashCustCount");
-    if (badge) badge.textContent = customers.length;
     if (!list) return;
-    if (customers.length === 0) {
-      list.innerHTML = `<div class="resv-empty">Aún no hay clientes registrados.</div>`;
-      return;
-    }
-    list.innerHTML = customers.map((c) => {
-      const d = new Date(c.ts).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
-      const prefBadges = (c.prefs || []).map((p) => `<span class="cust-pref">${escapeHtml(p)}</span>`).join("");
-      const channels = [];
-      if (c.optEmail) channels.push('<span class="cust-ch">✉ email</span>');
-      if (c.optWhatsapp) channels.push('<span class="cust-ch cust-ch--wa">⌬ WhatsApp</span>');
-      return `
-        <div class="cust-row" data-cust-id="${c.id}">
-          <div class="cust-row__avatar">${escapeHtml((c.name || "?")[0].toUpperCase())}</div>
-          <div class="cust-row__info">
-            <strong>${escapeHtml(c.name || "Sin nombre")}</strong>
-            <small>${escapeHtml(c.email)}${c.phone ? " · " + escapeHtml(c.phone) : ""}</small>
-            <div class="cust-row__chips">${prefBadges} ${channels.join(" ")}</div>
-          </div>
-          <div class="cust-row__date">${d}</div>
-          <button class="cust-row__del" data-cust-del="${c.id}" aria-label="Eliminar">🗑</button>
-        </div>`;
-    }).join("");
+    list.innerHTML = `<div class="resv-empty">${state.lang === "es" ? "Cargando clientes…" : "Loading customers…"}</div>`;
+
+    const fromBackend = (window.cbBackend && window.cbBackend.listAllCustomers)
+      ? window.cbBackend.listAllCustomers({ limit: 500 })
+      : Promise.resolve([]);
+
+    fromBackend.then((rows) => {
+      // Merge backend + local por email
+      const byEmail = new Map();
+      rows.forEach((c) => {
+        byEmail.set(c.email, {
+          id: c.id,
+          name: c.full_name,
+          email: c.email,
+          phone: c.phone,
+          ts: new Date(c.first_visit_at || c.created_at || Date.now()).getTime(),
+          optEmail: !!c.marketing_consent,
+          optWhatsapp: !!c.marketing_consent,
+          source: c.source,
+          remote: true
+        });
+      });
+      customers.forEach((c) => {
+        if (!byEmail.has(c.email)) byEmail.set(c.email, c);
+      });
+      const all = Array.from(byEmail.values()).sort((a, b) => b.ts - a.ts);
+
+      if (badge) badge.textContent = all.length;
+      if (all.length === 0) {
+        list.innerHTML = `<div class="resv-empty">${state.lang === "es" ? "Aún no hay clientes registrados." : "No customers yet."}</div>`;
+        return;
+      }
+      list.innerHTML = all.map((c) => {
+        const d = new Date(c.ts).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+        const prefBadges = (c.prefs || []).map((p) => `<span class="cust-pref">${escapeHtml(p)}</span>`).join("");
+        const channels = [];
+        if (c.optEmail) channels.push('<span class="cust-ch">✉ email</span>');
+        if (c.optWhatsapp) channels.push('<span class="cust-ch cust-ch--wa">⌬ WhatsApp</span>');
+        const remoteBadge = c.remote ? '<span class="cust-row__remote" title="En Supabase">☁️</span>' : '';
+        return `
+          <div class="cust-row" data-cust-id="${c.id}" data-cust-remote="${!!c.remote}">
+            <div class="cust-row__avatar">${escapeHtml((c.name || c.email || "?")[0].toUpperCase())}</div>
+            <div class="cust-row__info">
+              <strong>${escapeHtml(c.name || "Sin nombre")}</strong> ${remoteBadge}
+              <small>${escapeHtml(c.email)}${c.phone ? " · " + escapeHtml(c.phone) : ""}</small>
+              <div class="cust-row__chips">${prefBadges} ${channels.join(" ")}</div>
+            </div>
+            <div class="cust-row__date">${d}</div>
+            <button class="cust-row__del" data-cust-del="${c.id}" aria-label="Eliminar">🗑</button>
+          </div>`;
+      }).join("");
+    }).catch((err) => {
+      console.warn("Error cargando clientes backend:", err);
+      list.innerHTML = `<div class="resv-empty">${state.lang === "es" ? "Sin clientes (login admin requerido para ver Supabase)." : "No customers (admin login required)."}</div>`;
+    });
   }
   function sendMassEmail(channel) {
     const targets = customers.filter((c) => channel === "email" ? c.optEmail : c.optWhatsapp);
@@ -3300,56 +3374,130 @@
     try { localStorage.setItem(RESERVE_KEY, JSON.stringify(reservations)); } catch (_) {}
   }
   function saveReservation(data) {
-    reservations.unshift({
+    const localEntry = {
       id: "r" + Date.now(),
       ts: Date.now(),
       ...data
-    });
+    };
+    reservations.unshift(localEntry);
     persistReservations();
     updateDashBadges();
     renderReservations();
+
+    // Backend: insertar en Supabase para que viva entre dispositivos.
+    if (window.cbBackend && window.cbBackend.createReservation) {
+      const payload = {
+        guest_name: data.name || "",
+        phone: data.phone || "",
+        email: data.email || "",
+        party_size: parseInt(data.people, 10) || 2,
+        reserve_date: data.date,
+        reserve_time: data.time || "20:00",
+        zone: data.zone || "sala",
+        notes: data.notes || "",
+        status: "pending"
+      };
+      window.cbBackend.createReservation(payload).catch((e) => {
+        console.warn("backend reserve failed (sigue local + email)", e);
+      });
+    }
   }
 
   function renderReservations() {
     const list = document.getElementById("resvList");
     const badge = document.getElementById("dashResvCount");
-    if (badge) badge.textContent = reservations.length;
     if (!list) return;
-    if (reservations.length === 0) {
-      list.innerHTML = `<div class="resv-empty">Aún no hay reservas registradas en el panel local.</div>`;
-      return;
-    }
-    list.innerHTML = reservations.map((r) => {
-      const d = new Date(r.date + "T" + (r.time || "00:00"));
-      const day = d.getDate();
-      const month = d.toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { month: "short" }).toUpperCase();
-      return `
-        <div class="resv-row" data-resv-id="${r.id}">
-          <div class="resv-row__date"><strong>${day}</strong><small>${month}</small></div>
-          <div class="resv-row__name">
-            <strong>${escapeHtml(r.name || "—")}</strong>
-            <small>${r.time || ""} · ${escapeHtml(r.notes || "")}</small>
-          </div>
-          <div class="resv-row__contact">${escapeHtml(r.phone || "")}${r.email ? "<br>" + escapeHtml(r.email) : ""}</div>
-          <div class="resv-row__zone">${escapeHtml(r.zone || "")}</div>
-          <div class="resv-row__pax">${r.people || "—"}</div>
-          <button class="resv-row__del" data-resv-del="${r.id}" aria-label="Eliminar">🗑</button>
-        </div>`;
-    }).join("");
+    list.innerHTML = `<div class="resv-empty">${state.lang === "es" ? "Cargando reservas…" : "Loading reservations…"}</div>`;
+
+    const fromBackend = (window.cbBackend && window.cbBackend.listAllReservations)
+      ? window.cbBackend.listAllReservations({ limit: 200 })
+      : Promise.resolve([]);
+
+    fromBackend.then((rows) => {
+      // Mezclar backend + locales (deduplicar por id)
+      const allMap = new Map();
+      rows.forEach((r) => {
+        allMap.set(r.id, {
+          id: r.id,
+          name: r.guest_name,
+          phone: r.phone,
+          email: r.email,
+          people: r.party_size,
+          date: r.reserve_date,
+          time: r.reserve_time ? r.reserve_time.slice(0, 5) : "",
+          zone: r.zone,
+          notes: r.notes,
+          status: r.status,
+          remote: true
+        });
+      });
+      reservations.forEach((r) => {
+        if (!allMap.has(r.id)) allMap.set(r.id, r);
+      });
+      const all = Array.from(allMap.values()).sort((a, b) => {
+        const da = a.date + " " + (a.time || "");
+        const db = b.date + " " + (b.time || "");
+        return da < db ? 1 : -1;
+      });
+
+      if (badge) badge.textContent = all.filter((r) => !r.status || r.status === "pending").length;
+
+      if (all.length === 0) {
+        list.innerHTML = `<div class="resv-empty">${state.lang === "es" ? "Aún no hay reservas." : "No reservations yet."}</div>`;
+        return;
+      }
+      list.innerHTML = all.map((r) => {
+        const d = new Date(r.date + "T" + (r.time || "00:00"));
+        const day = d.getDate();
+        const month = d.toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { month: "short" }).toUpperCase();
+        const remoteBadge = r.remote ? `<span class="resv-row__remote" title="Sincronizada en Supabase">☁️</span>` : "";
+        const statusBadge = r.status ? `<span class="resv-row__status resv-row__status--${r.status}">${r.status}</span>` : "";
+        return `
+          <div class="resv-row" data-resv-id="${r.id}" data-resv-remote="${!!r.remote}">
+            <div class="resv-row__date"><strong>${day}</strong><small>${month}</small></div>
+            <div class="resv-row__name">
+              <strong>${escapeHtml(r.name || "—")}</strong> ${remoteBadge} ${statusBadge}
+              <small>${r.time || ""} · ${escapeHtml(r.notes || "")}</small>
+            </div>
+            <div class="resv-row__contact">${escapeHtml(r.phone || "")}${r.email ? "<br>" + escapeHtml(r.email) : ""}</div>
+            <div class="resv-row__zone">${escapeHtml(r.zone || "")}</div>
+            <div class="resv-row__pax">${r.people || "—"}</div>
+            <button class="resv-row__del" data-resv-del="${r.id}" aria-label="Eliminar">🗑</button>
+          </div>`;
+      }).join("");
+    }).catch((err) => {
+      console.warn("Error cargando reservas backend:", err);
+      // Fallback al render local
+      list.innerHTML = reservations.length === 0
+        ? `<div class="resv-empty">${state.lang === "es" ? "Sin reservas (backend offline)." : "No reservations (backend offline)."}</div>`
+        : reservations.map((r) => `<div class="resv-row" data-resv-id="${r.id}"><strong>${escapeHtml(r.name || "")}</strong> — ${r.date} ${r.time}</div>`).join("");
+    });
   }
   function bindReservations() {
     const list = document.getElementById("resvList");
     if (!list) return;
-    list.addEventListener("click", (e) => {
+    list.addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-resv-del]");
       if (!btn) return;
       const id = btn.getAttribute("data-resv-del");
-      if (confirm("¿Eliminar esta reserva?")) {
-        reservations = reservations.filter((r) => r.id !== id);
-        persistReservations();
-        updateDashBadges();
-        renderReservations();
+      const row = btn.closest("[data-resv-id]");
+      const isRemote = row && row.getAttribute("data-resv-remote") === "true";
+      if (!confirm(state.lang === "es" ? "¿Eliminar esta reserva?" : "Delete this reservation?")) return;
+
+      if (isRemote && window.cbBackend && window.cbBackend.updateReservationStatus) {
+        try {
+          await window.cbBackend.updateReservationStatus(id, "cancelled");
+          toast(state.lang === "es" ? "Reserva cancelada ✓" : "Reservation cancelled ✓");
+        } catch (err) {
+          console.warn("Error cancelando reserva:", err);
+          toast(state.lang === "es" ? "Error al cancelar (admin login requerido)" : "Cancel failed (admin login required)");
+          return;
+        }
       }
+      reservations = reservations.filter((r) => r.id !== id);
+      persistReservations();
+      updateDashBadges();
+      renderReservations();
     });
   }
 
@@ -3357,39 +3505,78 @@
   function renderWallModeration() {
     const grid = document.getElementById("wallModGrid");
     const badge = document.getElementById("dashWallCount");
-    if (badge) badge.textContent = bpicStore ? bpicStore.length : 0;
     if (!grid) return;
-    if (!bpicStore || bpicStore.length === 0) {
-      grid.innerHTML = `<div class="resv-empty" style="grid-column:1/-1">Nadie ha subido fotos al muro aún.</div>`;
-      return;
-    }
-    grid.innerHTML = bpicStore.map((p) => {
-      const d = new Date(p.ts).toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short" });
-      return `
-        <div class="wall-mod" data-wall-id="${p.id}">
-          <img src="${p.src}" alt="${escapeHtml(p.name || "")}" loading="lazy" />
-          <button class="wall-mod__del" data-wall-del="${p.id}" aria-label="Eliminar">×</button>
-          <div class="wall-mod__info">
-            <strong>${escapeHtml(p.name || "Anónimo")}</strong>
-            <span>${d}${p.handle ? " · " + escapeHtml(p.handle) : ""}</span>
-          </div>
-        </div>`;
-    }).join("");
+    grid.innerHTML = `<div class="resv-empty" style="grid-column:1/-1">${state.lang === "es" ? "Cargando muro…" : "Loading wall…"}</div>`;
+
+    const fromBackend = (window.cbBackend && window.cbBackend.listAllBpicPhotos)
+      ? window.cbBackend.listAllBpicPhotos({ limit: 200 })
+      : Promise.resolve([]);
+
+    fromBackend.then((rows) => {
+      const remoteMapped = rows.map((r) => ({
+        id: r.id,
+        src: r.public_url,
+        name: r.guest_name,
+        handle: r.ig_handle,
+        caption: r.caption,
+        status: r.status,
+        ts: new Date(r.created_at).getTime(),
+        remote: true
+      }));
+      const merged = new Map();
+      remoteMapped.forEach((p) => merged.set(p.id, p));
+      (bpicStore || []).forEach((p) => { if (!merged.has(p.id)) merged.set(p.id, p); });
+      const all = Array.from(merged.values()).sort((a, b) => b.ts - a.ts);
+
+      if (badge) badge.textContent = all.length;
+      if (all.length === 0) {
+        grid.innerHTML = `<div class="resv-empty" style="grid-column:1/-1">${state.lang === "es" ? "Nadie ha subido fotos al muro aún." : "No one has uploaded to the wall yet."}</div>`;
+        return;
+      }
+      grid.innerHTML = all.map((p) => {
+        const d = new Date(p.ts).toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short" });
+        const remoteBadge = p.remote ? '<span class="wall-mod__remote" title="En Supabase">☁️</span>' : '';
+        return `
+          <div class="wall-mod" data-wall-id="${p.id}" data-wall-remote="${!!p.remote}">
+            <img src="${p.src}" alt="${escapeHtml(p.name || "")}" loading="lazy" />
+            <button class="wall-mod__del" data-wall-del="${p.id}" aria-label="Eliminar">×</button>
+            <div class="wall-mod__info">
+              <strong>${escapeHtml(p.name || "Anónimo")}</strong> ${remoteBadge}
+              <span>${d}${p.handle ? " · " + escapeHtml(p.handle) : ""}</span>
+            </div>
+          </div>`;
+      }).join("");
+    }).catch((err) => {
+      console.warn("Wall backend fetch error:", err);
+      grid.innerHTML = `<div class="resv-empty" style="grid-column:1/-1">${state.lang === "es" ? "Sin fotos (login admin para ver Supabase)." : "No photos (admin login required)."}</div>`;
+    });
   }
   function bindWallModeration() {
     const grid = document.getElementById("wallModGrid");
     if (!grid) return;
-    grid.addEventListener("click", (e) => {
+    grid.addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-wall-del]");
       if (!btn) return;
       const id = btn.getAttribute("data-wall-del");
-      if (confirm("¿Eliminar esta foto del muro?")) {
-        bpicStore = bpicStore.filter((p) => p.id !== id);
-        persistBpicWall();
-        renderBpicWall();
-        renderWallModeration();
-        updateDashBadges();
+      const card = btn.closest("[data-wall-id]");
+      const isRemote = card && card.getAttribute("data-wall-remote") === "true";
+      if (!confirm(state.lang === "es" ? "¿Eliminar esta foto del muro?" : "Delete this photo from the wall?")) return;
+
+      if (isRemote && window.cbBackend && window.cbBackend.deleteBpicPhoto) {
+        try {
+          await window.cbBackend.deleteBpicPhoto(id);
+          toast(state.lang === "es" ? "Foto eliminada ✓" : "Photo deleted ✓");
+        } catch (err) {
+          console.warn("Error borrando foto del muro:", err);
+          toast(state.lang === "es" ? "Error al borrar (admin login requerido)" : "Delete failed (admin login required)");
+          return;
+        }
       }
+      bpicStore = bpicStore.filter((p) => p.id !== id);
+      persistBpicWall();
+      renderBpicWall();
+      renderWallModeration();
+      updateDashBadges();
     });
   }
 
@@ -3424,7 +3611,7 @@
   }
   function saveCrewPhoto(i, dataURL) {
     crewPhotos[i] = dataURL;
-    try { localStorage.setItem(CREW_STORAGE_KEY, JSON.stringify(crewPhotos)); } catch (_) {}
+    safeSetItem(CREW_STORAGE_KEY, JSON.stringify(crewPhotos));
     const img = document.getElementById("crewImg" + i);
     if (img) {
       img.src = dataURL;
@@ -3462,59 +3649,6 @@
     });
   }
 
-  function bindInstagramEditor() {
-    const editBtn = $("#igEditBtn");
-    const fileInput = $("#igFileInput");
-    const grid = $("#igGrid");
-    if (!editBtn || !fileInput || !grid) return;
-
-    editBtn.addEventListener("click", toggleIgEdit);
-
-    fileInput.addEventListener("change", (e) => {
-      const slot = parseInt(fileInput.dataset.slot || "-1", 10);
-      handleIgFiles(e.target.files, slot >= 0 ? slot : null);
-      fileInput.value = "";
-      delete fileInput.dataset.slot;
-    });
-
-    // Click empty/user slot in edit mode → open file picker for that slot
-    grid.addEventListener("click", (e) => {
-      if (!igEditMode) return;
-      const del = e.target.closest("[data-ig-del]");
-      if (del) {
-        e.stopPropagation();
-        const idx = parseInt(del.getAttribute("data-ig-del"), 10);
-        if (igUserFeed) igUserFeed[idx] = null;
-        persistIgFeed();
-        renderInstagramFeed();
-        toast(t("ig.deleted"));
-        return;
-      }
-      const tile = e.target.closest(".ig-tile");
-      if (tile) {
-        fileInput.dataset.slot = tile.dataset.slot;
-        fileInput.click();
-      }
-    });
-
-    // Drag-and-drop directly onto the grid
-    ["dragenter", "dragover"].forEach((ev) => grid.addEventListener(ev, (e) => {
-      if (!igEditMode) return;
-      e.preventDefault();
-      grid.classList.add("is-drag");
-    }));
-    ["dragleave", "drop"].forEach((ev) => grid.addEventListener(ev, (e) => {
-      e.preventDefault();
-      grid.classList.remove("is-drag");
-    }));
-    grid.addEventListener("drop", (e) => {
-      if (!igEditMode) return;
-      const tile = e.target.closest(".ig-tile");
-      const slot = tile ? parseInt(tile.dataset.slot, 10) : null;
-      handleIgFiles(e.dataTransfer?.files, slot);
-    });
-  }
-
 
   /* =====================================================
      SCROLL REVEAL  |  MAGNETIC  |  TILT  |  COUNT-UP
@@ -3536,20 +3670,46 @@
     els.forEach((el) => io.observe(el));
   }
 
+  // Detectar dispositivos sin pointer fino (móvil/tablet) → desactivar
+  // efectos hover que sólo añaden jank en touch.
+  const HAS_FINE_POINTER = typeof window.matchMedia === "function" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  // requestAnimationFrame throttle helper para handlers de mousemove
+  function rafThrottle(fn) {
+    let scheduled = false;
+    let lastEvent = null;
+    return function (e) {
+      lastEvent = e;
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        fn(lastEvent);
+      });
+    };
+  }
+
   function initMagnetic() {
+    if (!HAS_FINE_POINTER) return;
     $$(".magnetic").forEach((el) => {
-      el.addEventListener("mousemove", (e) => {
+      const onMove = rafThrottle((e) => {
         const rect = el.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
         el.style.transform = `translate(${x * 0.18}px, ${y * 0.22}px)`;
       });
-      el.addEventListener("mouseleave", () => { el.style.transform = ""; });
+      el.addEventListener("mousemove", onMove, { passive: true });
+      el.addEventListener("mouseleave", () => { el.style.transform = ""; }, { passive: true });
     });
   }
 
   function initKpiGlow() {
-    document.addEventListener("mousemove", (e) => {
+    if (!HAS_FINE_POINTER) return;
+    // Sólo cuando hay KPIs visibles → enganchamos al contenedor del dashboard.
+    // No usar document-level listener para no penalizar el sitio público.
+    const dash = document.querySelector(".kpi-row");
+    if (!dash) return;
+    const onMove = rafThrottle((e) => {
       const kpi = e.target.closest(".kpi");
       if (!kpi) return;
       const rect = kpi.getBoundingClientRect();
@@ -3558,13 +3718,14 @@
       kpi.style.setProperty("--mx", mx + "%");
       kpi.style.setProperty("--my", my + "%");
     });
+    dash.addEventListener("mousemove", onMove, { passive: true });
   }
 
   function initDishTilt() {
-    // Delegated on the public menu grid
+    if (!HAS_FINE_POINTER) return;
     const grid = $("#publicMenuGrid");
     if (!grid) return;
-    grid.addEventListener("mousemove", (e) => {
+    const onMove = rafThrottle((e) => {
       const card = e.target.closest(".dish-card");
       if (!card) return;
       const rect = card.getBoundingClientRect();
@@ -3576,13 +3737,14 @@
       const ry = ((mx / 100) - 0.5) * 6;
       card.style.transform = `translateY(-4px) perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg)`;
     });
-    grid.addEventListener("mouseleave", (e) => {
+    grid.addEventListener("mousemove", onMove, { passive: true });
+    grid.addEventListener("mouseleave", () => {
       $$(".dish-card", grid).forEach((c) => { c.style.transform = ""; });
-    });
+    }, { passive: true });
     grid.addEventListener("mouseout", (e) => {
       const card = e.target.closest(".dish-card");
       if (card && !card.contains(e.relatedTarget)) card.style.transform = "";
-    });
+    }, { passive: true });
   }
 
   function initCountUp() {
@@ -3737,6 +3899,8 @@
     bindDesignPanel();
     bindPaymentsPanel();
     bindBackupPanel();
+    bindStatsPanel();
+    bindConsumptionPanel();
     bindGReview();
     applyGReviewToButton();
     applyDesignFromStorage();
@@ -3841,25 +4005,50 @@
   // ============== PET GALLERY · "Los peludos del Capitán" =============
   // ====================================================================
   const PET_KEY = "cb.pet.gallery.v1";
-  const PET_COUNT_KEY = "cb.pet.count.v1";
-
-  // ⚠️ Sin fotos demo: la galería arranca vacía. Las fotos las suben
-  // los clientes desde el bar y se aprueban desde el dashboard.
-  const PET_DEMO = [];
 
   let petStore = [];
   let petPendingDataURL = null;
 
   function loadPetGallery() {
+    // 1. Hidratamos rápido desde localStorage (instant render)
     try {
       const raw = localStorage.getItem(PET_KEY);
       petStore = raw ? JSON.parse(raw) : [];
     } catch (_) { petStore = []; }
     renderPetGallery();
     animatePetCounter();
+
+    // 2. Refrescamos desde el backend SÓLO después del primer paint
+    // y cuando el navegador esté idle → no compite con interacciones.
+    if (!window.cbBackend) return;
+    const fetchBackend = () => window.cbBackend.listPetPhotos({ status: "approved", limit: 60 })
+      .then((rows) => {
+        if (!Array.isArray(rows) || rows.length === 0) return;
+        const fromBackend = rows.map((r) => ({
+          id: r.id,
+          name: r.pet_name,
+          owner: r.owner_name,
+          breed: r.breed,
+          src: r.public_url,
+          ts: new Date(r.created_at).getTime(),
+          approved: true,
+          remote: true
+        }));
+        const localPending = petStore.filter((p) => !p.remote && p.approved === false);
+        petStore = fromBackend.concat(localPending);
+        renderPetGallery();
+        animatePetCounter();
+      })
+      .catch((e) => console.warn("pet backend fetch failed", e));
+    // Diferir hasta idle (o 1.2s) — el sitio responde a clicks al instante.
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(fetchBackend, { timeout: 2000 });
+    } else {
+      setTimeout(fetchBackend, 1200);
+    }
   }
   function persistPetGallery() {
-    try { localStorage.setItem(PET_KEY, JSON.stringify(petStore)); } catch (_) {}
+    safeSetItem(PET_KEY, JSON.stringify(petStore));
   }
 
   function renderPetGallery() {
@@ -3900,90 +4089,144 @@
   }
 
   // ============ Dashboard moderation ============
+  // Cache de fotos del backend para moderación
+  let petsModCache = [];
+
   function renderPetsModeration() {
     const grid = document.getElementById("petsModGrid");
     if (!grid) return;
-    const total = petStore.length;
-    const pending = petStore.filter((p) => p.approved === false).length;
-    const approved = petStore.filter((p) => p.approved !== false).length;
+    // Cargar desde el backend si admin está autenticado
+    const useBackend = !!(window.cbBackend && window.cbBackend.getSession && window.cbBackend.getSession());
+    if (useBackend) {
+      grid.innerHTML = `<p class="muted-sm">Cargando fotos del backend…</p>`;
+      window.cbBackend.listAllPetPhotos({ limit: 200 }).then((rows) => {
+        petsModCache = rows;
+        renderPetsModerationFromCache(rows);
+      }).catch((e) => {
+        console.warn("listAllPetPhotos failed", e);
+        renderPetsModerationLocal();
+      });
+    } else {
+      renderPetsModerationLocal();
+    }
+  }
+
+  function renderPetsModerationFromCache(rows) {
+    const grid = document.getElementById("petsModGrid");
+    const total = rows.length;
+    const pending = rows.filter((p) => p.status === "pending").length;
+    const approved = rows.filter((p) => p.status === "approved").length;
     const t1 = document.getElementById("petsStatTotal");
     const t2 = document.getElementById("petsStatPending");
     const t3 = document.getElementById("petsStatApproved");
     if (t1) t1.textContent = total;
     if (t2) t2.textContent = pending;
     if (t3) t3.textContent = approved;
-    if (petStore.length === 0) {
+    if (rows.length === 0) {
       grid.innerHTML = `<div class="bpic-empty">${state.lang === "es"
-        ? "Aún no hay fotos subidas por clientes. Las que subas desde la galería pet aparecen acá para moderar."
-        : "No customer photos yet. Photos uploaded from the pet gallery will appear here for moderation."}</div>`;
+        ? "Aún no hay fotos en el backend. Cuando un cliente suba una desde el sitio público aparece acá."
+        : "No photos in the backend yet. When a customer uploads one from the public site it shows up here."}</div>`;
       return;
     }
-    grid.innerHTML = petStore.map((p, i) => {
-      const date = new Date(p.ts || Date.now()).toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
-      const isPending = p.approved === false;
+    grid.innerHTML = rows.map((p) => {
+      const date = new Date(p.created_at).toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short", year: "numeric" });
+      const isPending = p.status === "pending";
+      const isRejected = p.status === "rejected";
+      const flagClass = isPending ? "" : (isRejected ? " pet-mod-card__flag--rej" : " pet-mod-card__flag--ok");
+      const flagText = isPending ? (state.lang === "es" ? "Pendiente" : "Pending")
+        : (isRejected ? (state.lang === "es" ? "Rechazada" : "Rejected")
+        : (state.lang === "es" ? "Público" : "Live"));
+      const cardClass = isPending ? "pet-mod-card--pending" : (isRejected ? "pet-mod-card--rej" : "pet-mod-card--ok");
       return `
-        <article class="pet-mod-card ${isPending ? "pet-mod-card--pending" : "pet-mod-card--ok"}" data-pet-idx="${i}">
+        <article class="pet-mod-card ${cardClass}" data-pet-id="${p.id}">
           <div class="pet-mod-card__img">
-            <img src="${p.src}" alt="${escapeHtml(p.name || "Peludo")}" loading="lazy" />
-            ${isPending ? `<span class="pet-mod-card__flag">${state.lang === "es" ? "Pendiente" : "Pending"}</span>` : `<span class="pet-mod-card__flag pet-mod-card__flag--ok">${state.lang === "es" ? "Público" : "Live"}</span>`}
+            <img src="${p.public_url}" alt="${escapeHtml(p.pet_name || "Peludo")}" loading="lazy" />
+            <span class="pet-mod-card__flag${flagClass}">${flagText}</span>
           </div>
           <div class="pet-mod-card__body">
             <div class="pet-mod-card__fields">
               <label class="field">
                 <small>${state.lang === "es" ? "Nombre del peludo" : "Pet name"}</small>
-                <input type="text" data-pet-edit="name" data-pet-idx="${i}" value="${escapeHtml(p.name || "")}" />
+                <input type="text" data-pet-edit="pet_name" data-pet-id="${p.id}" value="${escapeHtml(p.pet_name || "")}" />
               </label>
               <label class="field">
                 <small>${state.lang === "es" ? "Dueño" : "Owner"}</small>
-                <input type="text" data-pet-edit="owner" data-pet-idx="${i}" value="${escapeHtml(p.owner || "")}" />
+                <input type="text" data-pet-edit="owner_name" data-pet-id="${p.id}" value="${escapeHtml(p.owner_name || "")}" />
               </label>
               <label class="field">
                 <small>${state.lang === "es" ? "Raza / especie" : "Breed / species"}</small>
-                <input type="text" data-pet-edit="breed" data-pet-idx="${i}" value="${escapeHtml(p.breed || "")}" />
+                <input type="text" data-pet-edit="breed" data-pet-id="${p.id}" value="${escapeHtml(p.breed || "")}" />
               </label>
             </div>
-            <div class="pet-mod-card__meta">
-              <span>📅 ${date}</span>
-            </div>
+            <div class="pet-mod-card__meta"><span>📅 ${date}</span></div>
             <div class="pet-mod-card__actions">
               ${isPending
-                ? `<button class="btn btn--primary btn--sm" data-pet-approve="${i}" type="button">✓ ${state.lang === "es" ? "Aprobar" : "Approve"}</button>`
-                : `<button class="btn btn--ghost btn--sm" data-pet-unapprove="${i}" type="button">↺ ${state.lang === "es" ? "Despublicar" : "Unpublish"}</button>`
-              }
-              <button class="btn btn--ghost btn--sm" data-pet-save="${i}" type="button">💾 ${state.lang === "es" ? "Guardar cambios" : "Save"}</button>
-              <button class="btn btn--ghost btn--sm pet-mod-card__del" data-pet-delete="${i}" type="button">🗑 ${state.lang === "es" ? "Eliminar" : "Delete"}</button>
+                ? `<button class="btn btn--primary btn--sm" data-pet-approve="${p.id}" type="button">✓ ${state.lang === "es" ? "Aprobar" : "Approve"}</button>
+                   <button class="btn btn--ghost btn--sm" data-pet-reject="${p.id}" type="button">✕ ${state.lang === "es" ? "Rechazar" : "Reject"}</button>`
+                : `<button class="btn btn--ghost btn--sm" data-pet-reject="${p.id}" type="button">↺ ${state.lang === "es" ? "Despublicar" : "Unpublish"}</button>`}
+              <button class="btn btn--ghost btn--sm" data-pet-save="${p.id}" type="button">💾 ${state.lang === "es" ? "Guardar" : "Save"}</button>
+              <button class="btn btn--ghost btn--sm pet-mod-card__del" data-pet-delete="${p.id}" type="button">🗑 ${state.lang === "es" ? "Eliminar" : "Delete"}</button>
             </div>
           </div>
         </article>`;
     }).join("");
   }
 
+  function renderPetsModerationLocal() {
+    const grid = document.getElementById("petsModGrid");
+    grid.innerHTML = `<div class="bpic-empty">${state.lang === "es"
+      ? "Iniciá sesión como admin para ver las fotos del backend."
+      : "Sign in as admin to see backend photos."}</div>`;
+  }
+
   function bindPetsModeration() {
-    document.addEventListener("click", (e) => {
+    const panel = document.querySelector('[data-dash-panel="pets"]');
+    if (!panel) return;
+    panel.addEventListener("click", async (e) => {
       const ap = e.target.closest("[data-pet-approve]");
-      const un = e.target.closest("[data-pet-unapprove]");
+      const rj = e.target.closest("[data-pet-reject]");
       const sv = e.target.closest("[data-pet-save]");
       const del = e.target.closest("[data-pet-delete]");
-      if (ap) {
-        const i = parseInt(ap.dataset.petApprove, 10);
-        if (petStore[i]) { petStore[i].approved = true; persistPetGallery(); renderPetsModeration(); renderPetGallery(); toast(state.lang === "es" ? "Foto aprobada ✓" : "Photo approved ✓"); }
-      } else if (un) {
-        const i = parseInt(un.dataset.petUnapprove, 10);
-        if (petStore[i]) { petStore[i].approved = false; persistPetGallery(); renderPetsModeration(); renderPetGallery(); toast(state.lang === "es" ? "Despublicada" : "Unpublished"); }
-      } else if (sv) {
-        const i = parseInt(sv.dataset.petSave, 10);
-        if (!petStore[i]) return;
-        document.querySelectorAll(`[data-pet-idx="${i}"][data-pet-edit]`).forEach((inp) => {
-          petStore[i][inp.dataset.petEdit] = inp.value.trim();
-        });
-        persistPetGallery(); renderPetsModeration(); renderPetGallery();
-        toast(state.lang === "es" ? "Guardado ✓" : "Saved ✓");
-      } else if (del) {
-        const i = parseInt(del.dataset.petDelete, 10);
-        if (!confirm(state.lang === "es" ? "¿Eliminar esta foto?" : "Delete this photo?")) return;
-        petStore.splice(i, 1);
-        persistPetGallery(); renderPetsModeration(); renderPetGallery(); animatePetCounter();
-        toast(state.lang === "es" ? "Eliminada" : "Deleted");
+      const id = (ap || rj || sv || del)?.dataset.petApprove
+              || (ap || rj || sv || del)?.dataset.petReject
+              || (ap || rj || sv || del)?.dataset.petSave
+              || (ap || rj || sv || del)?.dataset.petDelete;
+      if (!id || !window.cbBackend) return;
+      try {
+        if (ap) {
+          await window.cbBackend.approvePetPhoto(id);
+          toast(state.lang === "es" ? "Foto aprobada ✓" : "Photo approved ✓");
+        } else if (rj) {
+          await window.cbBackend.rejectPetPhoto(id);
+          toast(state.lang === "es" ? "Rechazada" : "Rejected");
+        } else if (sv) {
+          const patch = {};
+          panel.querySelectorAll(`[data-pet-id="${id}"][data-pet-edit]`).forEach((inp) => {
+            patch[inp.dataset.petEdit] = inp.value.trim();
+          });
+          await fetch(`${window.cbBackend.URL}/rest/v1/pet_photos?id=eq.${encodeURIComponent(id)}`, {
+            method: "PATCH",
+            headers: {
+              "apikey": window.cbBackend.ANON_KEY,
+              "Authorization": `Bearer ${window.cbBackend.getSession().access_token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(patch)
+          });
+          toast(state.lang === "es" ? "Guardado ✓" : "Saved ✓");
+        } else if (del) {
+          if (!confirm(state.lang === "es" ? "¿Eliminar esta foto?" : "Delete this photo?")) return;
+          await window.cbBackend.deletePetPhoto(id);
+          toast(state.lang === "es" ? "Eliminada" : "Deleted");
+        }
+        renderPetsModeration();
+        // Re-render galería pública también
+        loadPetGallery();
+      } catch (err) {
+        console.warn("mod action failed", err);
+        toast(state.lang === "es"
+          ? "Acción rechazada (¿permisos?). Revisá la consola."
+          : "Action rejected (permissions?). Check console.");
       }
     });
     document.getElementById("petAddFromDash")?.addEventListener("click", openPetModal);
@@ -3991,7 +4234,15 @@
 
   function updateDashBadgesPet() {
     const badge = document.getElementById("dashPetsCount");
-    if (badge) {
+    if (!badge) return;
+    // Sólo si admin logueado pedimos el conteo real
+    if (window.cbBackend && window.cbBackend.getSession && window.cbBackend.getSession()) {
+      window.cbBackend.listAllPetPhotos({ limit: 200 }).then((rows) => {
+        const pending = rows.filter((r) => r.status === "pending").length;
+        badge.textContent = pending;
+        badge.style.display = pending > 0 ? "" : "none";
+      }).catch(() => {});
+    } else {
       const pending = petStore.filter((p) => p.approved === false).length;
       badge.textContent = pending;
       badge.style.display = pending > 0 ? "" : "none";
@@ -4087,26 +4338,69 @@
         }
         const fd = new FormData(form);
         const isAdmin = (typeof currentUser !== "undefined" && currentUser && ADMIN_EMAILS.includes(currentUser.email));
-        const entry = {
-          src: petPendingDataURL,
-          name: (fd.get("petName") || "").toString().trim() || "Peludo",
-          owner: (fd.get("ownerName") || "").toString().trim(),
-          breed: (fd.get("breed") || "").toString().trim(),
-          ts: Date.now(),
-          // Si lo sube un admin desde el dashboard → auto-aprobado.
-          // Si lo sube un cliente desde el público → pendiente de moderación.
-          approved: !!isAdmin
-        };
-        petStore.unshift(entry);
-        persistPetGallery();
-        renderPetGallery();
-        renderPetsModeration();
-        updateDashBadgesPet();
-        animatePetCounter();
-        closePetModal();
-        toast(state.lang === "es"
-          ? (isAdmin ? `¡${entry.name} ya está en la manada! 🐾` : `¡Gracias! ${entry.name} aparecerá tras la moderación 🐾`)
-          : (isAdmin ? `${entry.name} just joined the pack! 🐾` : `Thanks! ${entry.name} will appear after moderation 🐾`));
+        const petName = (fd.get("petName") || "").toString().trim() || "Peludo";
+        const ownerName = (fd.get("ownerName") || "").toString().trim();
+        const breed = (fd.get("breed") || "").toString().trim();
+
+        // Indicador de subida
+        const submitBtn = form.querySelector("button[type='submit']");
+        const originalLabel = submitBtn ? submitBtn.textContent : "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = state.lang === "es" ? "Subiendo…" : "Uploading…";
+        }
+
+        // 1. Intentamos backend Supabase
+        const uploadPromise = (window.cbBackend && window.cbBackend.uploadPetPhoto)
+          ? window.cbBackend.uploadPetPhoto({ dataURL: petPendingDataURL, petName, ownerName, breed })
+          : Promise.reject(new Error("no_backend"));
+
+        uploadPromise.then((row) => {
+          // Subida exitosa → la foto aparece YA en la galería pública
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+          closePetModal();
+          updateDashBadgesPet();
+          // Inyectar la foto recién subida al store local para que aparezca
+          // sin esperar el siguiente refetch (que está debounced/diferido).
+          const newEntry = {
+            id: row.id,
+            src: row.public_url,
+            name: row.pet_name || petName,
+            owner: row.owner_name || ownerName,
+            breed: row.breed || breed,
+            ts: Date.now(),
+            approved: true,
+            remote: true
+          };
+          petStore.unshift(newEntry);
+          renderPetGallery();
+          animatePetCounter();
+          toast(state.lang === "es"
+            ? `¡${newEntry.name} ya está en la manada! 🐾`
+            : `${newEntry.name} just joined the pack! 🐾`);
+          if (state.dashTab === "pets") renderPetsModeration();
+        }).catch((err) => {
+          console.warn("Backend pet upload failed, fallback a localStorage:", err);
+          // Fallback local — mismo comportamiento de antes
+          const entry = {
+            src: petPendingDataURL,
+            name: petName, owner: ownerName, breed,
+            ts: Date.now(),
+            approved: !!isAdmin
+          };
+          petStore.unshift(entry);
+          persistPetGallery();
+          renderPetGallery();
+          renderPetsModeration();
+          updateDashBadgesPet();
+          animatePetCounter();
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+          closePetModal();
+          toast(state.lang === "es"
+            ? (isAdmin ? `¡${entry.name} está en la manada (offline)! 🐾` : `Subido sin conexión a backend. ${entry.name} sólo se ve en este dispositivo.`)
+            : (isAdmin ? `${entry.name} joined the pack (offline)! 🐾` : `Uploaded without backend. ${entry.name} only shows on this device.`));
+        });
+        return;
       });
     }
   }
@@ -4147,6 +4441,325 @@
       try { localStorage.setItem(GREVIEW_KEY, v); } catch (_) {}
       applyGReviewToButton();
       toast(state.lang === "es" ? "Enlace de reseña Google guardado ✓" : "Google review link saved ✓");
+    });
+  }
+
+  // ====================================================================
+  // ============== STATS PANEL (charts + forecast) =====================
+  // ====================================================================
+  let statsRange = 30;
+  let statsCache = { daily: null, top: null, heat: null };
+
+  function fmtEUR(cents) {
+    return (cents / 100).toLocaleString(state.lang === "es" ? "es-ES" : "en-GB", {
+      style: "currency", currency: "EUR", maximumFractionDigits: 0
+    });
+  }
+
+  /**
+   * Regresión lineal simple sobre y vs índice → devuelve { slope, intercept }
+   * para proyectar siguientes n días.
+   */
+  function linearForecast(values, daysAhead) {
+    const n = values.length;
+    if (n < 3) return Array(daysAhead).fill(values[n - 1] || 0);
+    const sumX = (n - 1) * n / 2;
+    const sumY = values.reduce((a, b) => a + b, 0);
+    const sumXY = values.reduce((acc, y, i) => acc + i * y, 0);
+    const sumXX = values.reduce((acc, _, i) => acc + i * i, 0);
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    const out = [];
+    for (let i = 0; i < daysAhead; i++) {
+      out.push(Math.max(0, intercept + slope * (n + i)));
+    }
+    return out;
+  }
+
+  function renderStatsPanel() {
+    if (!window.cbBackend) return;
+    Promise.all([
+      window.cbBackend.fetchDailyRevenue({ days: statsRange }),
+      window.cbBackend.fetchTopDishes({ limit: 8 }),
+      window.cbBackend.fetchHourlyHeatmap()
+    ]).then(([daily, top, heat]) => {
+      statsCache = { daily, top, heat };
+      renderStatsKpis(daily);
+      renderDailyChart(daily);
+      renderTopDishes(top);
+      renderHeatmap(heat);
+    }).catch((e) => console.warn("stats failed", e));
+  }
+
+  function renderStatsKpis(daily) {
+    // Sumamos por día (las views devuelven una fila por (day, shift))
+    const byDay = {};
+    daily.forEach((r) => {
+      const d = r.day;
+      if (!byDay[d]) byDay[d] = { rev: 0, items: 0 };
+      byDay[d].rev += +r.revenue_cents;
+      byDay[d].items += +r.items_sold;
+    });
+    const days = Object.keys(byDay).sort();
+    const rev = days.reduce((a, d) => a + byDay[d].rev, 0);
+    const items = days.reduce((a, d) => a + byDay[d].items, 0);
+    const avg = items > 0 ? Math.round(rev / items * 100) / 100 : 0;
+    // Forecast
+    const values = days.map((d) => byDay[d].rev);
+    const forecast = linearForecast(values, 7).reduce((a, b) => a + b, 0);
+    const trend = values.length >= 2 ? values[values.length - 1] - values[0] : 0;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set("kpiRevenue", fmtEUR(rev));
+    set("kpiOrders", items.toLocaleString());
+    set("kpiAvgTicket", fmtEUR(avg * 100));
+    set("kpiForecast", fmtEUR(forecast));
+    set("kpiRevenueDelta", trend >= 0 ? "📈 tendencia positiva" : "📉 tendencia a la baja");
+    const elDeltaRev = document.getElementById("kpiRevenueDelta");
+    if (elDeltaRev) elDeltaRev.className = "kpi__delta " + (trend >= 0 ? "up" : "down");
+  }
+
+  function renderDailyChart(daily) {
+    const svg = document.getElementById("chartDaily");
+    if (!svg) return;
+    const byDay = {};
+    daily.forEach((r) => {
+      const d = r.day;
+      if (!byDay[d]) byDay[d] = 0;
+      byDay[d] += +r.revenue_cents;
+    });
+    const days = Object.keys(byDay).sort();
+    const values = days.map((d) => byDay[d]);
+    const forecast = linearForecast(values, 7);
+    const allValues = values.concat(forecast);
+    const W = 720, H = 240, padL = 50, padR = 12, padT = 18, padB = 28;
+    const max = Math.max(1, ...allValues);
+    const total = allValues.length;
+    const xStep = (W - padL - padR) / Math.max(1, total - 1);
+    const yScale = (v) => H - padB - (v / max) * (H - padT - padB);
+
+    const pathReal = values.map((v, i) => `${i === 0 ? "M" : "L"} ${padL + i * xStep} ${yScale(v)}`).join(" ");
+    const fStartIdx = values.length;
+    const pathForecast = forecast.map((v, i) => {
+      const idx = fStartIdx + i;
+      return `${i === 0 ? "M" : "L"} ${padL + idx * xStep} ${yScale(v)}`;
+    }).join(" ");
+
+    // Area under real
+    const areaPath = pathReal +
+      ` L ${padL + (values.length - 1) * xStep} ${H - padB} L ${padL} ${H - padB} Z`;
+
+    const labels = [];
+    const tickEvery = Math.max(1, Math.floor(days.length / 6));
+    days.forEach((d, i) => {
+      if (i % tickEvery !== 0 && i !== days.length - 1) return;
+      const dt = new Date(d);
+      const lbl = dt.toLocaleDateString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short" });
+      labels.push(`<text x="${padL + i * xStep}" y="${H - 8}" font-size="10" fill="#7c726a" text-anchor="middle">${lbl}</text>`);
+    });
+
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="dailyArea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1F4A2E" stop-opacity="0.32"/>
+          <stop offset="100%" stop-color="#1F4A2E" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${areaPath}" fill="url(#dailyArea)"/>
+      <path d="${pathReal}" fill="none" stroke="#1F4A2E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${pathForecast}" fill="none" stroke="#C9612F" stroke-width="2.2" stroke-dasharray="6 4" stroke-linecap="round"/>
+      <line x1="${padL + values.length * xStep}" y1="${padT}" x2="${padL + values.length * xStep}" y2="${H - padB}" stroke="#C9612F" stroke-dasharray="2 4" opacity="0.4"/>
+      <text x="${padL + values.length * xStep + 4}" y="${padT + 10}" font-size="10" fill="#C9612F">hoy</text>
+      ${labels.join("")}
+      <text x="${padL}" y="${padT + 4}" font-size="10" fill="#7c726a">${fmtEUR(max)}</text>
+      <text x="${padL}" y="${H - padB}" font-size="10" fill="#7c726a">0</text>
+    `;
+  }
+
+  function renderTopDishes(top) {
+    const wrap = document.getElementById("topDishesList");
+    if (!wrap) return;
+    if (!top.length) { wrap.innerHTML = `<p class="muted-sm">Sin datos aún.</p>`; return; }
+    const max = Math.max(...top.map((d) => +d.revenue_cents));
+    wrap.innerHTML = top.map((d, i) => `
+      <div class="top-dish">
+        <div class="top-dish__rank">${i + 1}</div>
+        <div class="top-dish__info">
+          <strong>${escapeHtml(d.dish_title || "—")}</strong>
+          <small>${d.units_sold} ud · ${escapeHtml(d.category)}</small>
+        </div>
+        <div class="top-dish__bar">
+          <div class="top-dish__fill" style="width:${((+d.revenue_cents / max) * 100).toFixed(1)}%"></div>
+        </div>
+        <div class="top-dish__rev">${fmtEUR(+d.revenue_cents)}</div>
+      </div>
+    `).join("");
+  }
+
+  function renderHeatmap(rows) {
+    const svg = document.getElementById("chartHeatmap");
+    if (!svg) return;
+    const W = 720, H = 280;
+    const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+    const hours = Array.from({ length: 24 }, (_, h) => h);
+    const padL = 48, padT = 24, padB = 28, padR = 12;
+    const cellW = (W - padL - padR) / hours.length;
+    const cellH = (H - padT - padB) / days.length;
+    // PG dow: 0=Sun..6=Sat. Normalizamos a Mon-first
+    const idxFromDow = (dow) => (dow + 6) % 7;
+    const grid = Array.from({ length: 7 }, () => Array(24).fill(0));
+    rows.forEach((r) => {
+      const di = idxFromDow(+r.dow);
+      const hi = +r.hour_madrid;
+      grid[di][hi] = +r.revenue_cents;
+    });
+    const max = Math.max(1, ...grid.flat());
+    let cells = "";
+    grid.forEach((row, di) => {
+      row.forEach((v, hi) => {
+        const x = padL + hi * cellW;
+        const y = padT + di * cellH;
+        const t = v / max;
+        const fill = v === 0 ? "#f3eedb" : `rgba(31, 74, 46, ${0.12 + t * 0.78})`;
+        cells += `<rect x="${x}" y="${y}" width="${cellW - 1}" height="${cellH - 1}" fill="${fill}" rx="2">
+          <title>${days[di]} ${hi}:00 → ${fmtEUR(v)}</title>
+        </rect>`;
+      });
+    });
+    let yLabels = days.map((d, i) =>
+      `<text x="${padL - 6}" y="${padT + i * cellH + cellH / 2 + 4}" font-size="11" fill="#7c726a" text-anchor="end">${d}</text>`
+    ).join("");
+    let xLabels = "";
+    [0, 6, 12, 18, 23].forEach((h) => {
+      xLabels += `<text x="${padL + h * cellW + cellW / 2}" y="${H - 8}" font-size="10" fill="#7c726a" text-anchor="middle">${h}h</text>`;
+    });
+    svg.innerHTML = cells + yLabels + xLabels;
+  }
+
+  function bindStatsPanel() {
+    const picker = document.getElementById("statsRangePicker");
+    if (!picker) return;
+    picker.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-stats-range]");
+      if (!b) return;
+      statsRange = parseInt(b.dataset.statsRange, 10);
+      picker.querySelectorAll(".seg__btn").forEach((x) => x.classList.toggle("is-active", x === b));
+      renderStatsPanel();
+    });
+  }
+
+  // ====================================================================
+  // ============== CONSUMPTION PANEL (manual logging) ==================
+  // ====================================================================
+  let consDishesCache = null;
+  let consAuthToken = null;
+
+  function ensureConsAuthToken() {
+    // Token de sesión Supabase Auth real (admin logueado vía email+password).
+    if (!window.cbBackend || !window.cbBackend.getSession) return "";
+    const s = window.cbBackend.getSession();
+    return s ? s.access_token : "";
+  }
+
+  function renderConsumptionPanel() {
+    if (!window.cbBackend) return;
+    const recent = document.getElementById("consumptionRecent");
+    if (recent) recent.innerHTML = `<p class="muted-sm">Cargando últimos consumos…</p>`;
+    window.cbBackend.fetchRecentConsumption({ limit: 50 }).then((rows) => {
+      if (!recent) return;
+      if (!rows.length) {
+        recent.innerHTML = `<p class="muted-sm">Aún no hay consumos registrados.</p>`;
+        return;
+      }
+      recent.innerHTML = `
+        <h4>Últimos ${rows.length} consumos</h4>
+        <table class="cons-table">
+          <thead>
+            <tr><th>Hora</th><th>Plato</th><th>Cant.</th><th>Turno</th><th>Total</th><th>Mesa</th></tr>
+          </thead>
+          <tbody>${rows.map((r) => `
+            <tr>
+              <td>${new Date(r.served_at).toLocaleString(state.lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
+              <td>${escapeHtml(r.dish_title)}</td>
+              <td>${r.quantity}</td>
+              <td>${escapeHtml(r.shift)}</td>
+              <td>${fmtEUR(+r.total_cents)}</td>
+              <td>${escapeHtml(r.table_label || "—")}</td>
+            </tr>
+          `).join("")}</tbody>
+        </table>`;
+    });
+
+    // Poblar select de platos
+    if (!consDishesCache) {
+      window.cbBackend.fetchDishes().then((rows) => {
+        consDishesCache = rows;
+        const sel = document.getElementById("consDish");
+        if (sel) {
+          sel.innerHTML = rows.map((d) =>
+            `<option value="${d.id}" data-price="${d.base_price_cents}" data-title="${escapeHtml(d.title_es)}" data-cat="${d.category}">${escapeHtml(d.title_es)} · ${fmtEUR(d.base_price_cents)}</option>`
+          ).join("");
+        }
+      });
+    }
+  }
+
+  function bindConsumptionPanel() {
+    document.getElementById("consumptionAddBtn")?.addEventListener("click", () => {
+      const f = document.getElementById("consumptionForm");
+      if (f) f.hidden = false;
+    });
+    document.getElementById("consCancelBtn")?.addEventListener("click", () => {
+      const f = document.getElementById("consumptionForm");
+      if (f) f.hidden = true;
+    });
+    document.getElementById("consumptionWipeDemo")?.addEventListener("click", async () => {
+      if (!confirm(state.lang === "es"
+        ? "¿Borrar las 950 ventas demo? Esto despeja el panel de stats para que arranques con datos REALES."
+        : "Wipe the 950 demo sales? This clears the stats panel so you start with REAL data.")) return;
+      if (!window.cbBackend || !window.cbBackend.getSession()) {
+        toast(state.lang === "es" ? "Necesitás estar logueado como admin." : "Login as admin first.");
+        return;
+      }
+      try {
+        await window.cbBackend.wipeDemoConsumption();
+        toast(state.lang === "es" ? "Demo data borrada ✓" : "Demo data wiped ✓");
+        renderConsumptionPanel();
+        if (state.dashTab === "stats") renderStatsPanel();
+      } catch (e) {
+        console.warn("wipe failed", e);
+        toast("Error al borrar (¿permisos?). Revisá la consola.");
+      }
+    });
+    document.getElementById("consSaveBtn")?.addEventListener("click", () => {
+      const sel = document.getElementById("consDish");
+      const opt = sel?.options[sel.selectedIndex];
+      if (!opt) return;
+      const qty = Math.max(1, parseInt(document.getElementById("consQty").value, 10) || 1);
+      const price = parseInt(opt.dataset.price, 10);
+      const entry = {
+        dish_id: opt.value,
+        dish_title: opt.dataset.title,
+        category: opt.dataset.cat,
+        quantity: qty,
+        unit_price_cents: price,
+        total_cents: price * qty,
+        shift: document.getElementById("consShift").value,
+        table_label: document.getElementById("consTable").value.trim(),
+        source: "manual"
+      };
+      const token = ensureConsAuthToken();
+      window.cbBackend.logConsumption([entry], token)
+        .then(() => {
+          toast(state.lang === "es" ? "Consumo registrado ✓" : "Logged ✓");
+          document.getElementById("consumptionForm").hidden = true;
+          renderConsumptionPanel();
+        })
+        .catch((err) => {
+          console.warn("log failed", err);
+          toast(state.lang === "es"
+            ? "Error al guardar (¿permisos?). Revisá la consola."
+            : "Save failed (permissions?). Check console.");
+        });
     });
   }
 
@@ -4293,13 +4906,17 @@
     });
   }
   function bindDesignPanel() {
-    // Live preview: cambia colores al instante
-    document.addEventListener("input", (e) => {
+    // Live preview SOLO dentro del panel de diseño — antes corría en
+    // CADA input del sitio (incluido reservas, búsqueda, etc.) y causaba
+    // re-styles innecesarios.
+    const panel = document.querySelector('[data-dash-panel="design"]');
+    if (!panel) return;
+    panel.addEventListener("input", (e) => {
       const cv = e.target.closest("[data-design-var]");
       if (cv) {
         const k = cv.getAttribute("data-design-var");
         document.documentElement.style.setProperty(k, cv.value);
-        const txt = document.querySelector(`[data-design-var-text="${k}"]`);
+        const txt = panel.querySelector(`[data-design-var-text="${k}"]`);
         if (txt) txt.value = cv.value;
         return;
       }
@@ -4308,7 +4925,7 @@
         const k = tv.getAttribute("data-design-var-text");
         if (/^#[0-9a-f]{6}$/i.test(tv.value)) {
           document.documentElement.style.setProperty(k, tv.value);
-          const cv2 = document.querySelector(`[data-design-var="${k}"]`);
+          const cv2 = panel.querySelector(`[data-design-var="${k}"]`);
           if (cv2) cv2.value = tv.value;
         }
         return;
@@ -4391,7 +5008,10 @@
     if (count) count.textContent = active;
   }
   function bindPaymentsPanel() {
-    document.addEventListener("change", (e) => {
+    // Limitamos al panel — los listeners globales costaban en cada click/change.
+    const panel = document.querySelector('[data-dash-panel="payments"]');
+    if (!panel) return;
+    panel.addEventListener("change", (e) => {
       const cb = e.target.closest("[data-pay-enabled]");
       if (!cb) return;
       const id = cb.getAttribute("data-pay-enabled");
@@ -4405,13 +5025,13 @@
         ? `${id} ${cb.checked ? "activado" : "desactivado"}`
         : `${id} ${cb.checked ? "enabled" : "disabled"}`);
     });
-    document.addEventListener("click", (e) => {
+    panel.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-pay-save]");
       if (!btn) return;
       const id = btn.getAttribute("data-pay-save");
       const p = loadPayments();
       if (!p[id]) p[id] = {};
-      document.querySelectorAll(`[data-pay-field^="${id}."]`).forEach((el) => {
+      panel.querySelectorAll(`[data-pay-field^="${id}."]`).forEach((el) => {
         const field = el.getAttribute("data-pay-field").split(".")[1];
         p[id][field] = el.value;
       });

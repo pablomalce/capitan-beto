@@ -14,9 +14,9 @@
                  script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
                  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com;
                  font-src 'self' https://fonts.gstatic.com;
-                 img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com;
+                 img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co;
                  media-src 'self' blob:;
-                 connect-src 'self' https://formsubmit.co https://accounts.google.com;
+                 connect-src 'self' https://formsubmit.co https://accounts.google.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co;
                  frame-src https://accounts.google.com https://drive.google.com;
                  frame-ancestors 'self';
                  form-action 'self' https://formsubmit.co https://wa.me;
@@ -86,7 +86,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=41" />
+  <link rel="stylesheet" href="styles.css?v=49" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1014,6 +1014,14 @@
           <span class="snav__ico">🎨</span>
           <span data-i18n="dash.nav.design">Diseño</span>
         </button>
+        <button class="snav" data-dash-tab="stats" type="button">
+          <span class="snav__ico">📊</span>
+          <span data-i18n="dash.nav.stats">Estadísticas</span>
+        </button>
+        <button class="snav" data-dash-tab="consumption" type="button">
+          <span class="snav__ico">🧾</span>
+          <span data-i18n="dash.nav.consumption">Consumos</span>
+        </button>
         <button class="snav" data-dash-tab="backup" type="button">
           <span class="snav__ico">💾</span>
           <span data-i18n="dash.nav.backup">Backup CMS</span>
@@ -1434,6 +1442,95 @@
             </div>
             <p class="muted-sm" data-i18n="dash.design.live">Los cambios viajan al sitio público inmediatamente. Tu navegador los recuerda.</p>
           </div>
+        </div>
+      </section>
+
+      <!-- ============ STATS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="stats" hidden>
+        <div class="stats-toolbar">
+          <div class="stats-toolbar__left">
+            <h3 data-i18n="dash.stats.title">📊 Estadísticas en tiempo real</h3>
+            <small data-i18n="dash.stats.sub">Datos directos del backend Supabase. Cambian al loguear consumos.</small>
+          </div>
+          <div class="seg" id="statsRangePicker">
+            <button class="seg__btn is-active" data-stats-range="7" type="button">7d</button>
+            <button class="seg__btn" data-stats-range="30" type="button">30d</button>
+            <button class="seg__btn" data-stats-range="90" type="button">90d</button>
+          </div>
+        </div>
+
+        <div class="kpi-row" id="statsKpis">
+          <div class="card kpi"><small>Revenue</small><strong id="kpiRevenue">—</strong><span class="kpi__delta" id="kpiRevenueDelta">vs período anterior</span></div>
+          <div class="card kpi"><small>Órdenes</small><strong id="kpiOrders">—</strong><span class="kpi__delta" id="kpiOrdersDelta">items vendidos</span></div>
+          <div class="card kpi"><small>Ticket medio</small><strong id="kpiAvgTicket">—</strong><span class="kpi__delta" id="kpiAvgDelta">por orden</span></div>
+          <div class="card kpi"><small>Proyección</small><strong id="kpiForecast">—</strong><span class="kpi__delta" id="kpiForecastNote">próximos 7 días</span></div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="card stats-card">
+            <h4 data-i18n="dash.stats.daily">Revenue diario + proyección</h4>
+            <div class="chart-wrap"><svg id="chartDaily" viewBox="0 0 720 240" preserveAspectRatio="none"></svg></div>
+            <p class="muted-sm" id="chartDailyNote">Líneas: ventas reales (verde) · proyección lineal próximos 7 días (naranja punteado)</p>
+          </div>
+
+          <div class="card stats-card">
+            <h4 data-i18n="dash.stats.top">Top platos por revenue</h4>
+            <div id="topDishesList" class="top-dishes"></div>
+          </div>
+
+          <div class="card stats-card stats-card--wide">
+            <h4 data-i18n="dash.stats.heatmap">Heatmap horario · día × hora (Madrid)</h4>
+            <div class="chart-wrap"><svg id="chartHeatmap" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"></svg></div>
+            <p class="muted-sm">Más oscuro = más facturación. Identifica las horas pico.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CONSUMPTION LOGGING VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="consumption" hidden>
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <h3 data-i18n="dash.consumption.title">🧾 Registro de consumos</h3>
+              <small data-i18n="dash.consumption.sub">Logueá ventas manualmente o importá CSV de tu POS. Alimenta el panel de Estadísticas.</small>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn--ghost btn--sm" id="consumptionWipeDemo" type="button" style="color:var(--danger)">
+                <span data-i18n="dash.consumption.wipeDemo">🧹 Borrar 950 datos demo</span>
+              </button>
+              <button class="btn btn--primary btn--sm" id="consumptionAddBtn" type="button">
+                <span data-i18n="dash.consumption.add">+ Registrar consumo</span>
+              </button>
+            </div>
+          </div>
+          <div class="cons-form" id="consumptionForm" hidden>
+            <label class="field">
+              <small>Plato</small>
+              <select id="consDish"></select>
+            </label>
+            <label class="field">
+              <small>Cantidad</small>
+              <input type="number" id="consQty" min="1" value="1" />
+            </label>
+            <label class="field">
+              <small>Turno</small>
+              <select id="consShift">
+                <option value="lunch">Comida (13–16:30)</option>
+                <option value="afternoon">Tarde (17–19)</option>
+                <option value="dinner" selected>Cena (20–23:30)</option>
+                <option value="late">Late night</option>
+              </select>
+            </label>
+            <label class="field">
+              <small>Mesa (opcional)</small>
+              <input type="text" id="consTable" placeholder="M5, barra…" />
+            </label>
+            <div class="cons-form__actions">
+              <button class="btn btn--primary" id="consSaveBtn" type="button">Guardar</button>
+              <button class="btn btn--ghost" id="consCancelBtn" type="button">Cancelar</button>
+            </div>
+          </div>
+          <div class="cons-recent" id="consumptionRecent"></div>
         </div>
       </section>
 
@@ -2062,6 +2159,7 @@
     <button type="button" id="logoutBtn" aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
   </div>
 
-  <script src="script.js?v=41" defer></script>
+  <script src="backend.js?v=3" defer></script>
+  <script src="script.js?v=49" defer></script>
 </body>
 </html>

@@ -999,28 +999,6 @@ button { font-family: inherit; cursor: pointer; }
   transform: translateY(-2px);
 }
 
-/* check-list legacy (mantenido por compatibilidad si reaparece en futuro) */
-.check-list {
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-.check-list li {
-  padding-left: 26px;
-  position: relative;
-  color: var(--ink-soft);
-  font-family: var(--font-display);
-}
-.check-list li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: var(--brand-green);
-  font-weight: 700;
-}
-
 @media (max-width: 900px) {
   .pet__layout { grid-template-columns: 1fr; gap: 28px; }
   .pet__photo { min-height: 320px; }
@@ -3410,6 +3388,152 @@ body[data-role="editor"] .role-hint[data-show-for="editor"] { display: inline-fl
   margin: 6px 0 14px;
 }
 
+/* Admin Supabase login form */
+.supa-login { display: flex; flex-direction: column; gap: 14px; }
+.supa-login .field { margin: 0; }
+.supa-login input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--card-border-soft);
+  border-radius: 10px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.supa-login input:focus {
+  outline: none;
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgba(31, 74, 46, 0.10);
+}
+.pet-mod-card__flag--rej {
+  background: var(--danger);
+}
+.pet-mod-card--rej { opacity: 0.65; }
+
+/* ============ STATS PANEL ============ */
+.stats-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.stats-toolbar h3 { margin: 0 0 4px; }
+.stats-toolbar small { color: var(--ink-mute); font-size: 13px; }
+.stats-toolbar .seg {
+  background: #fff;
+  border: 1px solid var(--card-border-soft);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
+}
+.stats-card { padding: 22px; }
+.stats-card--wide { grid-column: 1 / -1; }
+.stats-card h4 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+.chart-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fbf6e8;
+  padding: 10px 6px;
+}
+.chart-wrap svg { width: 100%; height: auto; display: block; }
+
+.top-dishes { display: flex; flex-direction: column; gap: 8px; }
+.top-dish {
+  display: grid;
+  grid-template-columns: 28px 1.4fr 1fr 80px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--card-border-soft);
+}
+.top-dish:last-child { border-bottom: 0; }
+.top-dish__rank {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--brand-green-deep);
+  text-align: center;
+}
+.top-dish__info { display: flex; flex-direction: column; gap: 1px; }
+.top-dish__info strong { font-size: 13px; font-family: var(--font-display); }
+.top-dish__info small { font-size: 11px; color: var(--ink-mute); }
+.top-dish__bar {
+  background: rgba(31, 74, 46, 0.10);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+.top-dish__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-green) 0%, var(--sunset) 100%);
+  border-radius: 999px;
+}
+.top-dish__rev {
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--brand-green-deep);
+  font-size: 13px;
+}
+
+/* Consumption panel */
+.cons-form {
+  display: grid;
+  grid-template-columns: 2fr 100px 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+  padding: 18px;
+  margin: 14px 0 18px;
+  background: linear-gradient(180deg, #fbf6e8, #fff);
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius-md);
+}
+.cons-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.cons-recent { margin-top: 16px; }
+.cons-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.cons-table th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--card-border-soft);
+}
+.cons-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--card-border-soft);
+}
+.cons-table tr:hover td { background: rgba(31, 74, 46, 0.03); }
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .cons-form { grid-template-columns: 1fr 1fr; }
+  .top-dish { grid-template-columns: 24px 1fr 90px; }
+  .top-dish__bar { display: none; }
+}
+
 /* Backup panel */
 .backup-stats {
   display: grid;
@@ -5332,116 +5456,6 @@ body[data-view="dashboard"] #reserveModal { display: none; }
 }
 .ev-lightbox__close:hover { background: var(--sunset); transform: rotate(90deg); }
 
-/* Instagram feed grid (integrated into gallery) */
-.ig-wrap {
-  position: relative;
-  max-width: 1080px;
-  margin: 0 auto 50px;
-}
-.ig-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow-1);
-}
-.ig-edit-btn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(20, 32, 16, 0.85);
-  color: #f4ead6;
-  border: 1px solid rgba(194,155,99,0.5);
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.32);
-  transition: transform 0.3s var(--ease-soft), background 0.3s var(--ease-soft);
-}
-.ig-edit-btn:hover {
-  background: var(--brand-green);
-  border-color: var(--brass);
-  transform: translateY(-2px);
-}
-.ig-edit-btn svg { width: 14px; height: 14px; color: var(--brass); }
-
-/* Delete button per IG tile (visible in edit mode) */
-.ig-tile__del {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 26px; height: 26px;
-  background: rgba(0,0,0,0.65);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  z-index: 3;
-  transition: background 0.2s, transform 0.2s;
-}
-.ig-tile__del:hover { background: var(--sunset); transform: rotate(90deg); }
-.ig-wrap.is-editing .ig-tile__del { display: flex; }
-.ig-wrap.is-editing .ig-tile { box-shadow: inset 0 0 0 2px var(--brass); }
-
-.ig-edit-hint {
-  text-align: center;
-  font-size: 13px;
-  color: var(--ink-mute);
-  margin: 14px auto 0;
-  max-width: 600px;
-  background: rgba(194,155,99,0.08);
-  border: 1px dashed var(--brass);
-  padding: 10px 16px;
-  border-radius: 12px;
-  display: none;
-}
-.ig-wrap.is-editing + .ig-edit-hint { display: block; }
-
-/* Edit-mode: tile becomes clickable/styled like a slot */
-.ig-wrap.is-editing .ig-tile {
-  cursor: pointer;
-  transition: transform 0.3s var(--ease-soft), filter 0.3s var(--ease-soft);
-}
-.ig-wrap.is-editing .ig-tile:hover {
-  transform: scale(1.02);
-  filter: brightness(1.1);
-}
-.ig-wrap.is-editing .ig-tile:hover::before {
-  content: "+";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
-  background: rgba(20, 32, 16, 0.78);
-  color: var(--brass);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 32px;
-  font-weight: 300;
-  z-index: 2;
-  pointer-events: none;
-}
-.ig-grid.is-drag .ig-tile {
-  filter: brightness(0.6);
-  border-radius: 14px;
-}
 
 /* MORE ANIMATIONS — global polish */
 @media (prefers-reduced-motion: no-preference) {

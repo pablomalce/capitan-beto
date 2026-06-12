@@ -1,0 +1,415 @@
+/* =====================================================================
+   Capitán Beto · Cliente Supabase (vanilla fetch, sin lib externa)
+   ---------------------------------------------------------------------
+   Endpoints REST de Supabase + Storage. Sin SDK para mantener bundle
+   liviano y CSP estricta.
+   ===================================================================== */
+(function () {
+  "use strict";
+
+  const URL = "https://ghuabxeqqmbvqzdrizrr.supabase.co";
+  // JWT legacy `anon` (no la publishable key) — PostgREST necesita un
+  // JWT con `role:'anon'` para evaluar las RLS de inserción pública.
+  const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodWFieGVxcW1idnF6ZHJpenJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNzEzNDcsImV4cCI6MjA5Njg0NzM0N30.ExNHok-l7dC74ubRcbDN3dg80rhtKnSicmvND0V5Xi4";
+
+  const REST = `${URL}/rest/v1`;
+  const STORAGE = `${URL}/storage/v1`;
+  const PUBLIC_OBJECT = (bucket, path) =>
+    `${URL}/storage/v1/object/public/${bucket}/${path}`;
+
+  const headers = (extra) => Object.assign({
+    "apikey": ANON_KEY,
+    "Authorization": `Bearer ${ANON_KEY}`,
+    "Content-Type": "application/json"
+  }, extra || {});
+
+  // ============ AUTH ============
+  const AUTH_KEY = "cb.sb.session.v1";
+  let _session = null;
+
+  function loadSession() {
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      // Expira si el access_token venció
+      const exp = s && s.expires_at ? s.expires_at * 1000 : 0;
+      if (exp && Date.now() > exp) return null;
+      return s;
+    } catch (_) { return null; }
+  }
+  function saveSession(s) {
+    _session = s;
+    try { localStorage.setItem(AUTH_KEY, JSON.stringify(s)); } catch (_) {}
+  }
+  function clearSession() {
+    _session = null;
+    try { localStorage.removeItem(AUTH_KEY); } catch (_) {}
+  }
+  function getSession() {
+    if (!_session) _session = loadSession();
+    return _session;
+  }
+  function authHeaders() {
+    const s = getSession();
+    return Object.assign({
+      "apikey": ANON_KEY,
+      "Authorization": s ? `Bearer ${s.access_token}` : `Bearer ${ANON_KEY}`,
+      "Content-Type": "application/json"
+    });
+  }
+  async function signInWithPassword(email, password) {
+    const res = await fetch(`${URL}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: { "apikey": ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), password })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error_description || err.msg || `Login failed (${res.status})`);
+    }
+    const data = await res.json();
+    saveSession(data);
+    return data;
+  }
+  async function refreshSession() {
+    const s = getSession();
+    if (!s || !s.refresh_token) return null;
+    const res = await fetch(`${URL}/auth/v1/token?grant_type=refresh_token`, {
+      method: "POST",
+      headers: { "apikey": ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: s.refresh_token })
+    });
+    if (!res.ok) { clearSession(); return null; }
+    const data = await res.json();
+    saveSession(data);
+    return data;
+  }
+  async function signOut() {
+    const s = getSession();
+    if (s) {
+      try {
+        await fetch(`${URL}/auth/v1/logout`, {
+          method: "POST",
+          headers: { "apikey": ANON_KEY, "Authorization": `Bearer ${s.access_token}` }
+        });
+      } catch (_) {}
+    }
+    clearSession();
+  }
+  async function changePassword(newPassword) {
+    const s = getSession();
+    if (!s) throw new Error("not_authenticated");
+    const res = await fetch(`${URL}/auth/v1/user`, {
+      method: "PUT",
+      headers: { "apikey": ANON_KEY, "Authorization": `Bearer ${s.access_token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: newPassword })
+    });
+    if (!res.ok) throw new Error("password_change_failed");
+    return await res.json();
+  }
+  function currentUser() {
+    const s = getSession();
+    if (!s) return null;
+    try {
+      const payload = JSON.parse(atob(s.access_token.split(".")[1]));
+      return { email: payload.email, sub: payload.sub, role: payload.role };
+    } catch (_) { return null; }
+  }
+
+  // ============ HEALTH ============
+  async function ping() {
+    try {
+      const r = await fetch(`${REST}/dishes?select=count`, {
+        method: "HEAD",
+        headers: headers({ "Prefer": "count=exact" })
+      });
+      return r.ok;
+    } catch (_) { return false; }
+  }
+
+  // ============ STORAGE ============
+  async function uploadToBucket(bucket, file, ext) {
+    const safeExt = (ext || (file.name.split(".").pop() || "jpg")).toLowerCase().replace(/[^a-z0-9]/g, "");
+    const stamp = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const path = `${stamp}.${safeExt}`;
+    const res = await fetch(`${STORAGE}/object/${bucket}/${path}`, {
+      method: "POST",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": `Bearer ${ANON_KEY}`,
+        "Content-Type": file.type || "application/octet-stream",
+        "x-upsert": "false"
+      },
+      body: file
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Storage upload failed: ${res.status} ${err}`);
+    }
+    return { bucket, path, publicUrl: PUBLIC_OBJECT(bucket, path) };
+  }
+
+  // Convierte un dataURL → Blob para upload binario eficiente
+  function dataURLToBlob(dataURL) {
+    const [meta, b64] = dataURL.split(",");
+    const mime = (meta.match(/data:([^;]+)/) || [])[1] || "image/jpeg";
+    const bin = atob(b64);
+    const len = bin.length;
+    const buf = new Uint8Array(len);
+    for (let i = 0; i < len; i++) buf[i] = bin.charCodeAt(i);
+    return new Blob([buf], { type: mime });
+  }
+
+  // ============ PET PHOTOS ============
+  async function uploadPetPhoto({ dataURL, petName, ownerName, breed }) {
+    const blob = dataURLToBlob(dataURL);
+    const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+    const file = new File([blob], `pet.${ext}`, { type: blob.type });
+    const up = await uploadToBucket("pet-photos", file, ext);
+    const row = {
+      pet_name: petName || "Peludo",
+      owner_name: ownerName || "",
+      breed: breed || "",
+      image_path: up.path
+      // status omitido → toma DEFAULT 'approved'. El admin puede borrar
+      // fotos inapropiadas desde Dashboard → Peludos.
+    };
+    const res = await fetch(`${REST}/pet_photos`, {
+      method: "POST",
+      headers: Object.assign({ "Prefer": "return=representation" }, authHeaders()),
+      body: JSON.stringify(row)
+    });
+    if (!res.ok) {
+      throw new Error(`Insert pet_photo failed: ${res.status} ${await res.text()}`);
+    }
+    const inserted = await res.json();
+    const stored = Array.isArray(inserted) && inserted[0] ? inserted[0] : row;
+    return Object.assign({ public_url: PUBLIC_OBJECT("pet-photos", up.path) }, stored);
+  }
+
+  async function listPetPhotos({ status = "approved", limit = 60 } = {}) {
+    const url = `${REST}/pet_photos?select=*&status=eq.${encodeURIComponent(status)}&order=created_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    const rows = await res.json();
+    return rows.map((r) => Object.assign(
+      { public_url: PUBLIC_OBJECT("pet-photos", r.image_path) },
+      r
+    ));
+  }
+
+  // ============ BPIC PHOTOS ============
+  async function uploadBpicPhoto({ dataURL, guestName, igHandle, caption }) {
+    const blob = dataURLToBlob(dataURL);
+    const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+    const file = new File([blob], `bpic.${ext}`, { type: blob.type });
+    const up = await uploadToBucket("bpic-photos", file, ext);
+    const row = {
+      guest_name: guestName || "Anónimo",
+      ig_handle: igHandle || "",
+      caption: caption || "",
+      image_path: up.path
+      // status omitido → DEFAULT 'approved'. Admin puede borrar después.
+    };
+    const res = await fetch(`${REST}/bpic_photos`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(row)
+    });
+    if (!res.ok && res.status !== 201) throw new Error(`Insert bpic failed: ${res.status} ${await res.text()}`);
+    return row;
+  }
+
+  async function listBpicPhotos({ status = "approved", limit = 30 } = {}) {
+    const url = `${REST}/bpic_photos?select=*&status=eq.${encodeURIComponent(status)}&order=created_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    const rows = await res.json();
+    return rows.map((r) => Object.assign(
+      { public_url: PUBLIC_OBJECT("bpic-photos", r.image_path) },
+      r
+    ));
+  }
+
+  // ============ CONSUMPTION (admin) ============
+  async function logConsumption(entries, authTokenOverride) {
+    const session = getSession();
+    if (!session && !authTokenOverride) throw new Error("not_authenticated");
+    const token = authTokenOverride || session.access_token;
+    const res = await fetch(`${REST}/consumption`, {
+      method: "POST",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify(entries)
+    });
+    if (!res.ok) throw new Error(`Log consumption failed: ${res.status} ${await res.text()}`);
+    return await res.json();
+  }
+
+  async function fetchTopDishes({ limit = 10 } = {}) {
+    const url = `${REST}/v_top_dishes?select=*&order=revenue_cents.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+
+  async function fetchDailyRevenue({ days = 30 } = {}) {
+    const since = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+    const url = `${REST}/v_daily_consumption?select=day,revenue_cents,items_sold,shift&day=gte.${since}&order=day.asc`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+
+  async function fetchHourlyHeatmap() {
+    const url = `${REST}/v_hourly_heatmap?select=*`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+
+  async function fetchRecentConsumption({ limit = 50 } = {}) {
+    const url = `${REST}/consumption?select=*&order=served_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+
+  // ============ DISHES (catalog · público lee) ============
+  async function fetchDishes() {
+    const url = `${REST}/dishes?select=*&order=id.asc`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+
+  // ============ RESERVATIONS (público insert) ============
+  async function createReservation(payload) {
+    const res = await fetch(`${REST}/reservations`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok && res.status !== 201) throw new Error(`Reservation failed: ${res.status} ${await res.text()}`);
+    return payload;
+  }
+
+  // ============ CUSTOMERS (upsert anon) ============
+  async function upsertCustomer({ email, full_name, phone, marketing_consent }) {
+    // Insert; si ya existe, mergeamos. Sin return=representation para
+    // que no falle si la SELECT policy no nos deja leerla de vuelta.
+    const res = await fetch(`${REST}/customers?on_conflict=email`, {
+      method: "POST",
+      headers: Object.assign(authHeaders(), {
+        "Prefer": "resolution=merge-duplicates"
+      }),
+      body: JSON.stringify({ email, full_name, phone, marketing_consent })
+    });
+    return res.ok || res.status === 201 ? { email, full_name, phone, marketing_consent } : null;
+  }
+
+  // ============ ADMIN ACTIONS ============
+  async function updateRow(table, id, patch) {
+    const res = await fetch(`${REST}/${table}?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify(patch)
+    });
+    if (!res.ok) throw new Error(`Update ${table} failed: ${res.status} ${await res.text()}`);
+    return res;
+  }
+  async function deleteRow(table, id) {
+    const res = await fetch(`${REST}/${table}?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: authHeaders()
+    });
+    if (!res.ok) throw new Error(`Delete ${table} failed: ${res.status}`);
+    return res;
+  }
+  async function listAllPetPhotos({ limit = 200 } = {}) {
+    const url = `${REST}/pet_photos?select=*&order=created_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    return (await res.json()).map((r) => Object.assign(
+      { public_url: PUBLIC_OBJECT("pet-photos", r.image_path) }, r
+    ));
+  }
+  async function approvePetPhoto(id) {
+    const u = currentUser();
+    return updateRow("pet_photos", id, {
+      status: "approved",
+      approved_at: new Date().toISOString(),
+      approved_by: u ? u.email : ""
+    });
+  }
+  async function rejectPetPhoto(id) {
+    return updateRow("pet_photos", id, { status: "rejected" });
+  }
+  async function deletePetPhoto(id) { return deleteRow("pet_photos", id); }
+
+  async function approveBpic(id) {
+    return updateRow("bpic_photos", id, { status: "approved" });
+  }
+  async function listAllBpicPhotos({ limit = 200 } = {}) {
+    const url = `${REST}/bpic_photos?select=*&order=created_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    return (await res.json()).map((r) => Object.assign(
+      { public_url: PUBLIC_OBJECT("bpic-photos", r.image_path) }, r
+    ));
+  }
+  async function deleteBpicPhoto(id) { return deleteRow("bpic_photos", id); }
+  async function listAllReservations({ limit = 100 } = {}) {
+    const url = `${REST}/reservations?select=*&order=reserve_date.asc,reserve_time.asc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+  async function listAllCustomers({ limit = 200 } = {}) {
+    const url = `${REST}/customers?select=*&order=last_visit_at.desc&limit=${limit}`;
+    const res = await fetch(url, { headers: authHeaders() });
+    return res.ok ? await res.json() : [];
+  }
+  async function updateReservationStatus(id, status) {
+    const stamp = new Date().toISOString();
+    const patch = { status };
+    if (status === "confirmed") patch.confirmed_at = stamp;
+    if (status === "seated") patch.seated_at = stamp;
+    if (status === "completed") patch.completed_at = stamp;
+    if (status === "cancelled") patch.cancelled_at = stamp;
+    return updateRow("reservations", id, patch);
+  }
+  async function wipeDemoConsumption() {
+    const res = await fetch(`${REST}/consumption?source=eq.demo`, {
+      method: "DELETE",
+      headers: authHeaders()
+    });
+    if (!res.ok) throw new Error(`wipe failed: ${res.status}`);
+    return res;
+  }
+
+  // ============ EXPORT ============
+  window.cbBackend = {
+    URL, ANON_KEY,
+    // health
+    ping,
+    // auth
+    signInWithPassword, signOut, getSession, currentUser, refreshSession, changePassword,
+    // pet
+    uploadPetPhoto, listPetPhotos, listAllPetPhotos,
+    approvePetPhoto, rejectPetPhoto, deletePetPhoto,
+    // bpic
+    uploadBpicPhoto, listBpicPhotos, listAllBpicPhotos, approveBpic, deleteBpicPhoto,
+    // consumption + stats
+    logConsumption,
+    fetchTopDishes, fetchDailyRevenue, fetchHourlyHeatmap, fetchRecentConsumption,
+    wipeDemoConsumption,
+    // dishes
+    fetchDishes,
+    // reservations
+    createReservation, listAllReservations, updateReservationStatus,
+    // customers
+    upsertCustomer, listAllCustomers,
+    // util
+    PUBLIC_OBJECT
+  };
+})();

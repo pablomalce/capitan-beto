@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /videos/
+Disallow: /*.json$
+
+# Sitemaps
+Sitemap: https://capitan-beto.es/sitemap.xml
+
+# Crawl politeness
+Crawl-delay: 1

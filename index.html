@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ============ CORE ============ -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1F4A2E" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#142010" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- ============ SECURITY HEADERS (meta-tag fallback) ============ -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com;
+                 font-src 'self' https://fonts.gstatic.com;
+                 img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com;
+                 media-src 'self' blob:;
+                 connect-src 'self' https://formsubmit.co https://accounts.google.com;
+                 frame-src https://accounts.google.com https://drive.google.com;
+                 frame-ancestors 'self';
+                 form-action 'self' https://formsubmit.co https://wa.me;
+                 base-uri 'self';
+                 object-src 'none';" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self), payment=()" />
+
+  <!-- ============ PRIMARY SEO ============ -->
+  <title>Capitán Beto · Gastro Taberna · Tapas y sabor argentino en Madrid</title>
+  <meta name="description" content="Gastro Taberna en Madrid · Tapas castizas y sabor argentino. Provoleta, empanadas criollas, milanesas, vermut de grifo y Fernet con Coca. Atendido por sus dueños Matías y la Polaca. Terraza pet-friendly." />
+  <meta name="keywords" content="bar de tapas madrid, gastro taberna, tapas argentinas madrid, provoleta madrid, empanadas madrid, vermut de grifo, fernet con coca, bar pet-friendly madrid, capitán beto, tapas castizas, restaurante argentino madrid, La Latina tapas" />
+  <meta name="author" content="Capitán Beto · Gastro Taberna" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="rating" content="general" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="geo.region" content="ES-MD" />
+  <meta name="geo.placename" content="Madrid" />
+
+  <!-- ============ CANONICAL + ALTERNATE LANGUAGES ============ -->
+  <link rel="canonical" href="https://capitan-beto.es/" />
+  <link rel="alternate" hreflang="es" href="https://capitan-beto.es/" />
+  <link rel="alternate" hreflang="en" href="https://capitan-beto.es/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://capitan-beto.es/" />
+
+  <!-- ============ OPEN GRAPH (Facebook · WhatsApp · LinkedIn) ============ -->
+  <meta property="og:type" content="restaurant.restaurant" />
+  <meta property="og:site_name" content="Capitán Beto · Gastro Taberna" />
+  <meta property="og:title" content="Capitán Beto · Tapas castizas y sabor argentino en Madrid" />
+  <meta property="og:description" content="Dos mundos, un solo sabor. Provoleta, empanadas, vermut de grifo y la mejor pizarra del barrio. Atendido por sus dueños en La Latina, Madrid." />
+  <meta property="og:url" content="https://capitan-beto.es/" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:image" content="https://capitan-beto.es/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="1200" />
+  <meta property="og:image:alt" content="Logo Capitán Beto · Gastro Taberna · Tapas castizas y sabor argentino" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="restaurant:contact_info:street_address" content="La Latina, Madrid" />
+  <meta property="restaurant:contact_info:locality" content="Madrid" />
+  <meta property="restaurant:contact_info:country_name" content="España" />
+  <meta property="restaurant:contact_info:phone_number" content="+34611854380" />
+
+  <!-- ============ TWITTER CARD ============ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Capitán Beto · Tapas castizas y sabor argentino" />
+  <meta name="twitter:description" content="Gastro Taberna en Madrid. Provoleta, empanadas, vermut de grifo, terraza pet-friendly. Atendido por sus dueños." />
+  <meta name="twitter:image" content="https://capitan-beto.es/og-image.png" />
+  <meta name="twitter:image:alt" content="Capitán Beto · Gastro Taberna" />
+
+  <!-- ============ ICONS + MANIFEST ============ -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="mask-icon" href="logo.svg" color="#1F4A2E" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="msapplication-TileColor" content="#1F4A2E" />
+  <meta name="msapplication-TileImage" content="icon-192.png" />
+
+  <!-- ============ FONTS (preconnect + preload) ============ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
+
+  <!-- ============ STYLES ============ -->
+  <link rel="stylesheet" href="styles.css?v=41" />
+
+  <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- ============ JSON-LD · LocalBusiness / Restaurant ============ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "@id": "https://capitan-beto.es/#restaurant",
+    "name": "Capitán Beto · Gastro Taberna",
+    "description": "Gastro Taberna en Madrid. Tapas castizas y sabor argentino. Atendida por sus dueños Matías y Natalia (la Polaca).",
+    "url": "https://capitan-beto.es/",
+    "logo": "https://capitan-beto.es/logo.png",
+    "image": [
+      "https://capitan-beto.es/crew/beto.jpg",
+      "https://capitan-beto.es/og-image.png",
+      "https://capitan-beto.es/momentos/vinos.jpg"
+    ],
+    "telephone": "+34611854380",
+    "email": "capitanbetomadrid@gmail.com",
+    "priceRange": "€€",
+    "currenciesAccepted": "EUR",
+    "paymentAccepted": "Cash, Credit Card",
+    "servesCuisine": ["Spanish tapas", "Argentine", "Mediterranean"],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Calle de los Hidalgos",
+      "addressLocality": "Madrid",
+      "addressRegion": "Comunidad de Madrid",
+      "postalCode": "28005",
+      "addressCountry": "ES"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 40.4117,
+      "longitude": -3.7079
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday"], "opens": "13:00", "closes": "16:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday"], "opens": "20:00", "closes": "23:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday"], "opens": "13:00", "closes": "16:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday"], "opens": "20:00", "closes": "00:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday"], "opens": "13:00", "closes": "17:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday"], "opens": "20:00", "closes": "01:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday"], "opens": "12:30", "closes": "17:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday"], "opens": "20:00", "closes": "01:30" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday"], "opens": "12:30", "closes": "17:30" }
+    ],
+    "acceptsReservations": "True",
+    "menu": "https://capitan-beto.es/#menu",
+    "hasMenu": {
+      "@type": "Menu",
+      "name": "La Pizarra",
+      "hasMenuSection": [
+        { "@type": "MenuSection", "name": "Para Compartir",
+          "hasMenuItem": [
+            { "@type": "MenuItem", "name": "Provoleta a la Parrilla", "description": "Queso provolone fundido con orégano y pan crujiente.", "offers": { "@type": "Offer", "price": "11.50", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Empanadas Criollas (×3)", "description": "Carne cortada a cuchillo, humita o jamón y queso.", "offers": { "@type": "Offer", "price": "9.00", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Tabla del Capitán", "description": "Jamón ibérico, manchego, salame argentino y pan con tomate.", "offers": { "@type": "Offer", "price": "18.50", "priceCurrency": "EUR" }}
+          ]
+        },
+        { "@type": "MenuSection", "name": "Nuestras Tapas",
+          "hasMenuItem": [
+            { "@type": "MenuItem", "name": "Choripán con Chimichurri", "offers": { "@type": "Offer", "price": "7.50", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Milanesa Napolitana", "offers": { "@type": "Offer", "price": "14.00", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Tortilla a la Madrileña", "offers": { "@type": "Offer", "price": "9.00", "priceCurrency": "EUR" }}
+          ]
+        },
+        { "@type": "MenuSection", "name": "Bodega",
+          "hasMenuItem": [
+            { "@type": "MenuItem", "name": "Vermut de Grifo", "offers": { "@type": "Offer", "price": "3.50", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Malbec de Mendoza", "offers": { "@type": "Offer", "price": "4.80", "priceCurrency": "EUR" }},
+            { "@type": "MenuItem", "name": "Fernet con Coca", "offers": { "@type": "Offer", "price": "5.00", "priceCurrency": "EUR" }}
+          ]
+        }
+      ]
+    },
+    "amenityFeature": [
+      { "@type": "LocationFeatureSpecification", "name": "Pet-friendly", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Terraza", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Reservas", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "WiFi", "value": true }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/capitanbeto.bardetapas",
+      "https://wa.me/34611854380"
+    ],
+    "founder": [
+      { "@type": "Person", "name": "Matías" },
+      { "@type": "Person", "name": "Natalia", "alternateName": "La Polaca" }
+    ]
+  }
+  </script>
+
+  <!-- ============ JSON-LD · Website + sitelink searchbox ============ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://capitan-beto.es/",
+    "name": "Capitán Beto · Gastro Taberna",
+    "inLanguage": ["es", "en"]
+  }
+  </script>
+
+  <!-- ============ JSON-LD · BreadcrumbList ============ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://capitan-beto.es/" },
+      { "@type": "ListItem", "position": 2, "name": "Menú", "item": "https://capitan-beto.es/#menu" },
+      { "@type": "ListItem", "position": 3, "name": "The Crew", "item": "https://capitan-beto.es/#crew" },
+      { "@type": "ListItem", "position": 4, "name": "Contacto", "item": "https://capitan-beto.es/#contact" }
+    ]
+  }
+  </script>
+</head>
+<body data-view="public" data-lang="es" data-role="admin">
+
+  <!-- ============== DEMO CONTROL WIDGET (collapsible bottom-left) ============== -->
+  <div class="demo-widget" id="demoWidget" data-open="false">
+    <button class="demo-widget__toggle" type="button" aria-label="Demo controls">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span data-i18n="demo.toggle">Demo</span>
+    </button>
+    <div class="demo-widget__panel">
+      <div class="demo-row">
+        <span class="demo-label" data-i18n="ctrl.view">Vista</span>
+        <div class="seg">
+          <button class="seg__btn is-active" data-view-switch="public" type="button"><span data-i18n="ctrl.public">Público</span></button>
+          <button class="seg__btn" data-view-switch="dashboard" type="button"><span data-i18n="ctrl.dashboard">Backoffice</span></button>
+        </div>
+      </div>
+      <div class="demo-row">
+        <span class="demo-label" data-i18n="ctrl.simulate">Rol</span>
+        <div class="seg">
+          <button class="seg__btn is-active" data-role-switch="admin" type="button">Admin</button>
+          <button class="seg__btn" data-role-switch="editor" type="button">Editor</button>
+          <button class="seg__btn" data-role-switch="view" type="button">Camarero</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ PUBLIC SITE ============================ -->
+  <main id="publicSite" class="public-site">
+
+    <!-- Navbar -->
+    <header class="navbar" id="mainNavbar" role="banner">
+      <div class="navbar__inner">
+        <a href="#hero" class="brand" aria-label="Capitán Beto · Inicio">
+          <img class="brand__logo" src="logo.png" width="50" height="50" alt="Logo Capitán Beto Gastro Taberna" onerror="if(this.dataset.fb){this.replaceWith(Object.assign(document.createElement('span'),{className:'brand__mark',textContent:'CB'}))}else{this.dataset.fb=1;this.src='logo.svg'}" />
+          <span class="brand__name">
+            Capitán Beto
+            <small data-i18n="brand.sub">Gastro Taberna</small>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="Menú principal">
+          <a href="#experience" data-i18n="nav.experience">La Experiencia</a>
+          <a href="#menu" data-i18n="nav.menu">Menú</a>
+          <a href="#crew" data-i18n="nav.crew">The Crew</a>
+          <a href="#momentos" data-i18n="nav.momentos">Momentos</a>
+          <a href="#gallery" data-i18n="nav.gallery">Galería</a>
+          <a href="#contact" data-i18n="nav.contact">Contacto</a>
+        </nav>
+        <div class="nav-right">
+          <div class="lang-toggle lang-toggle--nav" role="group" aria-label="Language">
+            <button class="lang-btn is-active" data-lang-switch="es" type="button">ES</button>
+            <span class="lang-divider">|</span>
+            <button class="lang-btn" data-lang-switch="en" type="button">EN</button>
+          </div>
+          <button class="nav-account" type="button" id="navOpenAccount" title="Mi cuenta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+            <span data-i18n="nav.account">Mi cuenta</span>
+          </button>
+          <button class="nav-cta" type="button" data-open-reserve>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+            <span data-i18n="nav.reserve">Reservar mesa</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero · dramático con gradiente verde→borgoña -->
+    <section id="hero" class="hero hero--dark">
+      <div class="hero__bg" aria-hidden="true"></div>
+
+      <!-- Decorative floats -->
+      <span class="hero__float hero__float--olive" aria-hidden="true">🫒</span>
+      <span class="hero__float hero__float--chili" aria-hidden="true">🌶️</span>
+
+      <div class="hero__inner">
+        <div class="hero__crest-wrap anim-stagger" aria-hidden="false">
+          <div class="hero__ring hero__ring--outer"></div>
+          <div class="hero__ring hero__ring--mid"></div>
+          <img class="hero__crest" src="logo.png" alt="Capitán Beto · Gastro Taberna"
+               onerror="if(this.dataset.fb){this.style.display='none'}else{this.dataset.fb=1;this.src='logo.svg'}" />
+        </div>
+
+        <span class="hero__pill anim-stagger">
+          <span class="hero__pill-dot"></span>
+          <span data-i18n="hero.pill" data-content="hero.pill">Gastro Taberna · Fusión Española &amp; Argentina</span>
+        </span>
+
+        <h1 class="hero__title anim-stagger">
+          <span class="hero__title-1" data-i18n="hero.title1" data-content="hero.title1">Dos mundos.</span>
+          <span class="hero__title-2" data-i18n="hero.title2" data-content="hero.title2">Un solo sabor.</span>
+        </h1>
+
+        <p class="hero__subtitle anim-stagger" data-i18n="hero.subtitle" data-content="hero.subtitle">
+          Donde las tapas castizas abrazan el fuego de Buenos Aires. Atendidos por sus propios dueños, para que cada visita se sienta como volver a casa.
+        </p>
+
+        <div class="hero__cta anim-stagger">
+          <button class="btn btn--gold magnetic" data-open-reserve type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+            <span data-i18n="hero.ctaBook">Reservar mesa</span>
+          </button>
+          <a href="#menu" class="btn btn--ghost-dark magnetic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            <span data-i18n="hero.ctaMenu">Ver el Menú</span>
+          </a>
+        </div>
+
+        <div class="hero__meta anim-stagger">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span data-i18n="hero.live" data-content="hero.live">Promo en directo · Empanadas (×3) + Malbec 9€</span>
+        </div>
+      </div>
+
+      <div class="hero__scroll" aria-hidden="true"><span></span></div>
+    </section>
+
+    <!-- La Experiencia anchor (used by nav) -->
+    <span id="experience" class="anchor-jump" aria-hidden="true"></span>
+
+    <!-- Menu / Pizarra -->
+    <section id="menu" class="section section--menu reveal" data-reveal>
+      <div class="section__head">
+        <span class="eyebrow" data-i18n="menu.eyebrow">La Pizarra</span>
+        <h2 data-i18n="menu.title">Hoy en la barra</h2>
+        <p data-i18n="menu.lead">Precios honestos. Producto cercano. Cambia cada semana, como en cualquier tasca que se precie.</p>
+      </div>
+
+      <div class="menu-tabs" role="tablist">
+        <button class="tab-btn is-active" role="tab" data-menu-tab="share" type="button">
+          <span data-i18n="menu.tabShare">Para Compartir</span>
+        </button>
+        <button class="tab-btn" role="tab" data-menu-tab="tapas" type="button">
+          <span data-i18n="menu.tabTapas">Nuestras Tapas</span>
+        </button>
+        <button class="tab-btn" role="tab" data-menu-tab="bodega" type="button">
+          <span data-i18n="menu.tabBodega">Bodega</span>
+        </button>
+        <button class="tab-btn" role="tab" data-menu-tab="spirits" type="button">
+          <span data-i18n="menu.tabSpirits">Destilados</span>
+        </button>
+        <span class="tab-indicator" aria-hidden="true"></span>
+      </div>
+
+      <div class="menu-grid-wrap">
+        <!-- Public menu cards are rendered by JS so role/i18n stays in sync -->
+        <div id="publicMenuGrid" class="menu-grid"></div>
+      </div>
+    </section>
+
+    <!-- Pet Friendly -->
+    <section id="pet" class="section section--pet reveal" data-reveal>
+      <div class="pet__header">
+        <span class="eyebrow" data-i18n="pet.eyebrow" data-content="pet.eyebrow">Bienvenidos en todo el bar</span>
+        <h2 data-i18n="pet.title" data-content="pet.title">Espacio Pet-Friendly</h2>
+        <p class="pet__lead" data-i18n="pet.lead" data-content="pet.lead">Todos los animales son bienvenidos en todo el local. Perros, gatos, conejos, hurones... si viene contigo, viene con nosotros. Sobremesa eterna para humanos y peludos.</p>
+      </div>
+
+      <div class="pet__layout">
+        <div class="pet__visual">
+          <div class="pet__photo">
+            <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900&h=1100&fit=crop&q=80"
+                 alt="Perro feliz en la taberna" loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1546238232-20216dec9f72?w=900&h=1100&fit=crop&q=80'" />
+            <div class="pet__photo-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 21s-7-4.35-7-10a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 5.65-7 10-7 10z"/>
+              </svg>
+              <span data-i18n="pet.badge" data-content="pet.badge">100% Pet-Friendly</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pet__benefits">
+          <article class="pet-card">
+            <div class="pet-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v6"/><path d="M8 6h8"/><path d="M6 10h12l-1.5 10a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2L6 10z"/>
+              </svg>
+            </div>
+            <h3 data-i18n="pet.c1.t" data-content="pet.c1.t">Agua siempre fresca</h3>
+            <p data-i18n="pet.c1.d" data-content="pet.c1.d">Cuencos en cada zona del bar. Cambiamos el agua varias veces al día.</p>
+          </article>
+
+          <article class="pet-card">
+            <div class="pet-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 18l4-12 4 7 4-5 4 10"/><circle cx="6" cy="7" r="1.5"/><circle cx="10" cy="5" r="1.5"/><circle cx="14" cy="6" r="1.5"/><circle cx="18" cy="8" r="1.5"/>
+              </svg>
+            </div>
+            <h3 data-i18n="pet.c2.t" data-content="pet.c2.t">Snacks caseros</h3>
+            <p data-i18n="pet.c2.d" data-content="pet.c2.d">Galletas sin sal ni azúcar, horneadas por la Polaca. Pedinos cuando quieras.</p>
+          </article>
+
+          <article class="pet-card">
+            <div class="pet-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21V11a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v10"/><path d="M3 14h18"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h3 data-i18n="pet.c3.t" data-content="pet.c3.t">Rincones tranquilos</h3>
+            <p data-i18n="pet.c3.d" data-content="pet.c3.d">Mesas con sombra, lejos del paso. Ideal para peludos tímidos o mayores.</p>
+          </article>
+
+          <article class="pet-card">
+            <div class="pet-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="5" cy="13" r="2"/><circle cx="19" cy="13" r="2"/><path d="M12 22c-3 0-5-2-5-5 0-2.5 2-5 5-5s5 2.5 5 5c0 3-2 5-5 5z"/>
+              </svg>
+            </div>
+            <h3 data-i18n="pet.c4.t" data-content="pet.c4.t">Todos son bienvenidos</h3>
+            <p data-i18n="pet.c4.d" data-content="pet.c4.d">Perros, gatos, conejos, hurones, aves. Sin restricciones de tamaño ni raza.</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="pet__cta">
+        <div class="pet__cta-text">
+          <strong data-i18n="pet.cta.t" data-content="pet.cta.t">¿Vienes con tu peludo?</strong>
+          <span data-i18n="pet.cta.d" data-content="pet.cta.d">Avísanos al reservar y te guardamos un rincón tranquilo con cuenco listo.</span>
+        </div>
+        <a href="#reserve" class="btn btn--primary" data-i18n="pet.cta.btn" data-content="pet.cta.btn">Reservar con peludo</a>
+      </div>
+
+      <!-- ===== Peludos counter + gallery + uploader ===== -->
+      <div class="pet__community">
+        <div class="pet__counter" id="petCounter">
+          <span class="pet__counter-num" id="petCounterNum" data-count="0">0</span>
+          <span class="pet__counter-lbl">
+            <strong data-i18n="pet.counter.t" data-content="pet.counter.t">peludos posaron en Capitán Beto</strong>
+            <small data-i18n="pet.counter.d" data-content="pet.counter.d">todas las fotos las sacan los clientes desde el bar · sumá la tuya</small>
+          </span>
+        </div>
+
+        <div class="pet__gallery-head">
+          <div>
+            <span class="eyebrow" data-i18n="pet.gal.eyebrow" data-content="pet.gal.eyebrow">Manada del Capitán</span>
+            <h3 data-i18n="pet.gal.title" data-content="pet.gal.title">Fotos sacadas en el bar</h3>
+            <p class="pet__gallery-lead" data-i18n="pet.gal.lead" data-content="pet.gal.lead">Vení con tu peludo, sacate una foto en la barra o en la mesa, y sumala a la manada del Capitán.</p>
+          </div>
+          <button type="button" class="btn btn--primary" id="petUploadOpen" data-i18n="pet.gal.share" data-content="pet.gal.share">📷 Subir foto del bar</button>
+        </div>
+
+        <div class="pet-gallery" id="petGallery"></div>
+
+        <!-- ===== Google Review CTA ===== -->
+        <div class="google-review">
+          <div class="google-review__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="48" height="48">
+              <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+              <path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/>
+              <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+              <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+            </svg>
+          </div>
+          <div class="google-review__body">
+            <div class="google-review__stars" aria-label="5 estrellas">★★★★★</div>
+            <strong data-i18n="pet.review.t" data-content="pet.review.t">¿Pasaste un buen rato con tu peludo?</strong>
+            <span data-i18n="pet.review.d" data-content="pet.review.d">Dejanos una reseña en Google. Nos ayuda muchísimo y a otros peludos a encontrar su bar favorito en Madrid.</span>
+          </div>
+          <a id="googleReviewLink"
+             class="btn btn--google"
+             href="https://search.google.com/local/writereview?placeid=ChIJ_____CapitanBetoMadrid"
+             target="_blank" rel="noopener noreferrer"
+             data-i18n="pet.review.btn"
+             data-content="pet.review.btn">Reseñar en Google</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Pride banner · between pet and crew ============ -->
+    <div class="pride-strip" role="note" aria-label="All are welcome">
+      <svg class="pride-flag" viewBox="0 0 60 36" aria-hidden="true" focusable="false">
+        <rect x="0" y="0"  width="60" height="6" fill="#E40303"/>
+        <rect x="0" y="6"  width="60" height="6" fill="#FF8C00"/>
+        <rect x="0" y="12" width="60" height="6" fill="#FFED00"/>
+        <rect x="0" y="18" width="60" height="6" fill="#008026"/>
+        <rect x="0" y="24" width="60" height="6" fill="#004CFF"/>
+        <rect x="0" y="30" width="60" height="6" fill="#732982"/>
+      </svg>
+      <span class="pride-strip__text" data-i18n="pride.text" data-content="pride.text">Todos son bienvenidos · All are welcome</span>
+      <svg class="pride-flag" viewBox="0 0 60 36" aria-hidden="true" focusable="false">
+        <rect x="0" y="0"  width="60" height="6" fill="#E40303"/>
+        <rect x="0" y="6"  width="60" height="6" fill="#FF8C00"/>
+        <rect x="0" y="12" width="60" height="6" fill="#FFED00"/>
+        <rect x="0" y="18" width="60" height="6" fill="#008026"/>
+        <rect x="0" y="24" width="60" height="6" fill="#004CFF"/>
+        <rect x="0" y="30" width="60" height="6" fill="#732982"/>
+      </svg>
+    </div>
+
+    <!-- ============ Pet uploader modal ============ -->
+    <div id="petUploadModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="petUploadTitle">
+      <div class="modal__backdrop" data-close-pet></div>
+      <div class="modal__panel">
+        <button class="modal__close" data-close-pet aria-label="Close">×</button>
+        <div class="modal__head">
+          <span class="eyebrow" data-i18n="pet.up.eyebrow">Compartí tu peludo</span>
+          <h3 id="petUploadTitle" data-i18n="pet.up.title">Sumá tu peludo a la manada</h3>
+          <p data-i18n="pet.up.lead">Subí una foto y el nombre de tu compañero/a peludo/a. Aparece en la galería al instante.</p>
+        </div>
+
+        <form id="petUploadForm" class="reserve-form" novalidate>
+          <label class="field">
+            <small data-i18n="pet.up.fName">Nombre del peludo</small>
+            <input name="petName" type="text" required maxlength="30" placeholder="Cala" />
+          </label>
+          <label class="field">
+            <small data-i18n="pet.up.fOwner">Tu nombre (opcional)</small>
+            <input name="ownerName" type="text" maxlength="30" placeholder="Matías" />
+          </label>
+          <label class="field">
+            <small data-i18n="pet.up.fBreed">Raza o especie (opcional)</small>
+            <input name="breed" type="text" maxlength="40" placeholder="Mestizo · gato persa · conejito belier…" />
+          </label>
+
+          <div class="pet-drop" id="petDrop" tabindex="0" role="button" aria-label="Subir foto">
+            <input type="file" id="petFile" accept="image/*,image/heic,image/heif,image/heic-sequence,image/heif-sequence,image/webp,image/avif,image/tiff,image/bmp,image/svg+xml,image/gif,.heic,.HEIC,.heif,.HEIF,.webp,.avif,.tiff,.tif,.bmp,.svg,.gif,.jfif" hidden />
+            <div class="pet-drop__inner">
+              <span class="pet-drop__icon">📸</span>
+              <strong data-i18n="pet.up.drop">Arrastrá la foto aquí</strong>
+              <span class="pet-drop__or" data-i18n="pet.up.or">o hacé clic para elegir</span>
+              <span class="pet-drop__formats" data-i18n="pet.up.formats">JPG · PNG · HEIC (iPhone) · WebP · AVIF · GIF — hasta 25 MB</span>
+            </div>
+            <img id="petPreview" class="pet-drop__preview" alt="" hidden />
+          </div>
+
+          <div class="modal__actions">
+            <button type="button" class="btn btn--ghost" data-close-pet data-i18n="pet.up.cancel">Cancelar</button>
+            <button type="submit" class="btn btn--primary" data-i18n="pet.up.send">Compartir mi peludo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Gold scrolling marquee · divider between Pet-Friendly and Crew -->
+    <div class="marquee marquee--divider" aria-hidden="true">
+      <div class="marquee__track">
+        <span class="marquee__item">Atendido por sus Dueños</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Spanish Tapas</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Argentine Soul</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Tapas Castizas</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Sabor Argentino</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Vermut de Grifo</span>
+        <span class="marquee__sep">✦</span>
+        <!-- Duplicado para loop continuo sin saltos -->
+        <span class="marquee__item">Atendido por sus Dueños</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Spanish Tapas</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Argentine Soul</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Tapas Castizas</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Sabor Argentino</span>
+        <span class="marquee__sep">✦</span>
+        <span class="marquee__item">Vermut de Grifo</span>
+        <span class="marquee__sep">✦</span>
+      </div>
+    </div>
+
+    <!-- The Crew -->
+    <section id="crew" class="section section--crew reveal" data-reveal>
+      <div class="section__head">
+        <span class="eyebrow" data-i18n="crew.eyebrow" data-content="crew.eyebrow">Atendido por sus dueños</span>
+        <h2 data-i18n="crew.title" data-content="crew.title">The Crew</h2>
+        <p data-i18n="crew.lead" data-content="crew.lead">Detrás de cada tapa, cada cóctel y cada Fernet con Coca, una pareja que vive la taberna como su casa. Madrid y Buenos Aires en una misma barra.</p>
+      </div>
+
+      <!-- Tarjeta unificada · 2 fotos + 1 narrativa -->
+      <article class="crew-unified reveal" data-reveal>
+        <div class="crew-unified__photos">
+          <figure class="crew-unified__photo" data-crew-card="0">
+            <img id="crewImg0" src="" alt="Matías y la Polaca · frente a frente"
+                 onerror="this.src='https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&h=1100&fit=crop'" />
+            <button class="crew-card__edit" data-crew-edit="0" aria-label="Cambiar foto" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+              <span data-i18n="crew.change">Cambiar foto</span>
+            </button>
+          </figure>
+          <figure class="crew-unified__photo" data-crew-card="1">
+            <img id="crewImg1" src="" alt="Detrás de la barra · en faena"
+                 onerror="this.src='https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=900&h=1100&fit=crop'" />
+            <button class="crew-card__edit" data-crew-edit="1" aria-label="Cambiar foto" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+              <span data-i18n="crew.change">Cambiar foto</span>
+            </button>
+          </figure>
+          <div class="crew-unified__seal" aria-hidden="true">
+            <span>🍷</span>
+            <span>🍸</span>
+          </div>
+        </div>
+
+        <div class="crew-unified__body">
+          <span class="crew-card__role" data-i18n="crew.roleUni" data-content="crew.roleUni">Los dueños · Frente a frente y detrás de la barra</span>
+          <h3 data-i18n="crew.nameUni" data-content="crew.nameUni">Matías &amp; La Polaca</h3>
+          <p data-i18n="crew.bioUni" data-content="crew.bioUni">Argentinos los dos, madrileños de adopción. Matías y Natalia — «la Polaca» para los amigos — te reciben en la barra, te recomiendan el vino y se quedan a charlar. Desde el primer vermut del mediodía hasta el último Fernet de madrugada, arman los tragos, sirven las tapas y cierran el local. Aquí no hay personal: hay dueños abriéndote la puerta de su taberna. Capitán Beto se vive porque ellos lo viven.</p>
+          <div class="crew-card__signature" data-i18n="crew.sigUni" data-content="crew.sigUni">«La taberna es como nuestra casa. Cada cóctel sale de nuestras manos. Pasá, sentate, contame.»</div>
+        </div>
+      </article>
+
+      <input type="file" id="crewFileInput" accept="image/*,image/heic,image/heif,image/heic-sequence,image/heif-sequence,image/webp,image/avif,image/tiff,image/bmp,image/svg+xml,image/gif,.heic,.HEIC,.heif,.HEIF,.webp,.avif,.tiff,.tif,.bmp,.svg,.gif,.jfif" hidden />
+    </section>
+
+    <!-- Gallery · Evento Argentina Soberana -->
+    <section id="gallery" class="section section--gallery reveal" data-reveal>
+      <div class="section__head">
+        <span class="eyebrow" data-i18n="gallery.eyebrow">Evento · 24 y 25 de marzo</span>
+        <h2 data-i18n="gallery.title">El día a día en la taberna</h2>
+        <p data-i18n="gallery.lead">Una selección de la noche <strong>Argentina Soberana en Capitán Beto</strong>. Fotos de <a href="https://instagram.com/maderenaudier" target="_blank" rel="noopener" class="cta-link">@maderenaudier</a>.</p>
+      </div>
+
+      <!-- Video hero del evento · vertical 9:16 con blur side-panels -->
+      <figure class="ev-hero">
+        <!-- Video de fondo con blur (rellena los lados del 9:16) -->
+        <video class="ev-hero__bg" autoplay loop muted playsinline preload="auto" aria-hidden="true">
+          <source src="videos/evento-1.mp4" type="video/mp4" />
+        </video>
+        <!-- Video principal centrado, completo -->
+        <video class="ev-hero__video" autoplay loop muted playsinline preload="auto" poster="videos/evento-1-poster.jpg" aria-label="Argentina Soberana en Capitán Beto · video del evento">
+          <source src="videos/evento-1.mp4" type="video/mp4" />
+        </video>
+        <figcaption class="ev-hero__cap">
+          <span class="ev-kicker">24 y 25 de marzo · 2026</span>
+          <strong>Argentina Soberana en Capitán Beto</strong>
+          <small>Dos noches de lecturas, charlas y vermut en La Latina.</small>
+        </figcaption>
+      </figure>
+
+      <!-- Masonry de fotos del Drive · vía thumbnails directos -->
+      <div class="event-grid" id="eventGrid"></div>
+
+      <div class="event-foot">
+        <a class="photo-credit" href="https://instagram.com/maderenaudier" target="_blank" rel="noopener" aria-label="Instagram de Madee Renaudier">
+          <span class="photo-credit__avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </span>
+          <span class="photo-credit__body">
+            <small data-i18n="gallery.photoBy">Fotografía por</small>
+            <strong>Madee Renaudier</strong>
+            <em>@maderenaudier</em>
+          </span>
+          <span class="photo-credit__arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- MOMENTOS · mosaic de fotos atmosféricas + video del bar -->
+    <section id="momentos" class="section section--momentos reveal" data-reveal>
+      <div class="section__head">
+        <span class="eyebrow" data-i18n="momentos.eyebrow">Momentos</span>
+        <h2 data-i18n="momentos.title">El bar, contado en imágenes</h2>
+        <p data-i18n="momentos.lead">Cervezas tiradas con paciencia, vinos bien elegidos, el perro del barrio que ya es de la familia. Pequeñas escenas del día a día en Capitán Beto.</p>
+      </div>
+
+      <div class="momentos-grid">
+        <!-- 1: Video del bar (autoplay loop muted) -->
+        <figure class="m-tile m-tile--video m-tile--wide">
+          <video autoplay loop muted playsinline poster="momentos/barra.jpg">
+            <source src="videos/evento-1.mp4" type="video/mp4" />
+          </video>
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.video">En vivo</span>
+            <strong data-i18n="momentos.t.video">El bar en marcha</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 2: Vinos -->
+        <figure class="m-tile m-tile--tall">
+          <img src="momentos/vinos.jpg" alt="Vinos en la barra" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.vinos">Bodega</span>
+            <strong data-i18n="momentos.t.vinos">Ribera y Rioja, a copa</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 3: Cervezas -->
+        <figure class="m-tile">
+          <img src="momentos/cervezas.jpg" alt="Cañas tiradas" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.cervezas">Tirador</span>
+            <strong data-i18n="momentos.t.cervezas">Cañas con espuma honesta</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 4: Cartel a mano -->
+        <figure class="m-tile">
+          <img src="momentos/cartel.jpg" alt="Cartel pintado a mano" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.cartel">El cartel</span>
+            <strong data-i18n="momentos.t.cartel">Pintado a mano</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 5: Puerta + perro -->
+        <figure class="m-tile m-tile--wide">
+          <img src="momentos/puerta.jpg" alt="La puerta de Capitán Beto" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.puerta">La puerta</span>
+            <strong data-i18n="momentos.t.puerta">Pet-friendly · siempre abierto</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 6: Interior -->
+        <figure class="m-tile">
+          <img src="momentos/interior.jpg" alt="Comedor con pared verde" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.interior">Comedor</span>
+            <strong data-i18n="momentos.t.interior">El rincón verde</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 7: Fachada -->
+        <figure class="m-tile m-tile--tall">
+          <img src="momentos/fachada.jpg" alt="Fachada Capitán Beto" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.fachada">Calle</span>
+            <strong data-i18n="momentos.t.fachada">Te esperamos</strong>
+          </figcaption>
+        </figure>
+
+        <!-- 8: Barra completa -->
+        <figure class="m-tile">
+          <img src="momentos/barra.jpg" alt="La barra de Capitán Beto" loading="lazy" />
+          <figcaption>
+            <span class="m-tile__kicker" data-i18n="momentos.k.barra">La barra</span>
+            <strong data-i18n="momentos.t.barra">Tu sitio favorito</strong>
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- #BetosPic · banner comunidad + uploader -->
+      <div class="betos-pic">
+        <div class="betos-pic__copy">
+          <span class="eyebrow" data-i18n="bpic.eyebrow" data-content="bpic.eyebrow">Comunidad</span>
+          <h3 data-i18n="bpic.title" data-content="bpic.title">¿Pasaste por acá? Subí tu <em>Beto's Pic</em></h3>
+          <p data-i18n="bpic.lead" data-content="bpic.lead">Sacate una foto en el bar, subila acá y aparecés en el muro de la comunidad. Etiquetanos con <strong>#BetosPic</strong> en Instagram y entrás al concurso del mes: la mejor foto se lleva una <strong>tabla del Capitán para dos</strong>.</p>
+          <div class="betos-pic__cta">
+            <button class="btn btn--gold" type="button" id="bpicOpenUpload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span data-i18n="bpic.ctaUpload">Subir mi foto</span>
+            </button>
+            <a class="btn btn--ghost-dark" href="https://www.instagram.com/capitanbeto.bardetapas?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" data-i18n="bpic.ctaFollow">Seguir @capitanbeto.bardetapas</a>
+          </div>
+        </div>
+        <div class="betos-pic__hash" aria-hidden="true">
+          <span>#</span>
+          <strong>Beto's<br/>Pic</strong>
+        </div>
+      </div>
+
+      <!-- Wall del cliente: fotos subidas por la comunidad -->
+      <div class="bpic-wall-wrap">
+        <div class="bpic-wall-head">
+          <h3 data-i18n="bpic.wallTitle">El muro de los clientes</h3>
+          <span class="bpic-count">
+            <strong id="bpicCount">0</strong>
+            <small data-i18n="bpic.count">fotos compartidas</small>
+          </span>
+        </div>
+        <div class="bpic-wall" id="bpicWall"></div>
+      </div>
+    </section>
+
+    <!-- Upload modal · Beto's Pic -->
+    <div id="bpicModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bpicTitle">
+      <div class="modal__backdrop" data-bpic-close></div>
+      <div class="modal__panel modal__panel--bpic">
+        <button class="modal__close" data-bpic-close aria-label="Close">×</button>
+        <div class="modal__head">
+          <span class="eyebrow" data-i18n="bpic.modalEyebrow">Beto's Pic</span>
+          <h3 id="bpicTitle" data-i18n="bpic.modalTitle">Subí tu foto</h3>
+          <p data-i18n="bpic.modalLead">Las mejores fotos del muro suben a nuestro Instagram al final del mes.</p>
+        </div>
+
+        <form id="bpicForm" class="bpic-form" novalidate>
+          <label class="bpic-drop" id="bpicDrop" tabindex="0">
+            <input type="file" id="bpicFile" accept="image/*,image/heic,image/heif,image/heic-sequence,image/heif-sequence,image/webp,image/avif,image/tiff,image/bmp,image/svg+xml,image/gif,.heic,.HEIC,.heif,.HEIF,.webp,.avif,.tiff,.tif,.bmp,.svg,.gif,.jfif" hidden />
+            <div class="bpic-drop__preview" id="bpicPreview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="3"/>
+                <circle cx="9" cy="11" r="2"/>
+                <path d="M21 17l-5-5-9 9"/>
+              </svg>
+              <strong data-i18n="bpic.drop">Arrastra tu foto o haz click</strong>
+              <small data-i18n="bpic.dropSub">JPG · PNG · WEBP hasta 8 MB</small>
+            </div>
+          </label>
+
+          <div class="reserve-row">
+            <label class="field">
+              <small data-i18n="bpic.f.name">Nombre <em>(opcional)</em></small>
+              <input name="bpicName" type="text" placeholder="Marina" maxlength="40" />
+            </label>
+            <label class="field">
+              <small data-i18n="bpic.f.handle">@instagram <em>(opcional)</em></small>
+              <input name="bpicHandle" type="text" placeholder="@tuhandle" maxlength="40" />
+            </label>
+          </div>
+
+          <label class="field">
+            <small data-i18n="bpic.f.caption">Caption <em>(opcional)</em></small>
+            <input name="bpicCaption" type="text" placeholder="¡Mejor noche del mes!" maxlength="120" />
+          </label>
+
+          <label class="bpic-check">
+            <input type="checkbox" name="bpicAgree" required />
+            <span data-i18n="bpic.consent">Doy permiso para mostrar mi foto en el muro y en Instagram de Capitán Beto.</span>
+          </label>
+
+          <div class="modal__actions">
+            <button type="button" class="btn btn--ghost btn--sm" data-bpic-close data-i18n="bpic.cancel">Cancelar</button>
+            <button type="submit" class="btn btn--primary" data-i18n="bpic.submit">Publicar foto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Hours -->
+    <section id="hours" class="section section--hours reveal" data-reveal>
+      <div class="section__head">
+        <span class="eyebrow" data-i18n="hours.eyebrow">Doble turno madrileño</span>
+        <h2 data-i18n="hours.title">Horarios</h2>
+      </div>
+      <div class="hours-grid" id="publicHoursGrid"><!-- rendered by JS --></div>
+    </section>
+
+    <!-- Reservation CTA strip -->
+    <section id="reserve" class="section section--reserveCta reveal" data-reveal>
+      <div class="reserve-strip">
+        <div class="reserve-strip__copy">
+          <span class="eyebrow" data-i18n="reserveCta.eyebrow">Reserva tu mesa</span>
+          <h2 data-i18n="reserveCta.title">Asegura tu sitio en la pizarra</h2>
+          <p data-i18n="reserveCta.lead">Reserva en 20 segundos. Te confirmamos por WhatsApp y te añadimos al calendario.</p>
+        </div>
+        <div class="reserve-strip__cta">
+          <button class="btn btn--primary magnetic" data-open-reserve type="button">
+            <span data-i18n="reserveCta.btn">Reservar ahora</span>
+          </button>
+          <small data-i18n="reserveCta.small">Confirmación inmediata · Sin tarjeta</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section section--contact">
+      <div class="contact__inner">
+        <div>
+          <span class="eyebrow" data-i18n="contact.eyebrow">Pasa a vernos</span>
+          <h2 data-i18n="contact.title" data-content="contact.title">Calle de los Hidalgos, Madrid</h2>
+          <p data-i18n="contact.lead" data-content="contact.lead">Reservas por WhatsApp o mándanos un DM en Instagram. Si llamas, contesta Beto.</p>
+        </div>
+        <div class="contact__channels">
+          <a class="channel-card" href="https://wa.me/34611854380" target="_blank" rel="noopener">
+            <span class="channel-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.8L2 22l4.3-1.5A11 11 0 1 0 20.5 3.5Zm-8.4 17a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-2.6.9.9-2.5-.2-.3A9.1 9.1 0 1 1 21.2 12 9.1 9.1 0 0 1 12.1 20.5Zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.2-.7.9-.9 1.1-.3.2-.6.1a7.5 7.5 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.5.1-.6s.3-.3.4-.5a2 2 0 0 0 .3-.5.5.5 0 0 0 0-.5c0-.1-.6-1.5-.8-2s-.5-.4-.6-.4h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1.1 2.6c0 1.5 1.1 3 1.3 3.2s2.2 3.4 5.4 4.7a18 18 0 0 0 1.8.7 4.3 4.3 0 0 0 2 .1 3.3 3.3 0 0 0 2.2-1.6 2.7 2.7 0 0 0 .2-1.6c0-.1-.3-.2-.6-.4Z"/></svg>
+            </span>
+            <div>
+              <strong>WhatsApp</strong>
+              <small>+34 611 854 380</small>
+            </div>
+          </a>
+          <a class="channel-card" href="https://www.instagram.com/capitanbeto.bardetapas?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
+            <span class="channel-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+            </span>
+            <div>
+              <strong>Instagram</strong>
+              <small>@capitanbeto.bardetapas</small>
+            </div>
+          </a>
+          <a class="channel-card" href="mailto:capitanbetomadrid@gmail.com">
+            <span class="channel-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            </span>
+            <div>
+              <strong>Email</strong>
+              <small>capitanbetomadrid@gmail.com</small>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer footer--legal">
+      <div class="footer__top">
+        <div class="footer__col">
+          <img src="logo.png" alt="Capitán Beto" class="footer__logo" />
+          <strong>Capitán Beto · Gastro Taberna</strong>
+          <small>Tapas castizas · Sabor argentino · Madrid</small>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.contact">Contacto</h4>
+          <a href="mailto:capitanbetomadrid@gmail.com">capitanbetomadrid@gmail.com</a>
+          <a href="https://wa.me/34611854380" target="_blank" rel="noopener">+34 611 854 380</a>
+          <a href="https://maps.google.com/?q=Calle+de+los+Hidalgos+Madrid" target="_blank" rel="noopener">Calle de los Hidalgos, Madrid</a>
+          <a href="https://www.instagram.com/capitanbeto.bardetapas" target="_blank" rel="noopener">@capitanbeto.bardetapas</a>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.legal">Legal</h4>
+          <button class="footer__link" type="button" data-open-legal="aviso" data-i18n="footer.aviso">Aviso Legal</button>
+          <button class="footer__link" type="button" data-open-legal="privacy" data-i18n="footer.privacy">Política de Privacidad</button>
+          <button class="footer__link" type="button" data-open-legal="cookies" data-i18n="footer.cookies">Política de Cookies</button>
+          <button class="footer__link" type="button" data-open-legal="terms" data-i18n="footer.terms">Términos y Condiciones</button>
+          <button class="footer__link footer__link--alert" type="button" id="footerCookieReopen" data-i18n="footer.cookieConfig">⚙️ Configurar cookies</button>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.business">Empresa</h4>
+          <small><strong data-i18n="footer.titular">Titulares:</strong> Matías &amp; Natalia (la Polaca) · régimen de autónomos</small>
+          <small><strong>NIF:</strong> <span id="ownerNif">pendiente · actualizar desde dashboard</span></small>
+          <small><strong data-i18n="footer.address">Domicilio fiscal:</strong> Madrid</small>
+          <small data-i18n="footer.responsable"><strong>Responsable de datos:</strong> Matías &amp; Natalia (la Polaca)</small>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© <span id="year"></span> Capitán Beto · Madrid · <span data-i18n="footer.rights">Todos los derechos reservados</span></p>
+        <span class="pride-badge" title="Todos son bienvenidos · All are welcome">
+          <svg class="pride-flag pride-flag--xs" viewBox="0 0 60 36" aria-hidden="true" focusable="false">
+            <rect x="0" y="0"  width="60" height="6" fill="#E40303"/>
+            <rect x="0" y="6"  width="60" height="6" fill="#FF8C00"/>
+            <rect x="0" y="12" width="60" height="6" fill="#FFED00"/>
+            <rect x="0" y="18" width="60" height="6" fill="#008026"/>
+            <rect x="0" y="24" width="60" height="6" fill="#004CFF"/>
+            <rect x="0" y="30" width="60" height="6" fill="#732982"/>
+          </svg>
+          <span data-i18n="pride.short">Todos son bienvenidos</span>
+        </span>
+        <p class="footer__small" data-i18n="footer.small">Hecho con sobremesa y vermut.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ============================ DASHBOARD ============================ -->
+  <section id="dashboard" class="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <img class="sidebar__logo" src="logo.png" alt="Capitán Beto" onerror="if(this.dataset.fb){this.replaceWith(Object.assign(document.createElement('span'),{className:'brand__mark brand__mark--dark',textContent:'CB'}))}else{this.dataset.fb=1;this.src='logo.svg'}" />
+        <div>
+          <strong>Capitán Beto</strong>
+          <small data-i18n="dash.sidebarSub">Gastro Taberna</small>
+        </div>
+      </div>
+
+      <div class="sidebar__user">
+        <div class="avatar" id="sidebarAvatar">A</div>
+        <div>
+          <small data-i18n="dash.loggedAs">Conectado como:</small>
+          <strong id="sidebarRole">Admin</strong>
+        </div>
+        <span class="status-dot" title="online"></span>
+      </div>
+
+      <nav class="sidebar__nav">
+        <button class="snav is-active" data-dash-tab="inventory" type="button">
+          <span class="snav__ico">📋</span>
+          <span data-i18n="dash.nav.inventory">Inventario</span>
+        </button>
+        <button class="snav" data-dash-tab="content" type="button">
+          <span class="snav__ico">✏️</span>
+          <span data-i18n="dash.nav.content">Contenido</span>
+        </button>
+        <button class="snav" data-dash-tab="images" type="button">
+          <span class="snav__ico">🖼️</span>
+          <span data-i18n="dash.nav.images">Imágenes</span>
+        </button>
+        <button class="snav" data-dash-tab="reservations" type="button">
+          <span class="snav__ico">🗓️</span>
+          <span data-i18n="dash.nav.reservations">Reservas</span>
+          <span class="badge" id="dashResvCount">0</span>
+        </button>
+        <button class="snav" data-dash-tab="customers" type="button">
+          <span class="snav__ico">👤</span>
+          <span data-i18n="dash.nav.customers">Clientes</span>
+          <span class="badge" id="dashCustCount">0</span>
+        </button>
+        <button class="snav" data-dash-tab="wall" type="button">
+          <span class="snav__ico">📸</span>
+          <span data-i18n="dash.nav.wall">Wall #BetosPic</span>
+          <span class="badge" id="dashWallCount">0</span>
+        </button>
+        <button class="snav" data-dash-tab="pets" type="button">
+          <span class="snav__ico">🐾</span>
+          <span data-i18n="dash.nav.pets">Peludos</span>
+          <span class="badge" id="dashPetsCount">0</span>
+        </button>
+        <button class="snav" data-dash-tab="promos" type="button">
+          <span class="snav__ico">🔥</span>
+          <span data-i18n="dash.nav.promos">Promociones</span>
+          <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
+        </button>
+        <button class="snav" data-dash-tab="hours" type="button">
+          <span class="snav__ico">🕒</span>
+          <span data-i18n="dash.nav.hours">Horarios</span>
+        </button>
+        <button class="snav" data-dash-tab="channels" type="button">
+          <span class="snav__ico">📡</span>
+          <span data-i18n="dash.nav.channels">Canales</span>
+        </button>
+        <button class="snav" data-dash-tab="design" type="button">
+          <span class="snav__ico">🎨</span>
+          <span data-i18n="dash.nav.design">Diseño</span>
+        </button>
+        <button class="snav" data-dash-tab="backup" type="button">
+          <span class="snav__ico">💾</span>
+          <span data-i18n="dash.nav.backup">Backup CMS</span>
+        </button>
+        <button class="snav" data-dash-tab="payments" type="button">
+          <span class="snav__ico">💳</span>
+          <span data-i18n="dash.nav.payments">Pagos & Integraciones</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__foot">
+        <small data-i18n="dash.foot">Madrid · doble turno</small>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+
+      <!-- Top bar -->
+      <header class="dash-top">
+        <div>
+          <small data-i18n="dash.title.kicker">Panel de gestión</small>
+          <h1 id="dashSectionTitle" data-i18n="dash.title.inventory">Inventario de Cocina</h1>
+        </div>
+        <div class="dash-top__actions">
+          <div class="search">
+            <input id="invSearch" type="text" placeholder="Buscar plato, categoría, alérgeno…" data-i18n-placeholder="dash.search" />
+          </div>
+          <button class="btn btn--primary btn--sm" id="addProductBtn" data-role-restrict="admin">
+            <span data-i18n="dash.addProduct">+ Nuevo Plato</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- KPI row -->
+      <div class="kpi-row">
+        <div class="card kpi">
+          <small data-i18n="dash.kpi.products">Platos activos</small>
+          <strong id="kpiProducts">0</strong>
+          <span class="kpi__delta up">+3 hoy</span>
+        </div>
+        <div class="card kpi">
+          <small data-i18n="dash.kpi.outstock">Sin stock</small>
+          <strong id="kpiOutstock">0</strong>
+          <span class="kpi__delta down" data-i18n="dash.kpi.review">revisar</span>
+        </div>
+        <div class="card kpi">
+          <small data-i18n="dash.kpi.promos">Promos LIVE</small>
+          <strong id="kpiPromos">2</strong>
+          <span class="kpi__delta">
+            <span class="pulse-dot pulse-dot--gold"></span>
+            <span data-i18n="dash.kpi.airing">al aire</span>
+          </span>
+        </div>
+        <div class="card kpi">
+          <small data-i18n="dash.kpi.shift">Turno actual</small>
+          <strong id="kpiShift">Comidas</strong>
+          <span class="kpi__delta" id="kpiShiftHours">13:00 — 16:30</span>
+        </div>
+      </div>
+
+      <!-- ============ INVENTORY VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="inventory">
+        <div class="card card--table">
+          <div class="card__head">
+            <h3 data-i18n="dash.inv.table">Gestión de cocina</h3>
+            <div class="role-hint" data-show-for="view">
+              <span data-i18n="dash.inv.roView">Modo Camarero · sólo consulta</span>
+            </div>
+            <div class="role-hint" data-show-for="editor">
+              <span data-i18n="dash.inv.roEditor">Modo Editor · sin cambios de precio</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table" id="invTable">
+              <thead>
+                <tr>
+                  <th data-i18n="dash.th.title">Plato</th>
+                  <th data-i18n="dash.th.cat">Categoría</th>
+                  <th data-i18n="dash.th.base">Precio Base</th>
+                  <th data-i18n="dash.th.terr">Precio Terraza</th>
+                  <th data-i18n="dash.th.allerg">Alérgenos</th>
+                  <th data-i18n="dash.th.stock">Stock</th>
+                  <th data-i18n="dash.th.act">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="invBody"><!-- rendered by JS --></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CONTENT EDITOR VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="content" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.content.title">Editor de contenido</h3>
+            <small data-i18n="dash.content.sub">Todo lo que cambies se guarda en el navegador y se aplica al sitio público al instante.</small>
+          </div>
+          <div class="content-editor">
+            <aside class="content-editor__nav" id="contentNav"></aside>
+            <div class="content-editor__panel" id="contentPanel"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ IMAGES MANAGER VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="images" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.img.title">Imágenes del sitio</h3>
+            <small data-i18n="dash.img.sub">Hacé hover sobre cualquier imagen y reemplazala. Se guarda en tu navegador y aparece al instante en el sitio público.</small>
+          </div>
+          <div class="img-manager" id="imgManagerGrid"></div>
+          <div class="card__actions">
+            <button class="btn btn--ghost btn--sm" id="imgResetAll" type="button">↺ Restaurar todas las imágenes originales</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESERVATIONS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="reservations" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.resv.title">Reservas recibidas</h3>
+            <small data-i18n="dash.resv.sub">Las reservas se guardan localmente. Si el cliente confirma por WhatsApp, Google Calendar o email, también las recibís ahí.</small>
+          </div>
+          <div class="resv-list" id="resvList"></div>
+        </div>
+      </section>
+
+      <!-- ============ CUSTOMERS CRM VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="customers" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.cust.title">Clientes registrados</h3>
+            <small data-i18n="dash.cust.sub">Solo aparecen aquí quienes aceptaron explícitamente recibir comunicaciones. Cumplimos RGPD.</small>
+          </div>
+          <div class="cust-actions">
+            <button class="btn btn--primary btn--sm" id="custSendEmail" type="button">✉ Enviar email masivo (BCC)</button>
+            <button class="btn btn--ghost btn--sm" id="custSendWa" type="button">⌬ WhatsApp masivo</button>
+            <button class="btn btn--ghost btn--sm" id="custExport" type="button">⬇ Exportar CSV</button>
+          </div>
+          <div class="cust-list" id="custList"></div>
+        </div>
+      </section>
+
+      <!-- ============ WALL MODERATION VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="wall" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.wall.title">Muro #BetosPic</h3>
+            <small data-i18n="dash.wall.sub">Las fotos que suben los clientes desde el sitio público. Podés eliminarlas si son spam.</small>
+          </div>
+          <div class="wall-grid" id="wallModGrid"></div>
+        </div>
+      </section>
+
+      <!-- ============ PETS MODERATION VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="pets" hidden>
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <h3 data-i18n="dash.pets.title">🐾 Peludos del Capitán</h3>
+              <small data-i18n="dash.pets.sub">Fotos subidas por los clientes. Aprobá, edita o eliminá. Aparecen en la galería pública al instante una vez aprobadas.</small>
+            </div>
+            <button class="btn btn--primary btn--sm" id="petAddFromDash" type="button" data-role-restrict="admin">
+              <span data-i18n="dash.pets.add">+ Subir foto</span>
+            </button>
+          </div>
+          <div class="pets-stats">
+            <div class="pets-stat">
+              <strong id="petsStatTotal">0</strong>
+              <small data-i18n="dash.pets.total">Total subidos</small>
+            </div>
+            <div class="pets-stat pets-stat--pending">
+              <strong id="petsStatPending">0</strong>
+              <small data-i18n="dash.pets.pending">Pendientes</small>
+            </div>
+            <div class="pets-stat pets-stat--ok">
+              <strong id="petsStatApproved">0</strong>
+              <small data-i18n="dash.pets.approved">Aprobados</small>
+            </div>
+          </div>
+          <div class="pets-mod-grid" id="petsModGrid"></div>
+        </div>
+      </section>
+
+      <!-- ============ PROMOS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="promos" hidden>
+        <div class="promo-grid">
+          <div class="card promo-card" data-live="true">
+            <div class="promo-card__head">
+              <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
+              <h4 data-i18n="dash.promo.p1.title">Empanadas + Malbec</h4>
+            </div>
+            <p data-i18n="dash.promo.p1.desc">3 empanadas criollas + copa de Malbec por 9€. Lunes a jueves de 18 a 20h.</p>
+            <div class="promo-card__foot">
+              <strong>9,00 €</strong>
+              <button class="btn btn--ghost btn--sm" data-role-restrict="admin" data-i18n="dash.promo.edit">Editar</button>
+            </div>
+          </div>
+
+          <div class="card promo-card" data-live="true">
+            <div class="promo-card__head">
+              <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
+              <h4 data-i18n="dash.promo.p2.title">Provoleta + Vermut</h4>
+            </div>
+            <p data-i18n="dash.promo.p2.desc">Provoleta a la parrilla + vermut de grifo por 12€ todo el sábado.</p>
+            <div class="promo-card__foot">
+              <strong>12,00 €</strong>
+              <button class="btn btn--ghost btn--sm" data-role-restrict="admin" data-i18n="dash.promo.edit">Editar</button>
+            </div>
+          </div>
+
+          <div class="card promo-card promo-card--new" data-role-restrict="admin">
+            <button class="promo-card__add" id="newPromoBtn" type="button">
+              <span>+</span>
+              <small data-i18n="dash.promo.new">Nueva promoción</small>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HOURS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="hours" hidden>
+        <div class="card">
+          <div class="card__head">
+            <h3 data-i18n="dash.hours.title">Doble turno madrileño</h3>
+            <small data-i18n="dash.hours.sub">Ajusta cocina y barra · comidas y cenas</small>
+          </div>
+          <div class="hours-form" id="hoursForm"><!-- rendered by JS --></div>
+          <div class="card__actions">
+            <button class="btn btn--primary" data-role-restrict="admin" id="saveHoursBtn" data-i18n="dash.hours.save">Guardar horarios</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CHANNELS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="channels" hidden>
+        <div class="channels-grid">
+          <div class="card">
+            <div class="card__head">
+              <h3>WhatsApp Business API</h3>
+              <span class="badge badge--ok" data-i18n="dash.ch.connected">Conectado</span>
+            </div>
+            <label class="field">
+              <small data-i18n="dash.ch.number">Número activo</small>
+              <input id="whatsappInput" type="text" value="+34 611 854 380" data-role-restrict="admin" />
+            </label>
+            <label class="field">
+              <small data-i18n="dash.ch.greeting">Saludo automático</small>
+              <textarea data-role-restrict="admin" rows="3" data-i18n="dash.ch.greetingVal">¡Buenas! Soy Beto. ¿Reserva, takeaway o consulta de la pizarra?</textarea>
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary" data-role-restrict="admin" data-i18n="dash.ch.save">Guardar canal</button>
+              <a class="btn btn--ghost" href="https://wa.me/34611854380" target="_blank" rel="noopener" data-i18n="dash.ch.test">Probar enlace</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <h3>Instagram</h3>
+              <span class="badge badge--ok" data-i18n="dash.ch.connected">Conectado</span>
+            </div>
+            <label class="field">
+              <small data-i18n="dash.ch.handle">Perfil</small>
+              <input id="instagramInput" type="text" value="@capitanbeto.bardetapas" data-role-restrict="admin" />
+            </label>
+            <label class="field">
+              <small data-i18n="dash.ch.url">URL pública</small>
+              <input type="text" value="https://www.instagram.com/capitanbeto.bardetapas" data-role-restrict="admin" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary" data-role-restrict="admin" data-i18n="dash.ch.save">Guardar canal</button>
+              <a class="btn btn--ghost" href="https://www.instagram.com/capitanbeto.bardetapas?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" data-i18n="dash.ch.open">Abrir perfil</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <h3>Google Reseñas</h3>
+              <span class="badge" id="googleReviewStatus" data-i18n="dash.ch.pending">Configurar</span>
+            </div>
+            <label class="field">
+              <small data-i18n="dash.ch.googleReviewUrl">URL del enlace "Dejá tu reseña"</small>
+              <input id="googleReviewInput" type="url" placeholder="https://search.google.com/local/writereview?placeid=..." data-role-restrict="admin" />
+            </label>
+            <p style="font-size:12px;color:var(--ink-mute);margin:0 0 14px;line-height:1.45" data-i18n="dash.ch.googleReviewNote">
+              Pegá la URL "Dejar reseña" que te da Google Business Profile. La usás en el botón del público y al pegarse acá se actualiza el botón de "Reseñar en Google" del sitio.
+            </p>
+            <div class="card__actions">
+              <button class="btn btn--primary" id="googleReviewSave" type="button" data-role-restrict="admin" data-i18n="dash.ch.save">Guardar canal</button>
+              <a class="btn btn--ghost" href="https://business.google.com" target="_blank" rel="noopener" data-i18n="dash.ch.openBP">Abrir Google Business</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <h3>Email + Google Calendar</h3>
+              <span class="badge badge--ok" data-i18n="dash.ch.connected">Conectado</span>
+            </div>
+            <label class="field">
+              <small data-i18n="dash.ch.email">Email para notificaciones de reserva</small>
+              <input id="emailInput" type="email" value="capitanbetomadrid@gmail.com" data-role-restrict="admin" />
+            </label>
+            <label class="field">
+              <small data-i18n="dash.ch.calendar">Calendario invitado en cada reserva</small>
+              <input type="text" value="capitanbetomadrid@gmail.com (Google Calendar)" disabled />
+            </label>
+            <p style="font-size:12px;color:var(--ink-mute);margin:0 0 14px;line-height:1.45" data-i18n="dash.ch.emailNote">Las reservas web envían: email a este buzón vía FormSubmit, invitación de Google Calendar como attendee, y resumen por WhatsApp con transcript. La primera vez que entre un mail, abre el inbox y confirma el activation link de FormSubmit.</p>
+            <div class="card__actions">
+              <button class="btn btn--primary" data-role-restrict="admin" data-i18n="dash.ch.save">Guardar canal</button>
+              <a class="btn btn--ghost" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener" data-i18n="dash.ch.openCal">Abrir Google Calendar</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DESIGN VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="design" hidden>
+        <div class="design-grid">
+          <div class="card">
+            <div class="card__head">
+              <h3 data-i18n="dash.design.colors">🎨 Colores de marca</h3>
+              <button class="btn btn--ghost btn--sm" id="designColorsReset" type="button" data-i18n="dash.design.reset">Reset</button>
+            </div>
+            <p class="muted-sm" data-i18n="dash.design.colorsHint">Cambiá la paleta del sitio en vivo. Se aplica a todos los componentes que usen variables CSS.</p>
+            <div class="design-fields">
+              <label class="field design-field">
+                <small data-i18n="dash.design.green">Verde tabernero (principal)</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--brand-green" value="#1F4A2E" />
+                  <input type="text"  data-design-var-text="--brand-green" value="#1F4A2E" />
+                </div>
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.greenDeep">Verde profundo</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--brand-green-deep" value="#173823" />
+                  <input type="text"  data-design-var-text="--brand-green-deep" value="#173823" />
+                </div>
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.sunset">Naranja sunset (acento)</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--sunset" value="#C9612F" />
+                  <input type="text"  data-design-var-text="--sunset" value="#C9612F" />
+                </div>
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.brass">Dorado bronce (marquee)</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--brass" value="#C5A050" />
+                  <input type="text"  data-design-var-text="--brass" value="#C5A050" />
+                </div>
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.cream">Crema fondo</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--bg-cream" value="#F7EFDC" />
+                  <input type="text"  data-design-var-text="--bg-cream" value="#F7EFDC" />
+                </div>
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.ink">Texto principal</small>
+                <div class="design-color-row">
+                  <input type="color" data-design-var="--ink" value="#1A1A1A" />
+                  <input type="text"  data-design-var-text="--ink" value="#1A1A1A" />
+                </div>
+              </label>
+            </div>
+            <div class="card__actions">
+              <button class="btn btn--primary" id="designColorsSave" type="button" data-i18n="dash.design.save">Guardar paleta</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <h3 data-i18n="dash.design.typo">✒️ Tipografía y escala</h3>
+            </div>
+            <p class="muted-sm" data-i18n="dash.design.typoHint">Ajustá tamaños y radios. Se aplica en vivo.</p>
+            <div class="design-fields">
+              <label class="field design-field">
+                <small data-i18n="dash.design.bodySize">Tamaño base (px)</small>
+                <input type="number" min="14" max="20" step="1" data-design-num="--font-base-size" value="16" data-default="16" />
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.radius">Radio tarjetas (px)</small>
+                <input type="number" min="0" max="32" step="1" data-design-num="--radius-md" value="14" data-default="14" />
+              </label>
+              <label class="field design-field">
+                <small data-i18n="dash.design.radiusLg">Radio grande (px)</small>
+                <input type="number" min="0" max="48" step="1" data-design-num="--radius-lg" value="22" data-default="22" />
+              </label>
+            </div>
+            <div class="card__actions">
+              <button class="btn btn--primary" id="designTypoSave" type="button" data-i18n="dash.design.save">Guardar</button>
+              <button class="btn btn--ghost" id="designTypoReset" type="button" data-i18n="dash.design.reset">Reset</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card__head">
+              <h3 data-i18n="dash.design.preview">👁️ Vista previa rápida</h3>
+            </div>
+            <div class="design-preview">
+              <div class="design-preview__btnrow">
+                <button class="btn btn--primary" type="button">Botón primario</button>
+                <button class="btn btn--ghost" type="button">Botón ghost</button>
+              </div>
+              <div class="design-preview__chips">
+                <span class="badge badge--ok">Tag OK</span>
+                <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
+                <span class="tag tag--cat">Categoría</span>
+              </div>
+              <p class="design-preview__sample">Un texto de ejemplo en <strong>Inter</strong> con <em>Fraunces</em> de display.</p>
+            </div>
+            <p class="muted-sm" data-i18n="dash.design.live">Los cambios viajan al sitio público inmediatamente. Tu navegador los recuerda.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BACKUP CMS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="backup" hidden>
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <h3 data-i18n="dash.backup.title">💾 Backup del contenido editable</h3>
+              <small data-i18n="dash.backup.sub">Descargá un JSON con TODO lo que editaste desde el dashboard (textos, imágenes, reservas, clientes, peludos, diseño, pagos). Importá para restaurar en otro navegador o tras reinstalar.</small>
+            </div>
+          </div>
+          <div class="backup-stats" id="backupStats"></div>
+          <div class="card__actions backup-actions">
+            <button class="btn btn--primary" id="backupExportBtn" type="button">
+              <span data-i18n="dash.backup.export">⬇️ Descargar backup (.json)</span>
+            </button>
+            <label class="btn btn--ghost" for="backupImportInput" style="cursor:pointer">
+              <span data-i18n="dash.backup.import">⬆️ Restaurar desde archivo</span>
+              <input type="file" id="backupImportInput" accept="application/json,.json" hidden />
+            </label>
+            <button class="btn btn--ghost" id="backupClearBtn" type="button" style="color:var(--danger)">
+              <span data-i18n="dash.backup.clear">🗑 Borrar TODO el contenido editado</span>
+            </button>
+          </div>
+          <p class="muted-sm" data-i18n="dash.backup.note">
+            Sin backend, todo lo que editás vive sólo en este navegador. Hacé export periódicamente. Los archivos NO contienen claves de pago — solo contenido visible.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ PAYMENTS & INTEGRATIONS VIEW ============ -->
+      <section class="dash-panel" data-dash-panel="payments" hidden>
+        <div class="card pay-intro">
+          <div>
+            <h3 data-i18n="dash.pay.title">💳 Pasarelas de pago e integraciones</h3>
+            <p class="muted-sm" data-i18n="dash.pay.lead">Conectá Capitán Beto con tu pasarela favorita para cobrar reservas, depósitos o takeaway. Las claves se guardan cifradas en tu navegador y NUNCA salen del dispositivo. Para producción, conectá un backend.</p>
+          </div>
+          <div class="pay-intro__status">
+            <span class="status-dot status-dot--gold"></span>
+            <span id="payActiveCount">0</span> <small data-i18n="dash.pay.active">activas</small>
+          </div>
+        </div>
+
+        <div class="pay-grid">
+          <!-- STRIPE -->
+          <div class="card pay-card" data-pay-id="stripe">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--stripe">S</div>
+                <div>
+                  <h3>Stripe</h3>
+                  <small data-i18n="dash.pay.stripeDesc">Tarjeta, Apple Pay, Google Pay · global</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="stripe" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Publishable Key (pk_...)</small>
+              <input type="text" data-pay-field="stripe.pubKey" placeholder="pk_live_..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>Webhook URL (opcional)</small>
+              <input type="text" data-pay-field="stripe.webhook" placeholder="https://api.tu-bar.com/webhook/stripe" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small data-i18n="dash.pay.deposit">% depósito reserva</small>
+              <input type="number" data-pay-field="stripe.deposit" min="0" max="100" step="5" placeholder="10" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="stripe" type="button" data-i18n="dash.pay.save">Guardar</button>
+              <a class="btn btn--ghost btn--sm" href="https://dashboard.stripe.com" target="_blank" rel="noopener" data-i18n="dash.pay.openDash">Abrir Stripe</a>
+            </div>
+          </div>
+
+          <!-- REDSYS -->
+          <div class="card pay-card" data-pay-id="redsys">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--redsys">R</div>
+                <div>
+                  <h3>Redsys</h3>
+                  <small data-i18n="dash.pay.redsysDesc">Pasarela bancaria España · BBVA/Santander/CaixaBank</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="redsys" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Merchant Code (FUC)</small>
+              <input type="text" data-pay-field="redsys.merchant" placeholder="999008881" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>Terminal</small>
+              <input type="text" data-pay-field="redsys.terminal" placeholder="001" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>SHA-256 Secret Key</small>
+              <input type="password" data-pay-field="redsys.secret" placeholder="••••••••" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="redsys" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- PAYPAL -->
+          <div class="card pay-card" data-pay-id="paypal">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--paypal">P</div>
+                <div>
+                  <h3>PayPal</h3>
+                  <small data-i18n="dash.pay.paypalDesc">Pago alternativo · turistas</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="paypal" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Client ID</small>
+              <input type="text" data-pay-field="paypal.clientId" placeholder="A21AA..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>Email PayPal Business</small>
+              <input type="email" data-pay-field="paypal.email" placeholder="cobros@tu-bar.com" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="paypal" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- BIZUM (Spain) -->
+          <div class="card pay-card" data-pay-id="bizum">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--bizum">B</div>
+                <div>
+                  <h3>Bizum</h3>
+                  <small data-i18n="dash.pay.bizumDesc">Pagos móvil instantáneos · España</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="bizum" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Número Bizum negocio</small>
+              <input type="tel" data-pay-field="bizum.phone" placeholder="+34 ..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <small data-i18n="dash.pay.bizumNote">Texto que aparece al cliente</small>
+              <input type="text" data-pay-field="bizum.note" placeholder="Reserva Capitán Beto" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="bizum" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- COVERMANAGER -->
+          <div class="card pay-card" data-pay-id="covermanager">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--covermanager">C</div>
+                <div>
+                  <h3>CoverManager</h3>
+                  <small data-i18n="dash.pay.coverDesc">Software de reservas líder en hostelería ES</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="covermanager" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Slug del restaurante</small>
+              <input type="text" data-pay-field="covermanager.slug" placeholder="capitan-beto" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>API Key</small>
+              <input type="password" data-pay-field="covermanager.apiKey" placeholder="••••••••" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="covermanager" type="button" data-i18n="dash.pay.save">Guardar</button>
+              <a class="btn btn--ghost btn--sm" href="https://covermanager.com" target="_blank" rel="noopener" data-i18n="dash.pay.openDash">Web oficial</a>
+            </div>
+          </div>
+
+          <!-- TheFork -->
+          <div class="card pay-card" data-pay-id="thefork">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--thefork">TF</div>
+                <div>
+                  <h3>TheFork</h3>
+                  <small data-i18n="dash.pay.theforkDesc">Marketplace de reservas TripAdvisor</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="thefork" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>URL pública del restaurante</small>
+              <input type="text" data-pay-field="thefork.url" placeholder="https://www.thefork.es/restaurante/..." autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="thefork" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Mailchimp -->
+          <div class="card pay-card" data-pay-id="mailchimp">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--mailchimp">M</div>
+                <div>
+                  <h3>Mailchimp / Brevo</h3>
+                  <small data-i18n="dash.pay.mcDesc">Newsletter automática a clientes</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="mailchimp" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>API Key</small>
+              <input type="password" data-pay-field="mailchimp.apiKey" placeholder="••••••••" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>List ID / Audience</small>
+              <input type="text" data-pay-field="mailchimp.list" placeholder="abc123" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="mailchimp" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Google Analytics / Tag Manager -->
+          <div class="card pay-card" data-pay-id="analytics">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--ga">G</div>
+                <div>
+                  <h3>Google Analytics / Tag Manager</h3>
+                  <small data-i18n="dash.pay.gaDesc">Medición de tráfico y conversiones</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="analytics" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Measurement ID (G-...) o GTM-ID</small>
+              <input type="text" data-pay-field="analytics.id" placeholder="G-XXXXXXXXXX" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="analytics" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pay-roadmap">
+          <h3 data-i18n="dash.pay.next">🛣️ Próximos pasos para activar pagos reales</h3>
+          <ol class="pay-roadmap__list">
+            <li data-i18n="dash.pay.s1">Conseguí las claves de tu pasarela elegida (Stripe / Redsys / etc.).</li>
+            <li data-i18n="dash.pay.s2">Activá el switch del proveedor y guardá las claves desde aquí.</li>
+            <li data-i18n="dash.pay.s3">Para cobros en vivo necesitás un backend (Vercel/Cloudflare Workers). Hoy estas claves quedan guardadas en tu navegador y se inyectan al checkout del cliente.</li>
+            <li data-i18n="dash.pay.s4">Cuando despleguemos backend, sólo intercambiamos el endpoint y las pasarelas siguen funcionando con la misma config.</li>
+          </ol>
+        </div>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- ============== RESERVATION MODAL ============== -->
+  <div id="reserveModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reserveTitle">
+    <div class="modal__backdrop" data-close-reserve></div>
+    <div class="modal__panel">
+      <button class="modal__close" data-close-reserve aria-label="Close">×</button>
+      <div class="modal__head">
+        <span class="eyebrow" data-i18n="reserve.eyebrow">Reserva express</span>
+        <h3 id="reserveTitle" data-i18n="reserve.title">Tu mesa en Capitán Beto</h3>
+        <p data-i18n="reserve.lead">Rellena en 20 segundos. Te enviamos confirmación por WhatsApp y un enlace para añadirlo a Google Calendar.</p>
+      </div>
+
+      <form id="reserveForm" class="reserve-form" novalidate>
+        <div class="reserve-step is-active" data-step="1">
+          <label class="field">
+            <small data-i18n="reserve.f.name">Nombre</small>
+            <input name="name" type="text" required placeholder="Beto Pérez" />
+          </label>
+          <label class="field">
+            <small data-i18n="reserve.f.phone">Teléfono (WhatsApp)</small>
+            <input name="phone" type="tel" required placeholder="+34 ..." />
+          </label>
+          <label class="field">
+            <small data-i18n="reserve.f.email">Email <em>(opcional)</em></small>
+            <input name="email" type="email" placeholder="tu@email.com" />
+          </label>
+          <div class="reserve-row">
+            <label class="field">
+              <small data-i18n="reserve.f.date">Fecha</small>
+              <input name="date" type="date" required />
+            </label>
+            <label class="field">
+              <small data-i18n="reserve.f.time">Hora</small>
+              <select name="time" required>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+                <option value="14:30">14:30</option>
+                <option value="15:00">15:00</option>
+                <option value="20:00">20:00</option>
+                <option value="20:30">20:30</option>
+                <option value="21:00" selected>21:00</option>
+                <option value="21:30">21:30</option>
+                <option value="22:00">22:00</option>
+                <option value="22:30">22:30</option>
+              </select>
+            </label>
+            <label class="field">
+              <small data-i18n="reserve.f.people">Comensales</small>
+              <div class="stepper">
+                <button type="button" data-step-minus aria-label="-">−</button>
+                <input name="people" type="number" min="1" max="20" value="2" readonly />
+                <button type="button" data-step-plus aria-label="+">+</button>
+              </div>
+            </label>
+          </div>
+          <fieldset class="chip-group">
+            <legend data-i18n="reserve.f.where">¿Dónde?</legend>
+            <label class="chip-radio">
+              <input type="radio" name="zone" value="terraza" checked />
+              <span data-i18n="reserve.f.terraza">Terraza · pet-friendly</span>
+            </label>
+            <label class="chip-radio">
+              <input type="radio" name="zone" value="barra" />
+              <span data-i18n="reserve.f.barra">Barra</span>
+            </label>
+            <label class="chip-radio">
+              <input type="radio" name="zone" value="comedor" />
+              <span data-i18n="reserve.f.comedor">Comedor</span>
+            </label>
+          </fieldset>
+          <label class="field">
+            <small data-i18n="reserve.f.notes">Notas (alergias, ocasión...)</small>
+            <textarea name="notes" rows="2" placeholder="Cumpleaños, sin gluten..."></textarea>
+          </label>
+        </div>
+
+        <div class="reserve-step" data-step="2">
+          <div class="reserve-summary" id="reserveSummary"></div>
+          <div class="reserve-cal-actions">
+            <a class="btn btn--primary" id="waSendBtn" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.8L2 22l4.3-1.5A11 11 0 1 0 20.5 3.5Zm-8.4 17a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-2.6.9.9-2.5-.2-.3A9.1 9.1 0 1 1 21.2 12 9.1 9.1 0 0 1 12.1 20.5Zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.2-.7.9-.9 1.1-.3.2-.6.1a7.5 7.5 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.5.1-.6s.3-.3.4-.5a2 2 0 0 0 .3-.5.5.5 0 0 0 0-.5c0-.1-.6-1.5-.8-2s-.5-.4-.6-.4h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1.1 2.6c0 1.5 1.1 3 1.3 3.2s2.2 3.4 5.4 4.7a18 18 0 0 0 1.8.7 4.3 4.3 0 0 0 2 .1 3.3 3.3 0 0 0 2.2-1.6 2.7 2.7 0 0 0 .2-1.6c0-.1-.3-.2-.6-.4Z"/></svg>
+              <span data-i18n="reserve.send">Enviar por WhatsApp</span>
+            </a>
+            <a class="btn btn--ghost" id="calSendBtn" target="_blank" rel="noopener">
+              📅 <span data-i18n="reserve.cal">Añadir a Google Calendar</span>
+            </a>
+            <button class="btn btn--ghost" id="emailSendBtn" type="button">
+              ✉️ <span data-i18n="reserve.email">Confirmar por email</span>
+            </button>
+          </div>
+          <div class="reserve-channels">
+            <span class="ch-tag"><span class="dot dot--wa"></span> WhatsApp +34 611 854 380</span>
+            <span class="ch-tag"><span class="dot dot--cal"></span> Google Calendar · invita al bar</span>
+            <span class="ch-tag"><span class="dot dot--mail"></span> capitanbetomadrid@gmail.com</span>
+          </div>
+          <p class="reserve-foot" data-i18n="reserve.foot">Te contestamos en menos de 10 minutos. Si lo prefieres, puedes hablar directo con un camarero.</p>
+        </div>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-reserve-back hidden data-i18n="reserve.back">Atrás</button>
+          <button type="button" class="btn btn--primary" data-reserve-next data-i18n="reserve.next">Revisar reserva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============== CHATBOT WIDGET ============== -->
+  <div id="chatWidget" class="chat-widget" aria-hidden="true">
+    <header class="chat-header">
+      <div class="chat-avatar">B</div>
+      <div class="chat-meta">
+        <strong data-i18n="chat.headerName">Beto · Asistente</strong>
+        <small><span class="status-dot status-dot--mini"></span><span data-i18n="chat.headerStatus">En línea · responde al instante</span></small>
+      </div>
+      <button class="chat-human-pill" id="chatHumanPill" type="button" title="Hablar con una persona real">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 3.6 17.8L2 22l4.3-1.5A11 11 0 1 0 20.5 3.5Zm-8.4 17a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-2.6.9.9-2.5-.2-.3A9.1 9.1 0 1 1 21.2 12 9.1 9.1 0 0 1 12.1 20.5Zm5-6.8c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.2-.7.9-.9 1.1-.3.2-.6.1a7.5 7.5 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.5.1-.6s.3-.3.4-.5a2 2 0 0 0 .3-.5.5.5 0 0 0 0-.5c0-.1-.6-1.5-.8-2s-.5-.4-.6-.4h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1.1 2.6c0 1.5 1.1 3 1.3 3.2s2.2 3.4 5.4 4.7a18 18 0 0 0 1.8.7 4.3 4.3 0 0 0 2 .1 3.3 3.3 0 0 0 2.2-1.6 2.7 2.7 0 0 0 .2-1.6c0-.1-.3-.2-.6-.4Z"/></svg>
+        <span data-i18n="chat.humanPill">Persona</span>
+      </button>
+      <button class="chat-close" data-close-chat aria-label="Close">×</button>
+    </header>
+    <div class="chat-body" id="chatBody" aria-live="polite"></div>
+    <div class="chat-quick" id="chatQuick"></div>
+    <form class="chat-input" id="chatInputForm" autocomplete="off">
+      <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." data-i18n-placeholder="chat.input" />
+      <button type="submit" aria-label="send">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 21 3l-8.5 18-2-7.5L3 11.5Z"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <button id="chatLauncher" class="chat-launcher" type="button" aria-label="Abrir chat">
+    <span class="chat-launcher__pulse" aria-hidden="true"></span>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M21 12a8 8 0 0 1-12.6 6.6L3 20l1.4-5.2A8 8 0 1 1 21 12Z"/>
+      <circle cx="9" cy="12" r="1" fill="#1E2922"/>
+      <circle cx="12" cy="12" r="1" fill="#1E2922"/>
+      <circle cx="15" cy="12" r="1" fill="#1E2922"/>
+    </svg>
+    <span class="chat-launcher__badge" id="chatUnread" hidden>1</span>
+  </button>
+
+  <!-- ============== Toast ============== -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ LOGIN OVERLAY (Google Sign-In) ============ -->
+  <div id="loginOverlay" class="login-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="login-overlay__panel">
+      <img src="logo.png" alt="Capitán Beto" class="login-overlay__logo" />
+      <span class="eyebrow login-overlay__eyebrow">Acceso restringido</span>
+      <h2 id="loginTitle" data-i18n="login.title">Backoffice de Capitán Beto</h2>
+      <p data-i18n="login.lead">Solo los dueños pueden editar el contenido. Identificate con tu cuenta de Google autorizada.</p>
+
+      <div id="googleSignInBtn" class="login-overlay__gbtn"></div>
+
+      <div class="login-overlay__manual">
+        <small data-i18n="login.fallback">¿Problemas con Google? Configurá tu Client ID en el código (ver SECURITY.md).</small>
+      </div>
+
+      <div class="login-overlay__sec">
+        <strong>⚠️ Aviso de seguridad</strong>
+        <span data-i18n="login.warn">Este es un sitio estático sin backend. La autenticación verifica tu email con Google, pero el "guard" del dashboard puede ser bypassado por usuarios técnicos. No se almacenan datos sensibles del bar fuera de tu navegador.</span>
+      </div>
+
+      <button class="login-overlay__close" type="button" id="loginCloseBtn" aria-label="Cerrar">
+        ← <span data-i18n="login.back">Volver al sitio público</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ COOKIE BANNER (GDPR) ============ -->
+  <div id="cookieBanner" class="cookie-banner" aria-live="polite" hidden>
+    <div class="cookie-banner__copy">
+      <strong data-i18n="cookie.title">🍪 Usamos cookies</strong>
+      <p data-i18n="cookie.lead">Usamos cookies para que la web funcione, recordar tu idioma y mejorar tu experiencia. Tu eliges qué aceptás. Más info en nuestra <button class="cookie-banner__link" data-open-legal="cookies">Política de Cookies</button>.</p>
+    </div>
+    <div class="cookie-banner__actions">
+      <button class="btn btn--ghost btn--sm" id="cookieConfig" type="button" data-i18n="cookie.config">Configurar</button>
+      <button class="btn btn--ghost btn--sm" id="cookieMinimal" type="button" data-i18n="cookie.minimal">Solo necesarias</button>
+      <button class="btn btn--primary btn--sm" id="cookieAccept" type="button" data-i18n="cookie.acceptAll">Aceptar todas</button>
+    </div>
+  </div>
+
+  <!-- ============ COOKIE PREFERENCES MODAL ============ -->
+  <div id="cookieModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
+    <div class="modal__backdrop" data-cookie-close></div>
+    <div class="modal__panel modal__panel--cookie">
+      <button class="modal__close" data-cookie-close aria-label="Close">×</button>
+      <div class="modal__head">
+        <span class="eyebrow">🍪 Cookies</span>
+        <h3 id="cookieModalTitle" data-i18n="cookie.modalTitle">Configurar cookies</h3>
+        <p data-i18n="cookie.modalLead">Elegí qué tipo de cookies aceptás. Las necesarias son obligatorias para que la web funcione.</p>
+      </div>
+      <div class="cookie-cats">
+        <label class="cookie-cat">
+          <div class="cookie-cat__info">
+            <strong data-i18n="cookie.cat.nec">Necesarias</strong>
+            <small data-i18n="cookie.cat.necSub">Funcionamiento del sitio, idioma, sesión. No identifican personalmente.</small>
+          </div>
+          <input type="checkbox" checked disabled />
+          <span class="cookie-cat__pill" data-i18n="cookie.always">Siempre</span>
+        </label>
+        <label class="cookie-cat">
+          <div class="cookie-cat__info">
+            <strong data-i18n="cookie.cat.func">Funcionales</strong>
+            <small data-i18n="cookie.cat.funcSub">Guardar tus preferencias (fotos del muro, reservas, configuraciones del dashboard).</small>
+          </div>
+          <input type="checkbox" id="cookieFunc" />
+          <span class="cookie-cat__pill"></span>
+        </label>
+        <label class="cookie-cat">
+          <div class="cookie-cat__info">
+            <strong data-i18n="cookie.cat.ana">Analíticas</strong>
+            <small data-i18n="cookie.cat.anaSub">Saber qué secciones ves más y mejorar la web. Datos agregados, sin identificarte.</small>
+          </div>
+          <input type="checkbox" id="cookieAna" />
+          <span class="cookie-cat__pill"></span>
+        </label>
+        <label class="cookie-cat">
+          <div class="cookie-cat__info">
+            <strong data-i18n="cookie.cat.mkt">Marketing</strong>
+            <small data-i18n="cookie.cat.mktSub">Personalizar promociones y enviarte ofertas si das tus datos en "Mi cuenta".</small>
+          </div>
+          <input type="checkbox" id="cookieMkt" />
+          <span class="cookie-cat__pill"></span>
+        </label>
+      </div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost btn--sm" id="cookieMinimalModal" type="button" data-i18n="cookie.rejectAll">Rechazar todo</button>
+        <button class="btn btn--primary" id="cookieSavePrefs" type="button" data-i18n="cookie.savePrefs">Guardar preferencias</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ LEGAL MODALS (Aviso, Privacidad, Cookies, Términos) ============ -->
+  <div id="legalModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal__backdrop" data-legal-close></div>
+    <div class="modal__panel modal__panel--legal">
+      <button class="modal__close" data-legal-close aria-label="Close">×</button>
+      <div id="legalContent" class="legal-content"></div>
+    </div>
+  </div>
+
+  <!-- ============ CUSTOMER LOGIN MODAL ("Mi cuenta") ============ -->
+  <div id="customerModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle">
+    <div class="modal__backdrop" data-customer-close></div>
+    <div class="modal__panel modal__panel--customer">
+      <button class="modal__close" data-customer-close aria-label="Close">×</button>
+      <div class="modal__head">
+        <span class="eyebrow" data-i18n="customer.eyebrow">Comunidad Capitán Beto</span>
+        <h3 id="customerModalTitle" data-i18n="customer.title">Mi cuenta</h3>
+        <p data-i18n="customer.lead">Registrate para recibir promos exclusivas, descuentos de cumpleaños y novedades del bar. Solo te escribimos si dijiste que sí.</p>
+      </div>
+
+      <div class="customer-tabs">
+        <button class="customer-tab is-active" data-customer-tab="signup" type="button" data-i18n="customer.tabSignup">Registrarme</button>
+        <button class="customer-tab" data-customer-tab="signin" type="button" data-i18n="customer.tabSignin">Ya tengo cuenta</button>
+      </div>
+
+      <!-- Signup form -->
+      <form id="customerSignupForm" class="customer-form is-active" data-customer-panel="signup" novalidate>
+        <div class="reserve-row">
+          <label class="field">
+            <small data-i18n="customer.f.name">Nombre</small>
+            <input name="cName" type="text" required maxlength="40" placeholder="Marina" />
+          </label>
+          <label class="field">
+            <small data-i18n="customer.f.phone">Teléfono</small>
+            <input name="cPhone" type="tel" maxlength="20" placeholder="+34 ..." />
+          </label>
+        </div>
+        <label class="field">
+          <small data-i18n="customer.f.email">Email</small>
+          <input name="cEmail" type="email" required placeholder="tu@email.com" />
+        </label>
+        <label class="field">
+          <small data-i18n="customer.f.birthday">Cumpleaños <em>(opcional · descuento gratis)</em></small>
+          <input name="cBirthday" type="date" />
+        </label>
+        <fieldset class="chip-group">
+          <legend data-i18n="customer.f.prefs">¿Qué te gusta?</legend>
+          <label class="chip-radio"><input type="checkbox" name="prefs" value="vinos" /><span>🍷 Vinos</span></label>
+          <label class="chip-radio"><input type="checkbox" name="prefs" value="cocteles" /><span>🍸 Cócteles</span></label>
+          <label class="chip-radio"><input type="checkbox" name="prefs" value="empanadas" /><span>🥟 Empanadas</span></label>
+          <label class="chip-radio"><input type="checkbox" name="prefs" value="eventos" /><span>🎤 Eventos</span></label>
+        </fieldset>
+
+        <label class="customer-check">
+          <input type="checkbox" name="optEmail" />
+          <span data-i18n="customer.optEmail">Quiero recibir promos y novedades por email.</span>
+        </label>
+        <label class="customer-check">
+          <input type="checkbox" name="optWhatsapp" />
+          <span data-i18n="customer.optWa">Quiero recibir avisos por WhatsApp (cumpleaños, eventos especiales).</span>
+        </label>
+        <label class="customer-check">
+          <input type="checkbox" name="consent" required />
+          <span data-i18n="customer.consent">He leído y acepto la <button class="cookie-banner__link" type="button" data-open-legal="privacy">Política de Privacidad</button> y los <button class="cookie-banner__link" type="button" data-open-legal="terms">Términos</button>. Mis datos los guardará Capitán Beto solo para los fines indicados.</span>
+        </label>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-customer-close data-i18n="customer.cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary" data-i18n="customer.create">Crear cuenta</button>
+        </div>
+      </form>
+
+      <!-- Signin form -->
+      <form id="customerSigninForm" class="customer-form" data-customer-panel="signin" novalidate>
+        <label class="field">
+          <small data-i18n="customer.f.email">Email</small>
+          <input name="cEmail" type="email" required placeholder="tu@email.com" />
+        </label>
+        <p style="font-size:13px;color:var(--ink-mute);margin:0 0 14px">
+          <span data-i18n="customer.signinHint">Te identificamos por email (sin contraseña). Tu info se sincroniza con el navegador.</span>
+        </p>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-customer-close data-i18n="customer.cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary" data-i18n="customer.signin">Entrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Customer pill (visible cuando hay customer logueado) -->
+  <div id="customerPill" class="customer-pill" hidden>
+    <span class="customer-pill__icon">👤</span>
+    <div>
+      <strong id="customerPillName"></strong>
+      <small data-i18n="customer.pill">Mi cuenta</small>
+    </div>
+    <button type="button" id="customerLogoutBtn" aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
+  </div>
+
+  <!-- User pill (visible cuando logueado) -->
+  <div id="userPill" class="user-pill" hidden>
+    <img id="userPillAvatar" alt="" />
+    <div>
+      <strong id="userPillName"></strong>
+      <small id="userPillEmail"></small>
+    </div>
+    <button type="button" id="logoutBtn" aria-label="Cerrar sesión" title="Cerrar sesión">⎋</button>
+  </div>
+
+  <script src="script.js?v=41" defer></script>
+</body>
+</html>

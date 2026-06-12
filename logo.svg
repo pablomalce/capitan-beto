@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Capitán Beto · Gastro Taberna">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7EFDC"/>
+      <stop offset="55%" stop-color="#EBCBA0"/>
+      <stop offset="100%" stop-color="#C9612F"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d6a3f"/>
+      <stop offset="100%" stop-color="#1F4A2E"/>
+    </linearGradient>
+    <path id="topArc" d="M 30 100 A 70 70 0 0 1 170 100" fill="none"/>
+    <path id="bottomArc" d="M 38 110 A 62 62 0 0 0 162 110" fill="none"/>
+  </defs>
+
+  <!-- Outer wood ring -->
+  <circle cx="100" cy="100" r="96" fill="#F7EFDC"/>
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#6E4A2C" stroke-width="4"/>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#A1764B" stroke-width="1.2"/>
+
+  <!-- Inner green band (top + bottom) -->
+  <circle cx="100" cy="100" r="84" fill="#F7EFDC"/>
+  <circle cx="100" cy="100" r="84" fill="none" stroke="#1F4A2E" stroke-width="2.5"/>
+
+  <!-- Skyline scene clipped to inner circle -->
+  <clipPath id="innerClip">
+    <circle cx="100" cy="100" r="82"/>
+  </clipPath>
+  <g clip-path="url(#innerClip)">
+    <!-- Sky gradient band -->
+    <rect x="0" y="80" width="200" height="60" fill="url(#sky)"/>
+    <!-- Sun -->
+    <circle cx="100" cy="128" r="14" fill="#C9612F" opacity="0.85"/>
+    <!-- Distant city silhouette -->
+    <path d="M 18 130 L 28 124 L 36 128 L 44 120 L 54 126 L 60 116 L 70 122 L 80 118 L 90 124 L 100 116 L 110 124 L 122 118 L 134 124 L 146 116 L 158 122 L 170 118 L 182 126 L 182 140 L 18 140 Z"
+          fill="#143620" opacity="0.55"/>
+    <!-- Obelisco -->
+    <path d="M 98 78 L 100 70 L 102 78 L 102 132 L 98 132 Z" fill="#143620"/>
+    <rect x="96" y="132" width="8" height="4" fill="#143620"/>
+    <!-- Ground -->
+    <rect x="0" y="135" width="200" height="50" fill="url(#ground)"/>
+    <!-- Water highlight -->
+    <ellipse cx="100" cy="138" rx="60" ry="2.5" fill="#F7EFDC" opacity="0.32"/>
+  </g>
+
+  <!-- Top arched text: CAPITÁN BETO -->
+  <text font-family="'Fraunces', Georgia, serif" font-weight="800" font-size="20" letter-spacing="3" fill="#1F4A2E">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">CAPITÁN BETO</textPath>
+  </text>
+
+  <!-- Decorative dots beside subtitle -->
+  <circle cx="68" cy="100" r="1.6" fill="#1F4A2E"/>
+  <circle cx="132" cy="100" r="1.6" fill="#1F4A2E"/>
+
+  <!-- Subtitle below: GASTRO TABERNA -->
+  <text x="100" y="103" font-family="'Fraunces', Georgia, serif" font-weight="600" font-size="7.5" letter-spacing="3.5" fill="#1F4A2E" text-anchor="middle">GASTRO TABERNA</text>
+
+  <!-- Bottom ribbon banner -->
+  <g>
+    <path d="M 36 162 Q 100 178 164 162 L 160 174 Q 100 188 40 174 Z" fill="#6E4A2C"/>
+    <path d="M 36 162 Q 100 178 164 162 L 160 174 Q 100 188 40 174 Z" fill="none" stroke="#A1764B" stroke-width="0.8"/>
+    <text x="100" y="173" font-family="'Inter', sans-serif" font-weight="700" font-size="6.5" letter-spacing="1.6" fill="#F7EFDC" text-anchor="middle">TAPAS CASTIZAS · SABOR ARGENTINO</text>
+  </g>
+
+  <!-- Crossed bread sticks / grissini at bottom -->
+  <g transform="translate(100 184) rotate(0)">
+    <line x1="-14" y1="-3" x2="14" y2="3" stroke="#A1764B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-14" y1="3" x2="14" y2="-3" stroke="#A1764B" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

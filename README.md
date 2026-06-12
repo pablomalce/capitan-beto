@@ -2,7 +2,7 @@
 
 Sitio web oficial de **Capitán Beto** — gastro taberna en Madrid · tapas castizas con sabor argentino · atendido por sus dueños Matías y Natalia ("la Polaca").
 
-🌐 **Producción**: https://capitan-beto.es
+🌐 **Producción**: https://capitan-beto.com
 📍 **Madrid, España**
 🐾 **100% Pet-Friendly · Todos son bienvenidos**
 

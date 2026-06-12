@@ -4,7 +4,7 @@ Disallow: /videos/
 Disallow: /*.json$
 
 # Sitemaps
-Sitemap: https://capitan-beto.es/sitemap.xml
+Sitemap: https://capitan-beto.com/sitemap.xml
 
 # Crawl politeness
 Crawl-delay: 1

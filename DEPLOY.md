@@ -32,23 +32,42 @@ npx vercel link            # vincula el repo a un proyecto Vercel (te pregunta o
 npx vercel --prod          # deploy a producción
 ```
 
-## 🌐 Dominio capitan-beto.es
+## 🌐 Dominio capitan-beto.com (comprado en Hostinger)
 
-En Vercel → tu proyecto → **Settings → Domains**:
+### Paso 1 · En Vercel
+**Settings → Domains → Add Domain** → `capitan-beto.com`
+Vercel te muestra los records DNS que necesita. Apuntalo a:
+- **A record** `@` → `76.76.21.21`
+- **CNAME** `www` → `cname.vercel-dns.com`
 
-1. Click **Add Domain** → escribí `capitan-beto.es`.
-2. Vercel te muestra los DNS records que necesitás:
-   - **A record** apuntando a `76.76.21.21`, o
-   - **CNAME** apuntando a `cname.vercel-dns.com`
-3. Andá a tu **registrador del dominio** (donde compraste capitan-beto.es) y:
-   - Si tu registrador soporta CNAME para apex (Cloudflare, Vercel DNS): mejor CNAME.
-   - Si no (la mayoría de registradores tradicionales): usá el A record.
-4. Esperá 5-15 minutos a que el DNS propague.
-5. Vercel auto-provisiona SSL (Let's Encrypt). Vas a ver el ✓ verde.
+### Paso 2 · En Hostinger (DNS Zone Editor)
+1. Login en https://hpanel.hostinger.com
+2. Andá a **Domains → capitan-beto.com → DNS Zone Editor** (o "DNS / Nameservers").
+3. **Borrá** cualquier A record existente para `@` y CNAME para `www` que apunten a otro lugar.
+4. **Agregá estos 2 records**:
+
+| Tipo | Nombre | Valor | TTL |
+|------|--------|-------|-----|
+| `A`     | `@`    | `76.76.21.21`              | 14400 (o el default) |
+| `CNAME` | `www`  | `cname.vercel-dns.com`     | 14400 |
+
+5. Save changes.
+6. Volvé a Vercel → la verificación del dominio tarda 5–30 minutos.
+7. Vercel auto-provisiona SSL (Let's Encrypt). Vas a ver el ✓ verde cuando esté listo.
+
+### Verificar propagación DNS
+```bash
+dig capitan-beto.com +short        # debería devolver 76.76.21.21
+dig www.capitan-beto.com +short    # debería devolver el CNAME de Vercel
+```
+
+### Redirect www → apex (recomendado)
+En Vercel → Settings → Domains, marcá `capitan-beto.com` como **principal**.
+El `www.capitan-beto.com` redirecciona automáticamente.
 
 ## 🔧 Post-deploy · configuración del dashboard
 
-Después del primer deploy, andá a https://capitan-beto.es/?view=dashboard y:
+Después del primer deploy, andá a https://capitan-beto.com/?view=dashboard y:
 
 ### 1. Login admin (primera vez)
 - Email: `capitanbetomadrid@gmail.com`
@@ -77,7 +96,7 @@ Si querés OAuth Google en lugar del email/password:
 |---|---|
 | **Repo** | https://github.com/pablomalce/capitan-beto |
 | **Supabase** | https://supabase.com/dashboard/project/ghuabxeqqmbvqzdrizrr |
-| **Producción** | https://capitan-beto.es (después del DNS) |
+| **Producción** | https://capitan-beto.com (después del DNS) |
 | **Preview Vercel** | https://capitan-beto-pablomalce.vercel.app (después del primer deploy) |
 
 ## 🔥 Continuous deploy
@@ -87,6 +106,6 @@ No necesitás CLI para deploys futuros.
 
 ## ⚠️ Si algo falla
 
-- **DNS no resuelve**: esperá 30 minutos. Si seguís sin ver el ✓ en Vercel, verificá los records con `dig capitan-beto.es`.
+- **DNS no resuelve**: esperá 30 minutos. Si seguís sin ver el ✓ en Vercel, verificá los records con `dig capitan-beto.com`.
 - **Service Worker viejo**: en DevTools → Application → Service Workers → Unregister.
 - **Backend offline**: probar `curl https://ghuabxeqqmbvqzdrizrr.supabase.co/rest/v1/dishes -H "apikey: <ANON>"`.

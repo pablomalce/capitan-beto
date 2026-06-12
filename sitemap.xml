@@ -4,50 +4,50 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <url>
-    <loc>https://capitan-beto.es/</loc>
+    <loc>https://capitan-beto.com/</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://capitan-beto.es/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitan-beto.es/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://capitan-beto.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitan-beto.com/en/"/>
     <image:image>
-      <image:loc>https://capitan-beto.es/momentos/puerta.jpg</image:loc>
+      <image:loc>https://capitan-beto.com/momentos/puerta.jpg</image:loc>
       <image:title>Capitán Beto · Gastro Taberna en Madrid</image:title>
       <image:caption>Fachada de la taberna con su perro en la puerta</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://capitan-beto.es/crew/beto.jpg</image:loc>
+      <image:loc>https://capitan-beto.com/crew/beto.jpg</image:loc>
       <image:title>Matías y la Polaca · Los dueños</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://capitan-beto.es/momentos/vinos.jpg</image:loc>
+      <image:loc>https://capitan-beto.com/momentos/vinos.jpg</image:loc>
       <image:title>Vinos y cerveza de grifo</image:title>
     </image:image>
   </url>
 
   <url>
-    <loc>https://capitan-beto.es/#menu</loc>
+    <loc>https://capitan-beto.com/#menu</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://capitan-beto.es/#crew</loc>
+    <loc>https://capitan-beto.com/#crew</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://capitan-beto.es/#momentos</loc>
+    <loc>https://capitan-beto.com/#momentos</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://capitan-beto.es/#contact</loc>
+    <loc>https://capitan-beto.com/#contact</loc>
     <lastmod>2026-06-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

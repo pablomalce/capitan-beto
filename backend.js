@@ -212,10 +212,18 @@
   }
 
   // ============ PET PHOTOS ============
-  async function uploadPetPhoto({ dataURL, petName, ownerName, breed }) {
-    const blob = dataURLToBlob(dataURL);
-    const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
-    const file = new File([blob], `pet.${ext}`, { type: blob.type });
+  // Acepta opcionalmente el File ORIGINAL del usuario (mejor calidad +
+  // preserva HEIC para Safari). Si no se pasa, cae al dataURL del preview.
+  async function uploadPetPhoto({ dataURL, file: originalFile, petName, ownerName, breed }) {
+    let file, ext;
+    if (originalFile instanceof File || originalFile instanceof Blob) {
+      file = originalFile;
+      ext = (file.type.split("/")[1] || (file.name && file.name.split(".").pop()) || "jpg").toLowerCase().replace("jpeg", "jpg");
+    } else {
+      const blob = dataURLToBlob(dataURL);
+      ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+      file = new File([blob], `pet.${ext}`, { type: blob.type });
+    }
     const up = await uploadToBucket("pet-photos", file, ext);
     const row = {
       pet_name: petName || "Peludo",
@@ -250,10 +258,16 @@
   }
 
   // ============ BPIC PHOTOS ============
-  async function uploadBpicPhoto({ dataURL, guestName, igHandle, caption }) {
-    const blob = dataURLToBlob(dataURL);
-    const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
-    const file = new File([blob], `bpic.${ext}`, { type: blob.type });
+  async function uploadBpicPhoto({ dataURL, file: originalFile, guestName, igHandle, caption }) {
+    let file, ext;
+    if (originalFile instanceof File || originalFile instanceof Blob) {
+      file = originalFile;
+      ext = (file.type.split("/")[1] || (file.name && file.name.split(".").pop()) || "jpg").toLowerCase().replace("jpeg", "jpg");
+    } else {
+      const blob = dataURLToBlob(dataURL);
+      ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+      file = new File([blob], `bpic.${ext}`, { type: blob.type });
+    }
     const up = await uploadToBucket("bpic-photos", file, ext);
     const row = {
       guest_name: guestName || "Anónimo",

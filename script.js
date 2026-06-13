@@ -4073,6 +4073,7 @@
 
   let petStore = [];
   let petPendingDataURL = null;
+  let petPendingFile = null;  // File ORIGINAL para subir al storage
 
   function loadPetGallery() {
     // 1. Hidratamos rápido desde localStorage (instant render)
@@ -4348,6 +4349,7 @@
     const prev = document.getElementById("petPreview");
     if (prev) { prev.hidden = true; prev.src = ""; }
     petPendingDataURL = null;
+    petPendingFile = null;
   }
 
   function handlePetFile(file) {
@@ -4360,8 +4362,10 @@
       toast(state.lang === "es" ? "Máximo 25 MB" : "Max 25 MB");
       return;
     }
+    // Guardamos el File ORIGINAL para subirlo intacto al storage.
+    petPendingFile = file;
     readImageToDataURL(file).then(({ dataURL }) => {
-      petPendingDataURL = dataURL;
+      petPendingDataURL = dataURL;  // sólo para preview
       const prev = document.getElementById("petPreview");
       if (prev) { prev.src = petPendingDataURL; prev.hidden = false; }
     }).catch(() => {
@@ -4415,9 +4419,14 @@
           submitBtn.textContent = state.lang === "es" ? "Subiendo…" : "Uploading…";
         }
 
-        // 1. Intentamos backend Supabase
+        // 1. Intentamos backend Supabase · pasamos el FILE original
+        //    para que se suba intacto al storage (no el preview comprimido).
         const uploadPromise = (window.cbBackend && window.cbBackend.uploadPetPhoto)
-          ? window.cbBackend.uploadPetPhoto({ dataURL: petPendingDataURL, petName, ownerName, breed })
+          ? window.cbBackend.uploadPetPhoto({
+              dataURL: petPendingDataURL,
+              file: petPendingFile,   // ⭐ original
+              petName, ownerName, breed
+            })
           : Promise.reject(new Error("no_backend"));
 
         uploadPromise.then((row) => {

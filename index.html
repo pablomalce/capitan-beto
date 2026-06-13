@@ -86,7 +86,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=51" />
+  <link rel="stylesheet" href="styles.css?v=52" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1966,26 +1966,18 @@
   <!-- ============== Toast ============== -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- ============ LOGIN OVERLAY (Google Sign-In) ============ -->
+  <!-- ============ LOGIN OVERLAY · magic link ============ -->
   <div id="loginOverlay" class="login-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="login-overlay__backdrop" id="loginBackdrop"></div>
     <div class="login-overlay__panel">
+      <button class="login-overlay__x" type="button" id="loginCloseX" aria-label="Cerrar">×</button>
       <img src="logo.png" alt="Capitán Beto" class="login-overlay__logo" />
-      <span class="eyebrow login-overlay__eyebrow">Acceso restringido</span>
+      <span class="eyebrow login-overlay__eyebrow" data-i18n="login.eyebrow">Acceso admin</span>
       <h2 id="loginTitle" data-i18n="login.title">Backoffice de Capitán Beto</h2>
-      <p data-i18n="login.lead">Solo los dueños pueden editar el contenido. Identificate con tu cuenta de Google autorizada.</p>
 
       <div id="googleSignInBtn" class="login-overlay__gbtn"></div>
 
-      <div class="login-overlay__manual">
-        <small data-i18n="login.fallback">¿Problemas con Google? Configurá tu Client ID en el código (ver SECURITY.md).</small>
-      </div>
-
-      <div class="login-overlay__sec">
-        <strong>⚠️ Aviso de seguridad</strong>
-        <span data-i18n="login.warn">Este es un sitio estático sin backend. La autenticación verifica tu email con Google, pero el "guard" del dashboard puede ser bypassado por usuarios técnicos. No se almacenan datos sensibles del bar fuera de tu navegador.</span>
-      </div>
-
-      <button class="login-overlay__close" type="button" id="loginCloseBtn" aria-label="Cerrar">
+      <button class="login-overlay__close" type="button" id="loginCloseBtn" aria-label="Volver">
         ← <span data-i18n="login.back">Volver al sitio público</span>
       </button>
     </div>
@@ -2165,6 +2157,6 @@
   </div>
 
   <script src="backend.js?v=3" defer></script>
-  <script src="script.js?v=51" defer></script>
+  <script src="script.js?v=52" defer></script>
 </body>
 </html>

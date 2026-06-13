@@ -5956,3 +5956,38 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
   .tour-title { font-size: 20px; }
   .tour-body { font-size: 13.5px; }
 }
+
+/* === Login overlay UPDATES: backdrop clickable + × close arriba === */
+.login-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 0;
+}
+.login-overlay__panel {
+  position: relative;
+  z-index: 1;
+}
+.login-overlay__x {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 30, 22, 0.08);
+  border: 0;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 2;
+}
+.login-overlay__x:hover {
+  background: rgba(15, 30, 22, 0.18);
+  transform: rotate(90deg);
+}

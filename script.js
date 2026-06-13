@@ -2196,9 +2196,22 @@
           sentDiv.hidden = false;
         } catch (err) {
           console.warn("magic link failed", err);
-          toast(state.lang === "es"
-            ? "Error enviando el link. Verificá el email."
-            : "Error sending the link. Check the email.");
+          const msg = (err && err.message) || "";
+          let userMsg;
+          if (/rate limit|over_email/i.test(msg)) {
+            userMsg = state.lang === "es"
+              ? "⏱ Demasiados intentos. Esperá 1 hora o configurá SMTP propio en Supabase."
+              : "⏱ Too many attempts. Wait 1 hour or set up custom SMTP in Supabase.";
+          } else if (/not.?found|user_not_found|create_user/i.test(msg)) {
+            userMsg = state.lang === "es"
+              ? "Ese email no está en la lista de admins."
+              : "That email is not in the admin allowlist.";
+          } else {
+            userMsg = state.lang === "es"
+              ? "Error enviando el link. Verificá el email."
+              : "Error sending the link. Check the email.";
+          }
+          toast(userMsg);
         } finally {
           btn.disabled = false;
           btn.textContent = originalLabel;
@@ -2294,9 +2307,18 @@
 
   function bindAuth() {
     document.getElementById("logoutBtn")?.addEventListener("click", logout);
-    document.getElementById("loginCloseBtn")?.addEventListener("click", () => {
+    const closeAndReturn = () => {
       closeLoginOverlay();
       setView("public");
+    };
+    document.getElementById("loginCloseBtn")?.addEventListener("click", closeAndReturn);
+    document.getElementById("loginCloseX")?.addEventListener("click", closeAndReturn);
+    document.getElementById("loginBackdrop")?.addEventListener("click", closeAndReturn);
+    // ESC cierra el modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const ov = document.getElementById("loginOverlay");
+      if (ov && ov.classList.contains("is-open")) closeAndReturn();
     });
   }
 

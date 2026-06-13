@@ -72,6 +72,56 @@
     saveSession(data);
     return data;
   }
+
+  /**
+   * Envía un magic link al email del admin.
+   * El link redirige a /?view=dashboard&from=magic con el token,
+   * que `handleMagicLinkCallback()` consume al cargar la página.
+   */
+  async function signInWithMagicLink(email) {
+    const redirectTo = `${location.origin}/?view=dashboard&from=magic`;
+    const res = await fetch(`${URL}/auth/v1/otp`, {
+      method: "POST",
+      headers: { "apikey": ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        create_user: false, // sólo admins pre-creados
+        options: { email_redirect_to: redirectTo }
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error_description || err.msg || `Magic link failed (${res.status})`);
+    }
+    return await res.json();
+  }
+
+  /**
+   * Procesa el callback del magic link (hash con access_token, refresh_token, etc.)
+   * Devuelve true si se autenticó, false si no había token.
+   */
+  async function handleMagicLinkCallback() {
+    const hash = location.hash || "";
+    if (!hash.includes("access_token") && !hash.includes("error")) return false;
+    const params = new URLSearchParams(hash.replace(/^#/, ""));
+    const access_token = params.get("access_token");
+    const refresh_token = params.get("refresh_token");
+    const expires_in = parseInt(params.get("expires_in") || "0", 10);
+    const type = params.get("type");
+    if (!access_token) return false;
+    const session = {
+      access_token,
+      refresh_token: refresh_token || "",
+      expires_in,
+      expires_at: Math.floor(Date.now() / 1000) + expires_in,
+      token_type: "bearer",
+      type
+    };
+    saveSession(session);
+    // Limpiar el hash de la URL para que no quede el token visible
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (_) {}
+    return true;
+  }
   async function refreshSession() {
     const s = getSession();
     if (!s || !s.refresh_token) return null;
@@ -393,7 +443,8 @@
     // health
     ping,
     // auth
-    signInWithPassword, signOut, getSession, currentUser, refreshSession, changePassword,
+    signInWithPassword, signInWithMagicLink, handleMagicLinkCallback,
+    signOut, getSession, currentUser, refreshSession, changePassword,
     // pet
     uploadPetPhoto, listPetPhotos, listAllPetPhotos,
     approvePetPhoto, rejectPetPhoto, deletePetPhoto,

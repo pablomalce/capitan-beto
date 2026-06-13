@@ -5765,3 +5765,194 @@ body[data-view="dashboard"] #reserveModal { display: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============ MAGIC LINK LOGIN UI ============ */
+.supa-login {
+  text-align: center;
+  padding: 20px 8px 8px;
+}
+.supa-login__icon {
+  font-size: 48px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 4px 12px rgba(197, 160, 80, 0.35));
+}
+.supa-login__title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.supa-login__lead {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 22px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.supa-login__form .field {
+  text-align: left;
+  margin-bottom: 16px;
+}
+.supa-login__note {
+  display: block;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: center;
+  line-height: 1.5;
+}
+.supa-login--sent .supa-login__icon {
+  animation: floaty 3s var(--ease-soft) infinite;
+}
+
+/* ============ DASHBOARD ONBOARDING TOUR ============ */
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 30, 22, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tourFadeIn 0.35s var(--ease-soft);
+}
+@keyframes tourFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.tour-spot {
+  position: absolute;
+  border-radius: 14px;
+  border: 2px solid var(--brass);
+  background: transparent;
+  box-shadow:
+    0 0 0 4px rgba(197, 160, 80, 0.25),
+    0 0 0 9999px rgba(15, 30, 22, 0.65),
+    0 8px 28px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  transition: all 0.45s var(--ease-soft);
+  display: none;
+}
+.tour-card {
+  position: relative;
+  width: min(520px, 92vw);
+  background: linear-gradient(180deg, #fff 0%, #fbf6e8 100%);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px 22px;
+  box-shadow: 0 32px 80px rgba(15, 30, 22, 0.55), 0 0 0 1px rgba(197, 160, 80, 0.25);
+  text-align: center;
+  z-index: 1;
+  border-top: 4px solid var(--brass);
+  animation: tourCardPop 0.45s var(--ease-soft);
+}
+@keyframes tourCardPop {
+  from { transform: translateY(20px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.tour-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15, 30, 22, 0.08);
+  border: 0;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  transition: background 0.2s;
+}
+.tour-close:hover { background: rgba(15, 30, 22, 0.18); }
+.tour-icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 6px 14px rgba(197, 160, 80, 0.4));
+}
+.tour-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.tour-body {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto 24px;
+}
+.tour-body strong { color: var(--brand-green-deep); font-weight: 600; }
+.tour-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.tour-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.tour-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(15, 30, 22, 0.18);
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s;
+}
+.tour-dot.is-active {
+  background: var(--brass);
+  transform: scale(1.4);
+  box-shadow: 0 0 0 3px rgba(197, 160, 80, 0.25);
+}
+.tour-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Botón flotante "Iniciar tour" en el dashboard */
+.tour-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--brand-green);
+  color: var(--bg-cream);
+  border: 0;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-display);
+  box-shadow: 0 12px 28px rgba(15, 30, 22, 0.32);
+  display: none;
+  z-index: 999;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.tour-trigger:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(15, 30, 22, 0.45);
+}
+body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-flex; align-items: center; gap: 8px; }
+
+@media (max-width: 540px) {
+  .tour-card { padding: 24px 18px 18px; }
+  .tour-icon { font-size: 44px; }
+  .tour-title { font-size: 20px; }
+  .tour-body { font-size: 13.5px; }
+}

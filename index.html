@@ -86,7 +86,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=49" />
+  <link rel="stylesheet" href="styles.css?v=50" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -945,6 +945,11 @@
   </main>
 
   <!-- ============================ DASHBOARD ============================ -->
+  <!-- Botón flotante "Tour" — visible sólo cuando authed + en dashboard -->
+  <button type="button" class="tour-trigger" id="tourTrigger" onclick="cbStartTour && cbStartTour()" aria-label="Ver tour del dashboard">
+    ✨ <span data-i18n="dash.tour">Tour del dashboard</span>
+  </button>
+
   <section id="dashboard" class="dashboard">
     <aside class="sidebar">
       <div class="sidebar__brand">
@@ -2160,6 +2165,6 @@
   </div>
 
   <script src="backend.js?v=3" defer></script>
-  <script src="script.js?v=49" defer></script>
+  <script src="script.js?v=50" defer></script>
 </body>
 </html>

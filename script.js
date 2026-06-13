@@ -1375,10 +1375,51 @@
     renderInventory();
     renderHoursForm();
     bindEvents();
+    // Magic link callback · si el hash de la URL trae access_token,
+    // guardamos la sesión y redirigimos al dashboard.
+    handleMagicLinkArrival();
+    // Si la URL pide ?view=dashboard, intentamos abrirlo (con auth guard).
+    if (new URLSearchParams(location.search).get("view") === "dashboard") {
+      setTimeout(() => setView("dashboard"), 100);
+    }
     // Position the tab indicator after layout settles
     requestAnimationFrame(() => positionTabIndicator());
     // Trigger hero entrance after frame
     requestAnimationFrame(() => document.body.classList.add("is-loaded"));
+  }
+
+  /**
+   * Si llegamos con un magic link (hash con access_token), guardamos sesión,
+   * hidratamos currentUser desde el JWT, abrimos dashboard y mostramos tour.
+   */
+  function handleMagicLinkArrival() {
+    if (!window.cbBackend || !window.cbBackend.handleMagicLinkCallback) return;
+    window.cbBackend.handleMagicLinkCallback().then((ok) => {
+      if (!ok) return;
+      const u = window.cbBackend.currentUser();
+      if (!u || !ADMIN_EMAILS.includes(u.email)) {
+        toast("Email no autorizado como admin");
+        return;
+      }
+      currentUser = {
+        email: u.email,
+        name: u.email.split("@")[0],
+        picture: "",
+        exp: Date.now() + 12 * 60 * 60 * 1000
+      };
+      persistAuth(currentUser);
+      updateAuthUI();
+      closeLoginOverlay();
+      setView("dashboard");
+      toast(state.lang === "es"
+        ? `¡Hola ${currentUser.name}! Bienvenido al dashboard.`
+        : `Hi ${currentUser.name}! Welcome to the dashboard.`);
+      // Onboarding tour: solo la primera vez
+      setTimeout(() => {
+        const seen = localStorage.getItem("cb.tour.seen");
+        if (!seen) startDashboardTour();
+      }, 800);
+    });
   }
 
   /* =====================================================
@@ -2003,8 +2044,9 @@
 
   // Allowlist de emails autorizados como admin
   const ADMIN_EMAILS = [
+    "info@capitan-beto.com",          // ⭐ email profesional principal
     "capitanbetomadrid@gmail.com",
-    "malczewskipablo@gmail.com" // dev/admin
+    "malczewskipablo@gmail.com"       // dev/admin
   ];
 
   let currentUser = null;
@@ -2087,63 +2129,86 @@
       return setTimeout(initGoogleSignIn, 500);
     }
     if (!GOOGLE_CLIENT_ID) {
-      // Sin Google OAuth → usamos Supabase Auth con email + password (REAL)
+      // Magic link auth · sin contraseña. El admin recibe un email,
+      // hace click, y entra directo al dashboard.
       slot.innerHTML = `
-        <form id="supaLoginForm" class="supa-login">
-          <label class="field">
-            <small>Email del admin</small>
-            <input type="email" name="email" required placeholder="capitanbetomadrid@gmail.com" autocomplete="username" />
-          </label>
-          <label class="field">
-            <small>Contraseña</small>
-            <input type="password" name="password" required autocomplete="current-password" />
-          </label>
-          <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center">
-            🔐 Entrar
-          </button>
-          <small class="supa-login__note" style="display:block;margin-top:10px;font-size:11px;color:var(--ink-mute);text-align:center">
-            Sólo los emails autorizados como admin pueden entrar.<br/>
-            ¿Primera vez? Pedile a Pablo la contraseña temporal y cámbiala en el dashboard.
+        <div id="magicLinkUI" class="supa-login">
+          <div class="supa-login__icon" aria-hidden="true">✨</div>
+          <h3 class="supa-login__title">${state.lang === "es" ? "Entrar al dashboard" : "Enter the dashboard"}</h3>
+          <p class="supa-login__lead">${state.lang === "es"
+            ? "Te enviamos un link mágico a tu email. Hacé click y entrás directo, sin contraseña."
+            : "We send a magic link to your inbox. Click it and you're in — no password needed."}</p>
+          <form id="magicLinkForm" class="supa-login__form">
+            <label class="field">
+              <small>${state.lang === "es" ? "Tu email de admin" : "Your admin email"}</small>
+              <input type="email" name="email" required placeholder="info@capitan-beto.com"
+                     autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center">
+              ✉️ ${state.lang === "es" ? "Enviarme el link mágico" : "Send me the magic link"}
+            </button>
+          </form>
+          <small class="supa-login__note">
+            ${state.lang === "es"
+              ? "Sólo los emails autorizados como admin reciben el link."
+              : "Only authorized admin emails receive the link."}
           </small>
-        </form>`;
-      const form = slot.querySelector("#supaLoginForm");
+        </div>
+        <div id="magicLinkSent" class="supa-login supa-login--sent" hidden>
+          <div class="supa-login__icon" aria-hidden="true">📬</div>
+          <h3 class="supa-login__title">${state.lang === "es" ? "¡Revisá tu email!" : "Check your inbox!"}</h3>
+          <p class="supa-login__lead" id="magicLinkSentMsg"></p>
+          <small class="supa-login__note">
+            ${state.lang === "es"
+              ? "Si no ves el email en 1-2 min, revisá la carpeta de Spam."
+              : "If you don't see the email in 1-2 min, check your Spam folder."}
+          </small>
+          <button type="button" class="btn btn--ghost" id="magicLinkBack" style="margin-top:14px">
+            ${state.lang === "es" ? "← Volver" : "← Back"}
+          </button>
+        </div>`;
+      const form = slot.querySelector("#magicLinkForm");
+      const sentDiv = slot.querySelector("#magicLinkSent");
+      const inputUI = slot.querySelector("#magicLinkUI");
+      const sentMsg = slot.querySelector("#magicLinkSentMsg");
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const btn = form.querySelector("button[type='submit']");
         const email = form.email.value.trim().toLowerCase();
-        const password = form.password.value;
         if (!ADMIN_EMAILS.includes(email)) {
-          toast("Email no autorizado como admin");
+          toast(state.lang === "es" ? "Email no autorizado como admin" : "Email not authorized");
           return;
         }
-        if (!window.cbBackend || !window.cbBackend.signInWithPassword) {
+        if (!window.cbBackend || !window.cbBackend.signInWithMagicLink) {
           toast("Backend no disponible");
           return;
         }
         const originalLabel = btn.textContent;
         btn.disabled = true;
-        btn.textContent = "Entrando…";
+        btn.textContent = state.lang === "es" ? "Enviando…" : "Sending…";
         try {
-          const data = await window.cbBackend.signInWithPassword(email, password);
-          currentUser = {
-            email,
-            name: (data.user && data.user.user_metadata && data.user.user_metadata.display_name) || email,
-            picture: "",
-            exp: data.expires_at ? data.expires_at * 1000 : (Date.now() + 12 * 60 * 60 * 1000)
-          };
-          persistAuth(currentUser);
-          updateAuthUI();
-          closeLoginOverlay();
-          toast(state.lang === "es" ? `Bienvenido, ${currentUser.name}` : `Welcome, ${currentUser.name}`);
+          await window.cbBackend.signInWithMagicLink(email);
+          sentMsg.textContent = state.lang === "es"
+            ? `Te enviamos un link a ${email}. Hacé click ahí y entrás al dashboard automáticamente.`
+            : `We sent a link to ${email}. Click it and you'll land on the dashboard.`;
+          inputUI.hidden = true;
+          sentDiv.hidden = false;
         } catch (err) {
-          console.warn("login failed", err);
+          console.warn("magic link failed", err);
           toast(state.lang === "es"
-            ? "Credenciales incorrectas o backend offline."
-            : "Wrong credentials or backend offline.");
+            ? "Error enviando el link. Verificá el email."
+            : "Error sending the link. Check the email.");
         } finally {
           btn.disabled = false;
           btn.textContent = originalLabel;
         }
+      });
+
+      sentDiv.querySelector("#magicLinkBack")?.addEventListener("click", () => {
+        sentDiv.hidden = true;
+        inputUI.hidden = false;
+        form.email.value = "";
       });
       return;
     }
@@ -5041,6 +5106,173 @@
         : `${id} config saved ✓`);
     });
   }
+
+  // ====================================================================
+  // ============== DASHBOARD ONBOARDING TOUR ===========================
+  // ====================================================================
+  const TOUR_SLIDES = [
+    {
+      icon: "👋", title: { es: "Bienvenido al backoffice", en: "Welcome to the backoffice" },
+      body: { es: "Acá controlás <strong>todo</strong> de Capitán Beto: menú, fotos, reservas, clientes, diseño y pagos. Te muestro cada panel en 60 segundos.", en: "Here you control <strong>everything</strong> about Capitán Beto: menu, photos, reservations, customers, design and payments. Let me show you each panel in 60 seconds." },
+      target: ".sidebar__brand"
+    },
+    {
+      icon: "📋", title: { es: "Inventario · 96 platos reales", en: "Inventory · 96 real dishes" },
+      body: { es: "Editás precios, marcás stock, agregás nuevos. Cada cambio se aplica al instante en el sitio público.", en: "Edit prices, toggle stock, add new dishes. Every change applies instantly to the public site." },
+      target: '[data-dash-tab="inventory"]'
+    },
+    {
+      icon: "✏️", title: { es: "Contenido editable", en: "Editable content" },
+      body: { es: "Cambiás cualquier texto del sitio sin tocar código: hero, crew, footer. Hasta el menú lo editás con click directo en cada plato.", en: "Change any text on the site without touching code: hero, crew, footer. Even edit dishes with one click." },
+      target: '[data-dash-tab="content"]'
+    },
+    {
+      icon: "🖼️", title: { es: "Manager de imágenes", en: "Image manager" },
+      body: { es: "Drag-and-drop para reemplazar fotos del crew, momentos del bar, hero. Acepta JPG, PNG, HEIC del iPhone, WebP. Auto-compresión a 1400px.", en: "Drag-and-drop to replace crew photos, bar moments, hero. Accepts JPG, PNG, HEIC from iPhone, WebP. Auto-compressed to 1400px." },
+      target: '[data-dash-tab="images"]'
+    },
+    {
+      icon: "🗓️", title: { es: "Reservas en vivo", en: "Live reservations" },
+      body: { es: "Las reservas que hacen los clientes desde el sitio aparecen acá <strong>al instante</strong>, sincronizadas con Supabase. Cancelás o marcás cumplidas con un click.", en: "Customer reservations appear here <strong>instantly</strong>, synced with Supabase. Cancel or mark as completed with one click." },
+      target: '[data-dash-tab="reservations"]'
+    },
+    {
+      icon: "👤", title: { es: "Base de clientes (CRM)", en: "Customer base (CRM)" },
+      body: { es: "Cada lead se guarda en Supabase. Mandás email/WhatsApp masivo a los que opt-in. Es tu newsletter gratuita.", en: "Every lead is saved in Supabase. Send mass email/WhatsApp to opt-in customers. Your free newsletter." },
+      target: '[data-dash-tab="customers"]'
+    },
+    {
+      icon: "🐾", title: { es: "Peludos del Capitán", en: "Captain's furry friends" },
+      body: { es: "Las fotos de mascotas que suben tus clientes aparecen acá. Borrás las inapropiadas con un click. El resto se ve en la galería pública con su nota de agradecimiento.", en: "Pet photos uploaded by customers appear here. Delete inappropriate ones with one click. The rest show in the public gallery with their thank-you note." },
+      target: '[data-dash-tab="pets"]'
+    },
+    {
+      icon: "📸", title: { es: "Muro #BetosPic", en: "#BetosPic Wall" },
+      body: { es: "Comunidad de fotos del bar. Mismo flow de moderación que peludos.", en: "Bar photo community. Same moderation flow as pets." },
+      target: '[data-dash-tab="wall"]'
+    },
+    {
+      icon: "🔥", title: { es: "Promociones LIVE", en: "LIVE Promotions" },
+      body: { es: "Activás ofertas en tiempo real (happy hour, 2x1, etc.). Aparecen con un dot pulsante en la sección \"Pizarra del día\" del sitio.", en: "Activate real-time deals (happy hour, 2-for-1, etc.). They appear with a pulsing dot in the site's \"Today's slate\" section." },
+      target: '[data-dash-tab="promos"]'
+    },
+    {
+      icon: "🕒", title: { es: "Horarios y turnos", en: "Hours & shifts" },
+      body: { es: "Doble turno madrileño: comidas + cenas. Cerrás un día, cambiás horarios, todo se refleja en el footer del sitio.", en: "Madrid double shift: lunch + dinner. Close a day, change hours, all reflects on the site footer." },
+      target: '[data-dash-tab="hours"]'
+    },
+    {
+      icon: "📡", title: { es: "Canales de contacto", en: "Contact channels" },
+      body: { es: "Conectás WhatsApp, Instagram, Google Reseñas. Las reservas también se mandan por email vía FormSubmit + Google Calendar.", en: "Connect WhatsApp, Instagram, Google Reviews. Reservations are also sent via email through FormSubmit + Google Calendar." },
+      target: '[data-dash-tab="channels"]'
+    },
+    {
+      icon: "🐾", title: { es: "🎨 Diseño en vivo", en: "🎨 Live design" },
+      body: { es: "Cambiás colores de marca, tipografía, tamaño de tarjetas. La paleta se actualiza al instante mientras arrastrás los color pickers.", en: "Change brand colors, typography, card sizes. Palette updates instantly while you drag the color pickers." },
+      target: '[data-dash-tab="design"]'
+    },
+    {
+      icon: "💳", title: { es: "Pagos & Integraciones", en: "Payments & Integrations" },
+      body: { es: "Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork, Mailchimp y Google Analytics. Activás los que querés, pegás las claves, listo.", en: "Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork, Mailchimp and Google Analytics. Enable the ones you need, paste the keys, done." },
+      target: '[data-dash-tab="payments"]'
+    },
+    {
+      icon: "💾", title: { es: "Backup CMS", en: "CMS Backup" },
+      body: { es: "Exportás TODO el contenido editado como JSON (textos, imágenes, configs). Restaurás en otro navegador o tras reset. Es tu seguro.", en: "Export ALL edited content as JSON (texts, images, configs). Restore in another browser or after reset. Your safety net." },
+      target: '[data-dash-tab="backup"]'
+    },
+    {
+      icon: "🎉", title: { es: "¡Listo!", en: "All set!" },
+      body: { es: "Ya conocés todo. Tu sitio está en <strong>https://capitan-beto.com</strong> con backend Supabase real, SSL automático y deploy continuo desde GitHub. Cualquier duda, contactanos.", en: "You know it all now. Your site is at <strong>https://capitan-beto.com</strong> with real Supabase backend, automatic SSL and continuous deploy from GitHub. Reach out anytime." },
+      target: ".sidebar__brand",
+      isFinal: true
+    }
+  ];
+
+  let tourState = { idx: 0, overlay: null };
+
+  function startDashboardTour() {
+    if (state.view !== "dashboard") setView("dashboard");
+    if (tourState.overlay) tourState.overlay.remove();
+    tourState.idx = 0;
+    const ov = document.createElement("div");
+    ov.className = "tour-overlay";
+    ov.innerHTML = `
+      <div class="tour-spot" id="tourSpot"></div>
+      <div class="tour-card" id="tourCard">
+        <button class="tour-close" id="tourSkip" aria-label="Skip">×</button>
+        <div class="tour-icon" id="tourIcon"></div>
+        <h3 class="tour-title" id="tourTitle"></h3>
+        <div class="tour-body" id="tourBody"></div>
+        <div class="tour-foot">
+          <div class="tour-dots" id="tourDots"></div>
+          <div class="tour-actions">
+            <button class="btn btn--ghost btn--sm" id="tourPrev">${state.lang === "es" ? "← Anterior" : "← Back"}</button>
+            <button class="btn btn--primary btn--sm" id="tourNext">${state.lang === "es" ? "Siguiente →" : "Next →"}</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    tourState.overlay = ov;
+    ov.querySelector("#tourSkip").addEventListener("click", endDashboardTour);
+    ov.querySelector("#tourPrev").addEventListener("click", () => goTourSlide(tourState.idx - 1));
+    ov.querySelector("#tourNext").addEventListener("click", () => {
+      const slide = TOUR_SLIDES[tourState.idx];
+      if (slide && slide.isFinal) endDashboardTour();
+      else goTourSlide(tourState.idx + 1);
+    });
+    goTourSlide(0);
+  }
+  function goTourSlide(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= TOUR_SLIDES.length) idx = TOUR_SLIDES.length - 1;
+    tourState.idx = idx;
+    const s = TOUR_SLIDES[idx];
+    const ov = tourState.overlay;
+    if (!ov || !s) return;
+    ov.querySelector("#tourIcon").textContent = s.icon || "✨";
+    ov.querySelector("#tourTitle").textContent = s.title[state.lang] || s.title.es;
+    ov.querySelector("#tourBody").innerHTML = s.body[state.lang] || s.body.es;
+    // Dots
+    const dots = ov.querySelector("#tourDots");
+    dots.innerHTML = TOUR_SLIDES.map((_, i) =>
+      `<button class="tour-dot ${i === idx ? "is-active" : ""}" data-tour-go="${i}" aria-label="Slide ${i+1}"></button>`
+    ).join("");
+    dots.querySelectorAll("[data-tour-go]").forEach((d) =>
+      d.addEventListener("click", () => goTourSlide(parseInt(d.dataset.tourGo, 10)))
+    );
+    // Prev/Next labels
+    const prev = ov.querySelector("#tourPrev");
+    const next = ov.querySelector("#tourNext");
+    prev.style.visibility = idx === 0 ? "hidden" : "visible";
+    if (s.isFinal) {
+      next.textContent = state.lang === "es" ? "Empezar a usar 🚀" : "Start using 🚀";
+    } else {
+      next.textContent = state.lang === "es" ? "Siguiente →" : "Next →";
+    }
+    // Highlight target element
+    const spot = ov.querySelector("#tourSpot");
+    const target = s.target ? document.querySelector(s.target) : null;
+    if (target) {
+      const r = target.getBoundingClientRect();
+      const pad = 6;
+      spot.style.display = "block";
+      spot.style.top = (r.top + window.scrollY - pad) + "px";
+      spot.style.left = (r.left + window.scrollX - pad) + "px";
+      spot.style.width = (r.width + pad*2) + "px";
+      spot.style.height = (r.height + pad*2) + "px";
+      // scroll into view
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      spot.style.display = "none";
+    }
+  }
+  function endDashboardTour() {
+    if (tourState.overlay) { tourState.overlay.remove(); tourState.overlay = null; }
+    try { localStorage.setItem("cb.tour.seen", "1"); } catch (_) {}
+  }
+  // Botón flotante "Tour" en el dashboard para reabrirlo
+  window.cbStartTour = startDashboardTour;
 
   document.removeEventListener("DOMContentLoaded", __origInit);
   document.addEventListener("DOMContentLoaded", init);

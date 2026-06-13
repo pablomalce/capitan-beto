@@ -35,3 +35,4 @@ backups/
 # Original HEIC/sized photos del usuario (cap Beto, mocks)
 /originals/
 *.HEIC.bak
+.vercel

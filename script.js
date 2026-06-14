@@ -4015,6 +4015,8 @@
     // Sólo en producción (no en localhost via 127.0.0.1) o cuando hay HTTPS
     if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") return;
     window.addEventListener("load", () => {
+      // Sync menu stock/prices from Supabase after all scripts are loaded
+      setTimeout(syncMenuFromSupabase, 800);
       navigator.serviceWorker.register("/sw.js")
         .then((reg) => {
           // Update silently
@@ -5300,6 +5302,48 @@
   }
   // Botón flotante "Tour" en el dashboard para reabrirlo
   window.cbStartTour = startDashboardTour;
+
+
+  // ====================================================================
+  // ============== SUPABASE MENU SYNC ==================================
+  // Carga stock y precios en vivo desde la tabla `dishes` de Supabase.
+  // Si el fetch falla, el menú hardcodeado sigue funcionando sin cambios.
+  // ====================================================================
+  function syncMenuFromSupabase() {
+    if (!window.cbBackend || typeof window.cbBackend.fetchDishes !== "function") return;
+    window.cbBackend.fetchDishes().then((rows) => {
+      if (!Array.isArray(rows) || !rows.length) return;
+
+      // Construir mapa por id para lookup O(1)
+      const byId = {};
+      rows.forEach((r) => { byId[r.id] = r; });
+
+      let changed = false;
+      DISHES.forEach((d, i) => {
+        const r = byId[d.id];
+        if (!r) return;
+        // Actualizar stock en vivo
+        const newStock = r.in_stock !== false;
+        if (d.stock !== newStock) { DISHES[i] = Object.assign({}, d, { stock: newStock }); changed = true; }
+        // Actualizar precios si vienen en Supabase (base_price_cents > 0)
+        if (r.base_price_cents > 0) {
+          const newBase = r.base_price_cents / 100;
+          const newTerr = (r.terrace_price_cents || r.base_price_cents) / 100;
+          if (d.base !== newBase || d.terr !== newTerr) {
+            DISHES[i] = Object.assign({}, DISHES[i], { base: newBase, terr: newTerr });
+            changed = true;
+          }
+        }
+      });
+
+      if (changed) {
+        renderPublicMenu(false);
+        console.info("[cbMenu] Menú sincronizado desde Supabase ✓");
+      }
+    }).catch((e) => {
+      console.warn("[cbMenu] Sync falló, usando datos locales:", e.message);
+    });
+  }
 
   document.removeEventListener("DOMContentLoaded", __origInit);
   document.addEventListener("DOMContentLoaded", init);

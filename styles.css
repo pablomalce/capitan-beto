@@ -89,7 +89,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 .seg__btn.is-active { background: var(--brass); color: var(--olive-dark); font-weight: 700; }
 .seg__btn:hover:not(.is-active) { background: rgba(244,234,214,0.08); }
-@media (max-width: 740px) {
 
 /* ====================== NAVBAR · transparent over hero, solid on scroll ====================== */
 .navbar {

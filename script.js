@@ -238,6 +238,7 @@
       "footer.cookies": "Política de Cookies",
       "footer.terms": "Términos y Condiciones",
       "footer.cookieConfig": "⚙️ Configurar cookies",
+      "footer.admin": "Admin",
       "footer.cif": "Razón social:",
       "footer.regist": "Registro Mercantil:",
       "footer.responsable": "Responsable de datos:",
@@ -2290,7 +2291,13 @@
   // Guard: cuando intentás entrar al dashboard sin estar logueado,
   // abrimos el overlay y bloqueamos el render del backoffice.
   function authGuardForView(view) {
-    if (view === "dashboard" && !isAuthed()) {
+    if (view !== "dashboard") return true;
+    // Doble check: localStorage auth + sesión real en Supabase
+    const hasLocal = isAuthed();
+    const hasBackend = !!(window.cbBackend && window.cbBackend.getSession && window.cbBackend.getSession());
+    if (!hasLocal || !hasBackend) {
+      // Sin sesión real → limpiar cualquier estado local falso y pedir login
+      try { clearAuth(); } catch (_) {}
       openLoginOverlay();
       return false;
     }
@@ -2785,6 +2792,11 @@
     document.querySelectorAll("[data-cookie-close]").forEach((b) =>
       b.addEventListener("click", closeCookieModal));
     document.getElementById("footerCookieReopen")?.addEventListener("click", openCookieModal);
+
+    // Acceso admin discreto desde el footer → abre el login overlay
+    document.getElementById("footerAdminLink")?.addEventListener("click", () => {
+      if (typeof openLoginOverlay === "function") openLoginOverlay();
+    });
   }
 
   /* =====================================================

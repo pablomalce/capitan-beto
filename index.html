@@ -86,7 +86,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=53" />
+  <link rel="stylesheet" href="styles.css?v=54" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -208,31 +208,6 @@
   </script>
 </head>
 <body data-view="public" data-lang="es" data-role="admin">
-
-  <!-- ============== DEMO CONTROL WIDGET (collapsible bottom-left) ============== -->
-  <div class="demo-widget" id="demoWidget" data-open="false">
-    <button class="demo-widget__toggle" type="button" aria-label="Demo controls">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span data-i18n="demo.toggle">Demo</span>
-    </button>
-    <div class="demo-widget__panel">
-      <div class="demo-row">
-        <span class="demo-label" data-i18n="ctrl.view">Vista</span>
-        <div class="seg">
-          <button class="seg__btn is-active" data-view-switch="public" type="button"><span data-i18n="ctrl.public">Público</span></button>
-          <button class="seg__btn" data-view-switch="dashboard" type="button"><span data-i18n="ctrl.dashboard">Backoffice</span></button>
-        </div>
-      </div>
-      <div class="demo-row">
-        <span class="demo-label" data-i18n="ctrl.simulate">Rol</span>
-        <div class="seg">
-          <button class="seg__btn is-active" data-role-switch="admin" type="button">Admin</button>
-          <button class="seg__btn" data-role-switch="editor" type="button">Editor</button>
-          <button class="seg__btn" data-role-switch="view" type="button">Camarero</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ============================ PUBLIC SITE ============================ -->
   <main id="publicSite" class="public-site">
@@ -940,6 +915,9 @@
           <span data-i18n="pride.short">Todos son bienvenidos</span>
         </span>
         <p class="footer__small" data-i18n="footer.small">Hecho con sobremesa y vermut.</p>
+        <button type="button" class="footer__admin" id="footerAdminLink" aria-label="Admin login">
+          🔒 <span data-i18n="footer.admin">Admin</span>
+        </button>
       </div>
     </footer>
   </main>
@@ -2155,6 +2133,6 @@
   </div>
 
   <script src="backend.js?v=3" defer></script>
-  <script src="script.js?v=53" defer></script>
+  <script src="script.js?v=54" defer></script>
 </body>
 </html>

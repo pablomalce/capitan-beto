@@ -2160,12 +2160,9 @@
           <p class="supa-login__lead" id="magicLinkSentMsg"></p>
           <small class="supa-login__note">
             ${state.lang === "es"
-              ? "Si no ves el email en 1-2 min, revisá la carpeta de Spam."
-              : "If you don't see the email in 1-2 min, check your Spam folder."}
+              ? "Si no ves el email en 1-2 min, revisá la carpeta de Spam. Usá el botón de abajo para volver."
+              : "If you don't see the email in 1-2 min, check your Spam folder. Use the button below to go back."}
           </small>
-          <button type="button" class="btn btn--ghost" id="magicLinkBack" style="margin-top:14px">
-            ${state.lang === "es" ? "← Volver" : "← Back"}
-          </button>
         </div>`;
       const form = slot.querySelector("#magicLinkForm");
       const sentDiv = slot.querySelector("#magicLinkSent");
@@ -2218,11 +2215,6 @@
         }
       });
 
-      sentDiv.querySelector("#magicLinkBack")?.addEventListener("click", () => {
-        sentDiv.hidden = true;
-        inputUI.hidden = false;
-        form.email.value = "";
-      });
       return;
     }
     try {
@@ -2307,18 +2299,10 @@
 
   function bindAuth() {
     document.getElementById("logoutBtn")?.addEventListener("click", logout);
-    const closeAndReturn = () => {
+    // Un solo botón para volver: "← Volver al sitio público"
+    document.getElementById("loginCloseBtn")?.addEventListener("click", () => {
       closeLoginOverlay();
       setView("public");
-    };
-    document.getElementById("loginCloseBtn")?.addEventListener("click", closeAndReturn);
-    document.getElementById("loginCloseX")?.addEventListener("click", closeAndReturn);
-    document.getElementById("loginBackdrop")?.addEventListener("click", closeAndReturn);
-    // ESC cierra el modal
-    document.addEventListener("keydown", (e) => {
-      if (e.key !== "Escape") return;
-      const ov = document.getElementById("loginOverlay");
-      if (ov && ov.classList.contains("is-open")) closeAndReturn();
     });
   }
 

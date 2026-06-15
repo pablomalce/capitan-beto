@@ -1353,19 +1353,7 @@
       onScroll();
     }
 
-    // Demo widget toggle
-    const demo = $("#demoWidget");
-    if (demo) {
-      const toggle = demo.querySelector(".demo-widget__toggle");
-      toggle.addEventListener("click", () => {
-        const open = demo.getAttribute("data-open") === "true";
-        demo.setAttribute("data-open", open ? "false" : "true");
-      });
-      // Close demo when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!demo.contains(e.target)) demo.setAttribute("data-open", "false");
-      });
-    }
+
   }
 
   function init() {

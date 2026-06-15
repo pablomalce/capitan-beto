@@ -5,11 +5,11 @@
 
   <url>
     <loc>https://capitan-beto.com/</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://capitan-beto.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitan-beto.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitan-beto.com/"/>
     <image:image>
       <image:loc>https://capitan-beto.com/momentos/puerta.jpg</image:loc>
       <image:title>Capitán Beto · Gastro Taberna en Madrid</image:title>
@@ -17,39 +17,58 @@
     </image:image>
     <image:image>
       <image:loc>https://capitan-beto.com/crew/beto.jpg</image:loc>
-      <image:title>Matías y la Polaca · Los dueños</image:title>
+      <image:title>Matías y la Polaca · Los dueños de Capitán Beto</image:title>
     </image:image>
     <image:image>
       <image:loc>https://capitan-beto.com/momentos/vinos.jpg</image:loc>
-      <image:title>Vinos y cerveza de grifo</image:title>
+      <image:title>Vinos y vermut de grifo en Capitán Beto</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://capitan-beto.com/og-image.png</image:loc>
+      <image:title>Capitán Beto · Tapas castizas y sabor argentino · Madrid</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://capitan-beto.com/#menu</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://capitan-beto.com/#crew</loc>
-    <lastmod>2026-06-07</lastmod>
+    <loc>https://capitan-beto.com/#eventos</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://capitan-beto.com/#resenas</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://capitan-beto.com/#momentos</loc>
-    <lastmod>2026-06-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://capitan-beto.com/#crew</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
 
   <url>
     <loc>https://capitan-beto.com/#contact</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
+
+  <url>
+    <loc>https://capitan-beto.com/#instagram</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+
 </urlset>

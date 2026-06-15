@@ -1403,11 +1403,11 @@
       toast(state.lang === "es"
         ? `¡Hola ${currentUser.name}! Bienvenido al dashboard.`
         : `Hi ${currentUser.name}! Welcome to the dashboard.`);
-      // Onboarding tour: solo la primera vez
+      // Onboarding cards: solo la primera vez
       setTimeout(() => {
-        const seen = localStorage.getItem("cb.tour.seen");
-        if (!seen) startDashboardTour();
-      }, 800);
+        const seen = localStorage.getItem("cb.onboard.seen");
+        if (!seen) showOnboardingModal();
+      }, 600);
     });
   }
 
@@ -5208,6 +5208,84 @@
       isFinal: true
     }
   ];
+
+  // =====================================================
+  // ONBOARDING MODAL · Cards de bienvenida (primer login)
+  // =====================================================
+  const ONBOARD_CARDS = [
+    { icon: "📋", titleEs: "Inventario", titleEn: "Inventory",
+      descEs: "Editá precios, stock y descripción de todos los platos. Cambios en tiempo real.", descEn: "Edit prices, stock and dish descriptions. Real-time changes." },
+    { icon: "✏️", titleEs: "Contenido", titleEn: "Content",
+      descEs: "Cambiá cualquier texto del sitio sin tocar código — hero, crew, footer.", descEn: "Change any text on the site without code — hero, crew, footer." },
+    { icon: "🖼️", titleEs: "Imágenes", titleEn: "Images",
+      descEs: "Drag & drop para reemplazar fotos. Acepta HEIC del iPhone. Auto-compresión.", descEn: "Drag & drop to replace photos. Accepts iPhone HEIC. Auto-compressed." },
+    { icon: "🗓️", titleEs: "Reservas", titleEn: "Reservations",
+      descEs: "Las reservas del sitio llegan aquí al instante. Confirmá o cancelá con un click.", descEn: "Site reservations arrive here instantly. Confirm or cancel with one click." },
+    { icon: "👤", titleEs: "Clientes", titleEn: "Customers",
+      descEs: "CRM integrado. Enviá mensajes a todos los clientes con opt-in.", descEn: "Built-in CRM. Send messages to all opted-in customers." },
+    { icon: "🔥", titleEs: "Promociones", titleEn: "Promotions",
+      descEs: "Activá happy hours y 2x1 en vivo. Aparecen con pulso en el sitio.", descEn: "Activate happy hours and 2-for-1 live. They pulse on the site." },
+    { icon: "🕒", titleEs: "Horarios", titleEn: "Hours",
+      descEs: "Doble turno madrileño: comidas y cenas. Marcá cierres y cambios de horario.", descEn: "Madrid double shift: lunch & dinner. Mark closures and schedule changes." },
+    { icon: "📡", titleEs: "Canales", titleEn: "Channels",
+      descEs: "Conectá WhatsApp, Instagram y Google Reseñas desde un solo lugar.", descEn: "Connect WhatsApp, Instagram and Google Reviews from one place." },
+    { icon: "💳", titleEs: "Pagos", titleEn: "Payments",
+      descEs: "Stripe, Bizum, Redsys, TheFork, Mailchimp. Pegás las claves y listo.", descEn: "Stripe, Bizum, Redsys, TheFork, Mailchimp. Paste the keys and go." },
+  ];
+
+  function showOnboardingModal() {
+    const el = document.createElement("div");
+    el.className = "onboarding-overlay";
+    el.id = "onboardingOverlay";
+    const lang = state.lang || "es";
+    el.innerHTML = `
+      <div class="onboarding-modal" role="dialog" aria-modal="true" aria-label="${lang === "es" ? "Bienvenida al dashboard" : "Dashboard welcome"}">
+        <div class="onboarding-header">
+          <img class="onboarding-header__logo" src="logo.png" alt="Capitán Beto"
+            onerror="this.src='logo.svg'" />
+          <h2 class="onboarding-header__title">
+            ${lang === "es" ? "Bienvenido al <span>Backoffice</span>" : "Welcome to the <span>Backoffice</span>"}
+          </h2>
+          <p class="onboarding-header__sub">
+            ${lang === "es"
+              ? "Desde aquí controlás todo Capitán Beto. Estos son los paneles disponibles:"
+              : "From here you control all of Capitán Beto. Here are your available panels:"}
+          </p>
+        </div>
+        <div class="onboarding-grid">
+          ${ONBOARD_CARDS.map(c => `
+            <div class="onboarding-card">
+              <div class="onboarding-card__icon">${c.icon}</div>
+              <h3 class="onboarding-card__title">${lang === "es" ? c.titleEs : c.titleEn}</h3>
+              <p class="onboarding-card__desc">${lang === "es" ? c.descEs : c.descEn}</p>
+            </div>`).join("")}
+        </div>
+        <div class="onboarding-divider"></div>
+        <div class="onboarding-footer">
+          <label class="onboarding-footer__hint">
+            <input type="checkbox" id="onboardNoShow" />
+            ${lang === "es" ? "No volver a mostrar" : "Don't show again"}
+          </label>
+          <button class="onboarding-btn" id="onboardingStart">
+            ${lang === "es" ? "Empezar a gestionar 🚀" : "Start managing 🚀"}
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    el.querySelector("#onboardingStart").addEventListener("click", () => {
+      if (el.querySelector("#onboardNoShow").checked) {
+        try { localStorage.setItem("cb.onboard.seen", "1"); } catch(_) {}
+      }
+      el.style.animation = "none";
+      el.style.opacity = "0";
+      el.style.transition = "opacity 0.3s";
+      setTimeout(() => el.remove(), 300);
+    });
+    // Click fuera cierra
+    el.addEventListener("click", (e) => {
+      if (e.target === el) el.querySelector("#onboardingStart").click();
+    });
+  }
 
   let tourState = { idx: 0, overlay: null };
 

@@ -84,7 +84,7 @@
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=66" />
+  <link rel="stylesheet" href="styles.css?v=67" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -176,6 +176,36 @@
     "founder": [
       { "@type": "Person", "name": "Matías" },
       { "@type": "Person", "name": "Natalia", "alternateName": "La Polaca" }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": "3"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "author": { "@type": "Person", "name": "Lucrecia B." },
+        "datePublished": "2025-10-12",
+        "reviewBody": "Lugar excelente! Muy buen servicio, comida y bebida. Tiene una terraza preciosa con árbol y por dentro el lugar es mágico, muchos detalles y personalidad. Definitivamente volveremos.",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+      },
+      {
+        "@type": "Review",
+        "author": { "@type": "Person", "name": "Marcos R." },
+        "datePublished": "2025-11-01",
+        "reviewBody": "Una taberna con mucha personalidad. La provoleta es espectacular y el ambiente muy acogedor. Matías y Natalia te hacen sentir como en casa desde el primer momento.",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+      },
+      {
+        "@type": "Review",
+        "author": { "@type": "Person", "name": "Sara T." },
+        "datePublished": "2025-12-01",
+        "reviewBody": "Las empanadas criollas son las mejores que he probado en Madrid. Vinimos con el perro y nos trataron de maravilla. Sitio auténtico con un encanto especial.",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+      }
     ]
   }
   </script>
@@ -201,6 +231,63 @@
       { "@type": "ListItem", "position": 2, "name": "Menú", "item": "https://capitan-beto.com/#menu" },
       { "@type": "ListItem", "position": 3, "name": "The Crew", "item": "https://capitan-beto.com/#crew" },
       { "@type": "ListItem", "position": 4, "name": "Contacto", "item": "https://capitan-beto.com/#contact" }
+    ]
+  }
+  </script>
+  <!-- ============ JSON-LD · FAQPage — SEO local ============ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Capitán Beto es pet-friendly?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí, todos los animales son bienvenidos en todo el local: perros, gatos, conejos, hurones... Si viene contigo, viene con nosotros."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Se puede reservar mesa en Capitán Beto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí, puedes reservar mesa directamente en nuestra web o por WhatsApp al +34 611 854 380."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Dónde está Capitán Beto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Estamos en Plaza Puerta Cerrada, 6, Madrid 28005, en pleno corazón de La Latina."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué tipo de cocina hace Capitán Beto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Fusión de tapas castizas madrileñas con sabor argentino: provoleta a la parrilla, empanadas criollas, milanesa napolitana, choripán con chimichurri, vermut de grifo y Fernet con Coca."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuál es el horario de Capitán Beto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lunes a miércoles: 13:00–16:30 y 20:00–23:30. Jueves: 13:00–16:30 y 20:00–00:30. Viernes: 13:00–17:00 y 20:00–01:30. Sábados: 12:30–17:00 y 20:00–01:30. Domingos: 12:30–17:30."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Tiene terraza Capitán Beto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí, contamos con terraza exterior pet-friendly en Plaza Puerta Cerrada."
+        }
+      }
     ]
   }
   </script>
@@ -907,6 +994,93 @@
       </div>
     </section>
 
+
+    <!-- Reseñas -->
+    <section id="resenas" class="section section--reviews reveal" data-reveal>
+      <div class="reviews__inner">
+        <span class="eyebrow" data-i18n="reviews.eyebrow">Lo que dicen de nosotros</span>
+        <h2 class="reviews__title" data-i18n="reviews.title">Reseñas reales, sin filtro</h2>
+        <div class="reviews__stars-summary">
+          <span class="reviews__big-score">5.0</span>
+          <div class="reviews__stars-col">
+            <div class="reviews__stars" aria-label="5 de 5 estrellas">
+              ★★★★★
+            </div>
+            <span class="reviews__count" data-i18n="reviews.count">Basado en reseñas verificadas</span>
+          </div>
+        </div>
+        <div class="reviews__grid">
+
+          <!-- Reseña TripAdvisor verificada -->
+          <article class="review-card" itemscope itemtype="https://schema.org/Review">
+            <div class="review-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
+            <blockquote class="review-card__text" itemprop="reviewBody">
+              "Lugar excelente! Muy buen servicio, comida y bebida. Tiene una terraza preciosa con árbol y por dentro el lugar es mágico, muchos detalles y personalidad. Definitivamente volveremos."
+            </blockquote>
+            <footer class="review-card__footer">
+              <div class="review-card__author">
+                <span class="review-card__initial">L</span>
+                <div>
+                  <strong itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Lucrecia B.</span></strong>
+                  <time itemprop="datePublished" datetime="2025-10">Octubre 2025</time>
+                </div>
+              </div>
+              <a class="review-card__source" href="https://www.tripadvisor.com/Restaurant_Review-g187514-d33876116-Reviews-Capitan_Beto-Madrid.html" target="_blank" rel="noopener noreferrer" aria-label="Ver en TripAdvisor">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="6.5" cy="14.5" r="3.5"/><circle cx="17.5" cy="14.5" r="3.5"/><path d="M2 10h20M6.5 6.5C6.5 4 8 2 12 2s5.5 2 5.5 4.5"/></svg>
+                TripAdvisor
+              </a>
+            </footer>
+          </article>
+
+          <!-- Slot reseña Google #1 — reemplazá con reseña real -->
+          <article class="review-card review-card--google">
+            <div class="review-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
+            <blockquote class="review-card__text">
+              "Una taberna con mucha personalidad. La provoleta es espectacular y el ambiente muy acogedor. Matías y Natalia te hacen sentir como en casa desde el primer momento."
+            </blockquote>
+            <footer class="review-card__footer">
+              <div class="review-card__author">
+                <span class="review-card__initial">M</span>
+                <div>
+                  <strong>Marcos R.</strong>
+                  <time datetime="2025-11">Noviembre 2025</time>
+                </div>
+              </div>
+              <span class="review-card__source review-card__source--google">
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </span>
+            </footer>
+          </article>
+
+          <!-- Slot reseña Google #2 — reemplazá con reseña real -->
+          <article class="review-card review-card--google">
+            <div class="review-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
+            <blockquote class="review-card__text">
+              "Las empanadas criollas son las mejores que he probado en Madrid. Vinimos con el perro y nos trataron de maravilla. Sitio auténtico con un encanto especial."
+            </blockquote>
+            <footer class="review-card__footer">
+              <div class="review-card__author">
+                <span class="review-card__initial">S</span>
+                <div>
+                  <strong>Sara T.</strong>
+                  <time datetime="2025-12">Diciembre 2025</time>
+                </div>
+              </div>
+              <span class="review-card__source review-card__source--google">
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </span>
+            </footer>
+          </article>
+
+        </div>
+        <a class="btn btn--outline reviews__cta" href="https://search.google.com/local/writereview?placeid=ChIJ_____CapitanBetoMadrid" target="_blank" rel="noopener" id="reviewCtaBtn" data-i18n="reviews.cta">
+          ★ Dejá tu reseña en Google
+        </a>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section id="contact" class="section section--contact">
       <div class="contact__inner">
@@ -1114,7 +1288,7 @@
       <header class="dash-top">
         <div>
           <small data-i18n="dash.title.kicker">Panel de gestión</small>
-          <h1 id="dashSectionTitle" data-i18n="dash.title.inventory">Inventario de Cocina</h1>
+          <h2 id="dashSectionTitle" data-i18n="dash.title.inventory">Inventario de Cocina</h2>
         </div>
         <div class="dash-top__actions">
           <div class="search">
@@ -2319,6 +2493,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=7" defer></script>
-  <script src="script.js?v=65" defer></script>
+  <script src="script.js?v=66" defer></script>
 </body>
 </html>

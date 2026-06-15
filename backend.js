@@ -179,16 +179,27 @@
   }
 
   // ============ STORAGE ============
+  // Mapeo extensión → MIME para formatos que los browsers reportan vacíos
+  const EXT_MIME = {
+    heic: "image/heic", heif: "image/heif",
+    avif: "image/avif", webp: "image/webp",
+    jpg: "image/jpeg", jpeg: "image/jpeg",
+    png: "image/png", gif: "image/gif",
+    tif: "image/tiff", tiff: "image/tiff",
+    bmp: "image/bmp", svg: "image/svg+xml"
+  };
   async function uploadToBucket(bucket, file, ext) {
     const safeExt = (ext || (file.name.split(".").pop() || "jpg")).toLowerCase().replace(/[^a-z0-9]/g, "");
     const stamp = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     const path = `${stamp}.${safeExt}`;
+    // Si file.type viene vacío (HEIC en Chrome, algunos AVIF), inferir del ext
+    const mimeType = file.type || EXT_MIME[safeExt] || "image/jpeg";
     const res = await fetch(`${STORAGE}/object/${bucket}/${path}`, {
       method: "POST",
       headers: {
         "apikey": ANON_KEY,
         "Authorization": `Bearer ${ANON_KEY}`,
-        "Content-Type": file.type || "application/octet-stream",
+        "Content-Type": mimeType,
         "x-upsert": "false"
       },
       body: file

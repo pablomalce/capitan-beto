@@ -2494,6 +2494,7 @@
   const BPIC_KEY = "cb_bpic_wall_v1";
   let bpicStore = [];
   let bpicPendingDataURL = null;
+  let bpicPendingFile = null; // ⭐ original File para upload fiel al Storage
 
   function loadBpicWall() {
     try {
@@ -2553,6 +2554,7 @@
   }
   function resetBpicForm() {
     bpicPendingDataURL = null;
+    bpicPendingFile = null;
     const form = $("#bpicForm");
     if (form) form.reset();
     const drop = $("#bpicDrop");
@@ -2579,6 +2581,7 @@
       toast(state.lang === "es" ? "Foto demasiado grande (máx 25 MB)" : "Photo too large (max 25 MB)");
       return;
     }
+    bpicPendingFile = file; // ⭐ guardar original antes de procesar
     readImageToDataURL(file).then(({ dataURL }) => {
       bpicPendingDataURL = dataURL;
       const drop = $("#bpicDrop");
@@ -2621,6 +2624,7 @@
     if (window.cbBackend && window.cbBackend.uploadBpicPhoto) {
       window.cbBackend.uploadBpicPhoto({
         dataURL: bpicPendingDataURL,
+        file: bpicPendingFile,   // ⭐ original para formatos HEIC/AVIF/etc
         guestName,
         igHandle: cleanHandle,
         caption

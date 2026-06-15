@@ -178,7 +178,7 @@
       "hours.eyebrow": "Doble turno madrileño",
       "hours.title": "Horarios",
       "contact.eyebrow": "Pasa a vernos",
-      "contact.title": "Calle de los Hidalgos, Madrid",
+      "contact.title": "Plaza Puerta Cerrada, 6, Madrid",
       "contact.lead": "Reservas por WhatsApp o mándanos un DM en Instagram. Si llamas, contesta Beto.",
       "footer.small": "Hecho con sobremesa y vermut.",
       "wa.label": "Escríbenos",
@@ -415,7 +415,7 @@
       "chat.q.allergens": "Alérgenos",
       "chat.q.human": "Hablar con persona",
       "chat.a.hours": "Cocina abre en doble turno madrileño: 13:00 a 16:30 (comidas) y 20:00 a 23:30 (cenas). Los findes alargamos hasta la 01:30. ¿Quieres reservar para algún día concreto?",
-      "chat.a.location": "Estamos en Calle de los Hidalgos, Madrid. Metro más cercano La Latina, a 4 minutos andando. ¿Te paso ubicación de Google Maps?",
+      "chat.a.location": "Estamos en Plaza Puerta Cerrada, 6, Madrid. Metro más cercano La Latina, a 4 minutos andando. ¿Te paso ubicación de Google Maps?",
       "chat.a.pet": "¡Por supuesto! Somos 100% pet-friendly: todos los animales son bienvenidos en todo el bar. Cuencos de agua en cada zona, snacks caseros sin sal ni azúcar horneados por la Polaca, rincones tranquilos con sombra. Perros, gatos, conejos, hurones, aves... si viene contigo, viene con nosotros. ¿Reservamos mesa?",
       "chat.a.menu": "Hoy en la pizarra: provoleta a la parrilla, empanadas criollas, milanesa napolitana, choripán y vermut de grifo. Cambia cada semana. ¿Te paso la pizarra completa?",
       "chat.a.allergens": "Marcamos gluten, lácteos, huevo, pescado, moluscos, sulfitos y frutos secos en todos los platos. Cuéntame qué alergia tienes y te recomiendo.",
@@ -587,7 +587,7 @@
       "hours.eyebrow": "Madrid double-shift",
       "hours.title": "Opening hours",
       "contact.eyebrow": "Come see us",
-      "contact.title": "Calle de los Hidalgos, Madrid",
+      "contact.title": "Plaza Puerta Cerrada, 6, Madrid",
       "contact.lead": "Reservations on WhatsApp or DM us on Instagram. If you call, Beto picks up.",
       "footer.small": "Made with after-meal talks and vermouth.",
       "wa.label": "Message us",
@@ -770,7 +770,7 @@
       "chat.q.allergens": "Allergens",
       "chat.q.human": "Talk to a person",
       "chat.a.hours": "Madrid double-shift kitchen: 1–4:30 pm (lunch) and 8–11:30 pm (dinner). Weekends we run till 1:30 am. Want to book?",
-      "chat.a.location": "We're at Calle de los Hidalgos, Madrid. Closest metro is La Latina, 4-min walk. Want a Google Maps pin?",
+      "chat.a.location": "We're at Plaza Puerta Cerrada, 6, Madrid. Closest metro is La Latina, 4-min walk. Want a Google Maps pin?",
       "chat.a.pet": "Of course! We're 100% pet-friendly: all animals welcome throughout the whole bar. Water bowls in every area, salt-free/sugar-free homemade snacks baked by la Polaca, quiet shaded corners. Dogs, cats, rabbits, ferrets, birds... if it comes with you, it comes with us. Want to book a table?",
       "chat.a.menu": "Tonight on the slate: grilled provoleta, creole empanadas, milanesa napolitana, choripán and draft vermouth. Changes weekly. Want the full slate?",
       "chat.a.allergens": "We flag gluten, dairy, egg, fish, mollusks, sulphites and nuts on every dish. Tell me your allergy and I'll recommend.",
@@ -1769,7 +1769,7 @@
       text: title,
       dates,
       details,
-      location: "Calle de los Hidalgos, Madrid",
+      location: "Plaza Puerta Cerrada, 6, Madrid",
       add: BAR_EMAIL,   // invites the bar as attendee → bar receives notification
       ctz: "Europe/Madrid"
     });
@@ -2026,7 +2026,7 @@
     }
     else if (id === "openForm") { closeChat(); openReserveModal(); }
     else if (id === "maps") {
-      window.open("https://maps.google.com/?q=Calle+de+los+Hidalgos+Madrid", "_blank");
+      window.open("https://maps.google.com/?q=Plaza+Puerta+Cerrada+6+Madrid", "_blank");
     }
     else if (id === "seeMenu") {
       closeChat();

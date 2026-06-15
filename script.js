@@ -386,6 +386,10 @@
       "reserve.back": "Atrás",
       "reserve.send": "Enviar por WhatsApp",
       "reserve.cal": "Añadir a Google Calendar",
+      "reserve.consent": "He leído y acepto la Política de Privacidad. Mis datos se usarán únicamente para gestionar esta reserva.",
+      "reserve.marketing": "Acepto recibir promos, eventos y descuentos de Capitán Beto. (Opcional)",
+      "pet.consent": "Acepto que la foto se publique en la web y redes de Capitán Beto, y he leído la Política de Privacidad.",
+      "bpic.consent": "Doy permiso para publicar mi foto en la web y redes de Capitán Beto y acepto la Política de Privacidad.",
       "reserve.foot": "Te contestamos en menos de 10 minutos. Si lo prefieres, puedes hablar directo con un camarero.",
 
       "chat.headerName": "Beto · Asistente",
@@ -737,6 +741,10 @@
       "reserve.back": "Back",
       "reserve.send": "Send via WhatsApp",
       "reserve.cal": "Add to Google Calendar",
+      "reserve.consent": "I have read and accept the Privacy Policy. My data will only be used to manage this reservation.",
+      "reserve.marketing": "I agree to receive promos, events and discounts from Capitán Beto. (Optional)",
+      "pet.consent": "I consent to this photo being published on the Capitán Beto website and social media, and I accept the Privacy Policy.",
+      "bpic.consent": "I consent to this photo being published on the Capitán Beto website and social media, and I accept the Privacy Policy.",
       "reserve.foot": "We reply in under 10 minutes. You can also chat directly with a real waiter.",
 
       "chat.headerName": "Beto · Assistant",
@@ -2912,7 +2920,7 @@
         <ul>
           <li><strong>Titulares:</strong> Matías &amp; Natalia (alias "la Polaca") en régimen de autónomos</li>
           <li><strong>NIF:</strong> <em>pendiente — se actualiza desde el dashboard antes del go-live</em></li>
-          <li><strong>Dirección:</strong> Calle de los Hidalgos, Madrid</li>
+          <li><strong>Dirección:</strong> Plaza Puerta Cerrada, 6, 28005 Madrid</li>
           <li><strong>Email:</strong> capitanbetomadrid@gmail.com</li>
           <li><strong>Teléfono:</strong> +34 611 854 380</li>
           <li><strong>Registro Mercantil:</strong> Madrid, Tomo ____, Folio ____, Hoja ____</li>
@@ -2947,7 +2955,7 @@
         <h3>Plazo de conservación</h3>
         <p>Datos de reservas: 6 meses tras la visita. Datos para marketing: hasta que retires el consentimiento. Datos contables: 6 años (obligación fiscal).</p>
         <h3>Destinatarios</h3>
-        <p>No cedemos tus datos a terceros salvo obligación legal. Usamos los siguientes proveedores tecnológicos: <strong>Google</strong> (Calendar para reservas, Sign-In para administradores), <strong>FormSubmit</strong> (envío de formularios por email), <strong>Meta</strong> (WhatsApp Business).</p>
+        <p>No cedemos tus datos a terceros salvo obligación legal. Usamos los siguientes proveedores tecnológicos (todos con acuerdos DPA/RGPD): <strong>Supabase Inc.</strong> · alojamiento de base de datos en servidores AWS eu-west-1 (Irlanda, UE); <strong>Vercel Inc.</strong> · alojamiento del sitio web (servidores en UE disponibles); <strong>Bunny Fonts</strong> (CDN europeo, sin cookies, sin IP logging); <strong>FormSubmit.co</strong> · envío de formularios por email; <strong>Meta (WhatsApp Business)</strong> · confirmación de reservas.</p>
         <h3>Derechos</h3>
         <p>Podés ejercer en cualquier momento los derechos de:</p>
         <ul>
@@ -2977,7 +2985,7 @@
         <h3>Cómo desactivarlas en tu navegador</h3>
         <p>Cada navegador permite borrar o bloquear cookies. Consultá la ayuda de tu navegador (Chrome, Safari, Firefox, Edge).</p>
         <h3>Cookies de terceros</h3>
-        <p>Usamos servicios externos que pueden instalar sus propias cookies: <strong>Google Fonts</strong>, <strong>Google Sign-In</strong>, <strong>Google Drive</strong> (galerías), <strong>Instagram</strong> (links externos).</p>
+        <p>Usamos servicios externos que pueden instalar sus propias cookies: <strong>Bunny Fonts</strong> (CDN europeo, sin cookies, sin registro de IP), <strong>Google Sign-In</strong> (administradores), <strong>Instagram</strong> (links externos).</p>
         <small>Última actualización: ${today}</small>
       `,
       terms: `
@@ -3557,6 +3565,15 @@
     try { localStorage.setItem(RESERVE_KEY, JSON.stringify(reservations)); } catch (_) {}
   }
   function saveReservation(rawData) {
+    // RGPD: verificar consentimiento obligatorio
+    const consentCheck = document.getElementById("reservePrivacyConsent");
+    if (consentCheck && !consentCheck.checked) {
+      alert(state.lang === "es"
+        ? "Debes aceptar la Política de Privacidad para continuar."
+        : "You must accept the Privacy Policy to continue.");
+      consentCheck.closest(".field--consent")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     if (!rateLimit("reservation", 3, 10 * 60 * 1000)) {
       toast(state.lang === "es" ? "⏱ Demasiadas reservas seguidas. Esperá un momento." : "⏱ Too many attempts. Please wait.");
       return;
@@ -3565,6 +3582,7 @@
       name:   sanitizeInput(rawData.name || ""),
       phone:  sanitizeInput(rawData.phone || ""),
       email:  sanitizeInput(rawData.email || ""),
+      marketing_consent: document.getElementById("reserveMarketingConsent")?.checked || false,
       people: sanitizeInput(String(rawData.people || "2")),
       date:   sanitizeInput(rawData.date || ""),
       time:   sanitizeInput(rawData.time || "20:00"),

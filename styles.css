@@ -6408,3 +6408,44 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
 .loyalty-row__name { flex: 1; font-weight: 600; font-size: .9rem; }
 .loyalty-row__phone { font-size: .8rem; color: var(--ink-mute); }
 .loyalty-row__stamps { font-size: .85rem; color: var(--brand-green); font-weight: 700; }
+
+/* ===== RGPD consent fields ===== */
+.field--check {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  cursor: pointer;
+}
+.field--check input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-green);
+  cursor: pointer;
+}
+.field--check span {
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.field--consent {
+  background: rgba(15,65,35,.05);
+  border: 1px solid rgba(15,65,35,.15);
+  border-radius: 8px;
+  padding: .65rem .8rem;
+  margin-top: .25rem;
+}
+.field--consent input:invalid ~ span,
+.field--consent:has(input:invalid:not(:placeholder-shown)) { border-color: #d9534f; }
+.link-inline {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--brand-green);
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+.link-inline:hover { color: var(--brass); }

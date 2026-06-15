@@ -80,13 +80,11 @@
   <meta name="msapplication-TileImage" content="icon-192.png" />
 
   <!-- ============ FONTS (preconnect + preload) ============ -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=61" />
+  <link rel="stylesheet" href="styles.css?v=62" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -511,6 +509,10 @@
             <img id="petPreview" class="pet-drop__preview" alt="" hidden />
           </div>
 
+          <label class="field field--check field--consent" style="margin-top:.5rem">
+            <input type="checkbox" name="petPrivacyConsent" id="petPrivacyConsent" required />
+            <span data-i18n="pet.consent">Acepto que la foto se publique en la web y redes de Capitán Beto, y he leído la <button type="button" class="link-inline" data-open-legal="privacy">Política de Privacidad</button>.</span>
+          </label>
           <div class="modal__actions">
             <button type="button" class="btn btn--ghost" data-close-pet data-i18n="pet.up.cancel">Cancelar</button>
             <button type="submit" class="btn btn--primary" data-i18n="pet.up.send">Compartir mi peludo</button>
@@ -795,9 +797,9 @@
             <input name="bpicCaption" type="text" placeholder="¡Mejor noche del mes!" maxlength="120" />
           </label>
 
-          <label class="bpic-check">
-            <input type="checkbox" name="bpicAgree" required />
-            <span data-i18n="bpic.consent">Doy permiso para mostrar mi foto en el muro y en Instagram de Capitán Beto.</span>
+          <label class="bpic-check field--consent">
+            <input type="checkbox" name="bpicAgree" id="bpicPrivacyConsent" required />
+            <span data-i18n="bpic.consent">Doy permiso para publicar mi foto en la web y redes de Capitán Beto y acepto la <button type="button" class="link-inline" data-open-legal="privacy">Política de Privacidad</button>.</span>
           </label>
 
           <div class="modal__actions">
@@ -2040,6 +2042,15 @@
             <small data-i18n="reserve.f.notes">Notas (alergias, ocasión...)</small>
             <textarea name="notes" rows="2" placeholder="Cumpleaños, sin gluten..."></textarea>
           </label>
+
+          <label class="field field--check field--consent" id="reserveConsentWrap">
+            <input type="checkbox" name="privacyConsent" id="reservePrivacyConsent" required />
+            <span data-i18n="reserve.consent">He leído y acepto la <button type="button" class="link-inline" data-open-legal="privacy">Política de Privacidad</button>. Mis datos se usarán únicamente para gestionar esta reserva.</span>
+          </label>
+          <label class="field field--check" id="reserveMarketingWrap">
+            <input type="checkbox" name="marketingConsent" id="reserveMarketingConsent" />
+            <span data-i18n="reserve.marketing">Acepto recibir promos, eventos y descuentos de Capitán Beto. <em>(Opcional)</em></span>
+          </label>
         </div>
 
         <div class="reserve-step" data-step="2">
@@ -2300,6 +2311,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=7" defer></script>
-  <script src="script.js?v=61" defer></script>
+  <script src="script.js?v=62" defer></script>
 </body>
 </html>

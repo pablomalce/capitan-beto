@@ -3634,8 +3634,7 @@
         d.notes ? `📝 ${d.notes}` : null,
         ``,
         `Ver todas → https://capitan-beto.com/?view=dashboard`
-      ].filter(Boolean).join("
-");
+      ].filter(Boolean).join("\n");
       const ownerWaUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waText)}`;
       // Se abre solo si hay click activo (evita bloqueo de popup en móvil)
       if (typeof window !== "undefined") {

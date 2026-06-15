@@ -3113,6 +3113,44 @@ body[data-role="editor"] .role-hint[data-show-for="editor"] { display: inline-fl
   cursor: not-allowed;
 }
 
+/* Inventory pagination */
+.inv-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0 8px;
+}
+.pager-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.pager-btn:hover:not(:disabled) {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.pager-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.pager-info {
+  font-size: 13px;
+  color: var(--ink-mute);
+  min-width: 100px;
+  text-align: center;
+}
+
 .allergen-checks {
   display: flex;
   flex-wrap: wrap;

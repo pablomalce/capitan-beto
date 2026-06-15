@@ -953,6 +953,7 @@
     menuTab: "share",
     dashTab: "inventory",
     invFilter: "",
+    invPage: 0,
     allergenFilter: new Set()   // alérgenos excluidos por el usuario
   };
 
@@ -1121,12 +1122,14 @@
   }
 
   // ---------- Dashboard: inventory ----------
+  const INV_PER_PAGE = 20;
+
   function renderInventory() {
     const body = $("#invBody");
     if (!body) return;
     const term = state.invFilter.trim().toLowerCase();
 
-    const rows = DISHES.filter((d) => {
+    const filtered = DISHES.filter((d) => {
       if (!term) return true;
       const hay = [
         d.title[state.lang],
@@ -1135,7 +1138,15 @@
         ...d.allergens.map((a) => ALLERGEN_LABELS[state.lang][a] || a)
       ].join(" ").toLowerCase();
       return hay.includes(term);
-    }).map((d) => {
+    });
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / INV_PER_PAGE));
+    if (state.invPage >= totalPages) state.invPage = totalPages - 1;
+    if (state.invPage < 0) state.invPage = 0;
+
+    const pageItems = filtered.slice(state.invPage * INV_PER_PAGE, (state.invPage + 1) * INV_PER_PAGE);
+
+    const rows = pageItems.map((d) => {
       const allergenChips = ALLERGEN_KEYS.map((a) => {
         const checked = d.allergens.includes(a);
         const disabled = state.role === "view" ? "disabled" : "";
@@ -1187,6 +1198,32 @@
     }).join("");
 
     body.innerHTML = rows || `<tr><td colspan="7" style="text-align:center;color:var(--ink-mute);padding:30px">—</td></tr>`;
+
+    // Pagination controls
+    let pager = document.getElementById("invPager");
+    if (!pager) {
+      const table = body.closest("table") || body.parentElement;
+      pager = document.createElement("div");
+      pager.id = "invPager";
+      pager.className = "inv-pager";
+      table.parentElement.insertAdjacentElement("afterend", pager);
+    }
+    if (totalPages <= 1) {
+      pager.innerHTML = "";
+    } else {
+      const prevDis = state.invPage === 0 ? "disabled" : "";
+      const nextDis = state.invPage >= totalPages - 1 ? "disabled" : "";
+      const label = state.lang === "es"
+        ? `Página ${state.invPage + 1} de ${totalPages}`
+        : `Page ${state.invPage + 1} of ${totalPages}`;
+      pager.innerHTML = `
+        <button class="pager-btn" id="invPrev" ${prevDis}>&#8592;</button>
+        <span class="pager-info">${label}</span>
+        <button class="pager-btn" id="invNext" ${nextDis}>&#8594;</button>`;
+      document.getElementById("invPrev").onclick = () => { state.invPage--; renderInventory(); };
+      document.getElementById("invNext").onclick = () => { state.invPage++; renderInventory(); };
+    }
+
     updateKPIs();
   }
 
@@ -1428,6 +1465,7 @@
     if (search) {
       search.addEventListener("input", () => {
         state.invFilter = search.value;
+        state.invPage = 0;
         renderInventory();
       });
     }

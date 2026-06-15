@@ -175,7 +175,7 @@
       "pride.text": "Todos son bienvenidos · All are welcome",
       "pride.short": "Todos son bienvenidos",
       "gallery.photoBy": "Fotografía por",
-      "hours.eyebrow": "Doble turno madrileño",
+      "hours.eyebrow": "Nuestro horario",
       "hours.title": "Horarios",
       "contact.eyebrow": "Pasa a vernos",
       "contact.title": "Plaza Puerta Cerrada, 6, Madrid",
@@ -326,8 +326,8 @@
       "dash.promo.p2.desc": "Provoleta a la parrilla + vermut de grifo por 12€ todo el sábado.",
       "dash.promo.edit": "Editar",
       "dash.promo.new": "Nueva promoción",
-      "dash.hours.title": "Doble turno madrileño",
-      "dash.hours.sub": "Ajusta cocina y barra · comidas y cenas",
+      "dash.hours.title": "Horario del local",
+      "dash.hours.sub": "Turno seguido · martes cerrado",
       "dash.hours.save": "Guardar horarios",
       "dash.ch.connected": "Conectado",
       "dash.ch.number": "Número activo",
@@ -414,7 +414,7 @@
       "chat.q.menu": "¿Qué hay hoy?",
       "chat.q.allergens": "Alérgenos",
       "chat.q.human": "Hablar con persona",
-      "chat.a.hours": "Cocina abre en doble turno madrileño: 13:00 a 16:30 (comidas) y 20:00 a 23:30 (cenas). Los findes alargamos hasta la 01:30. ¿Quieres reservar para algún día concreto?",
+      "chat.a.hours": "Abrimos de lunes, miércoles a domingo de 14:00 a medianoche. Los viernes y sábados hasta la 01:30. Cerramos los martes. ¿Quieres reservar para algún día?",
       "chat.a.location": "Estamos en Plaza Puerta Cerrada, 6, Madrid. Metro más cercano La Latina, a 4 minutos andando. ¿Te paso ubicación de Google Maps?",
       "chat.a.pet": "¡Por supuesto! Somos 100% pet-friendly: todos los animales son bienvenidos en todo el bar. Cuencos de agua en cada zona, snacks caseros sin sal ni azúcar horneados por la Polaca, rincones tranquilos con sombra. Perros, gatos, conejos, hurones, aves... si viene contigo, viene con nosotros. ¿Reservamos mesa?",
       "chat.a.menu": "Hoy en la pizarra: provoleta a la parrilla, empanadas criollas, milanesa napolitana, choripán y vermut de grifo. Cambia cada semana. ¿Te paso la pizarra completa?",
@@ -584,7 +584,7 @@
       "pride.text": "All are welcome · Todos son bienvenidos",
       "pride.short": "All are welcome",
       "gallery.photoBy": "Photography by",
-      "hours.eyebrow": "Madrid double-shift",
+      "hours.eyebrow": "Opening hours",
       "hours.title": "Opening hours",
       "contact.eyebrow": "Come see us",
       "contact.title": "Plaza Puerta Cerrada, 6, Madrid",
@@ -681,8 +681,8 @@
       "dash.promo.p2.desc": "Grilled provoleta + draft vermouth for 12€ all Saturday long.",
       "dash.promo.edit": "Edit",
       "dash.promo.new": "New promotion",
-      "dash.hours.title": "Madrid double shift",
-      "dash.hours.sub": "Tune kitchen and bar · lunch and dinner",
+      "dash.hours.title": "Opening schedule",
+      "dash.hours.sub": "Continuous service · closed Tuesdays",
       "dash.hours.save": "Save hours",
       "dash.ch.connected": "Connected",
       "dash.ch.number": "Active number",
@@ -769,7 +769,7 @@
       "chat.q.menu": "What's on tonight?",
       "chat.q.allergens": "Allergens",
       "chat.q.human": "Talk to a person",
-      "chat.a.hours": "Madrid double-shift kitchen: 1–4:30 pm (lunch) and 8–11:30 pm (dinner). Weekends we run till 1:30 am. Want to book?",
+      "chat.a.hours": "Open Monday and Wednesday–Sunday from 2 pm till midnight. Fridays and Saturdays until 1:30 am. Closed Tuesdays. Want to book?",
       "chat.a.location": "We're at Plaza Puerta Cerrada, 6, Madrid. Closest metro is La Latina, 4-min walk. Want a Google Maps pin?",
       "chat.a.pet": "Of course! We're 100% pet-friendly: all animals welcome throughout the whole bar. Water bowls in every area, salt-free/sugar-free homemade snacks baked by la Polaca, quiet shaded corners. Dogs, cats, rabbits, ferrets, birds... if it comes with you, it comes with us. Want to book a table?",
       "chat.a.menu": "Tonight on the slate: grilled provoleta, creole empanadas, milanesa napolitana, choripán and draft vermouth. Changes weekly. Want the full slate?",
@@ -925,13 +925,13 @@
   ];
 
   const HOURS = [
-    { day: "lun", open: true, lunch: ["13:00", "16:30"], dinner: ["20:00", "23:30"] },
-    { day: "mar", open: true, lunch: ["13:00", "16:30"], dinner: ["20:00", "23:30"] },
-    { day: "mie", open: true, lunch: ["13:00", "16:30"], dinner: ["20:00", "23:30"] },
-    { day: "jue", open: true, lunch: ["13:00", "16:30"], dinner: ["20:00", "00:30"] },
-    { day: "vie", open: true, lunch: ["13:00", "17:00"], dinner: ["20:00", "01:30"] },
-    { day: "sab", open: true, lunch: ["12:30", "17:00"], dinner: ["20:00", "01:30"] },
-    { day: "dom", open: true, lunch: ["12:30", "17:30"], dinner: [null, null] }
+    { day: "lun", open: true,  lunch: ["14:00", "00:00"], dinner: [null, null] },
+    { day: "mar", open: false, lunch: [null, null],         dinner: [null, null] },
+    { day: "mie", open: true,  lunch: ["14:00", "00:00"], dinner: [null, null] },
+    { day: "jue", open: true,  lunch: ["14:00", "00:30"], dinner: [null, null] },
+    { day: "vie", open: true,  lunch: ["14:00", "01:30"], dinner: [null, null] },
+    { day: "sab", open: true,  lunch: ["14:00", "01:30"], dinner: [null, null] },
+    { day: "dom", open: true,  lunch: ["14:00", "00:00"], dinner: [null, null] }
   ];
 
   const DAY_NAMES = {
@@ -1084,16 +1084,20 @@
     if (!grid) return;
     grid.innerHTML = HOURS.map((h) => {
       const name = DAY_NAMES[state.lang][h.day];
+      if (!h.open) {
+        const closedLabel = state.lang === "es" ? "Cerrado" : "Closed";
+        return `<div class="hours-day is-closed"><strong>${name}</strong><small class="closed">${closedLabel}</small></div>`;
+      }
       const lunch = h.lunch[0] ? `${h.lunch[0]} — ${h.lunch[1]}` : null;
       const dinner = h.dinner[0] ? `${h.dinner[0]} — ${h.dinner[1]}` : null;
-      const closedLabel = state.lang === "es" ? "Cerrado noche" : "Closed at night";
-      return `
-        <div class="hours-day">
-          <strong>${name}</strong>
-          ${lunch ? `<small>${state.lang === "es" ? "Comidas" : "Lunch"}: ${lunch}</small>` : ""}
-          ${dinner ? `<small>${state.lang === "es" ? "Cenas" : "Dinner"}: ${dinner}</small>` : `<small class="closed">${closedLabel}</small>`}
-        </div>
-      `;
+      if (lunch && dinner) {
+        return `<div class="hours-day"><strong>${name}</strong>
+          <small>${state.lang === "es" ? "Comidas" : "Lunch"}: ${lunch}</small>
+          <small>${state.lang === "es" ? "Cenas" : "Dinner"}: ${dinner}</small></div>`;
+      }
+      const shift = lunch || dinner || "—";
+      return `<div class="hours-day"><strong>${name}</strong>
+        <small>${state.lang === "es" ? "Abierto" : "Open"}: ${shift}</small></div>`;
     }).join("");
   }
 

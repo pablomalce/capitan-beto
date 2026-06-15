@@ -124,15 +124,8 @@
       "longitude": -3.7088
     },
     "openingHoursSpecification": [
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday"], "opens": "13:00", "closes": "16:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday"], "opens": "20:00", "closes": "23:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday"], "opens": "13:00", "closes": "16:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Thursday"], "opens": "20:00", "closes": "00:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday"], "opens": "13:00", "closes": "17:00" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday"], "opens": "20:00", "closes": "01:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday"], "opens": "12:30", "closes": "17:00" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday"], "opens": "20:00", "closes": "01:30" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday"], "opens": "12:30", "closes": "17:30" }
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Wednesday","Thursday","Sunday"], "opens": "14:00", "closes": "00:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday","Saturday"], "opens": "14:00", "closes": "01:30" }
     ],
     "acceptsReservations": "True",
     "menu": "https://capitan-beto.com/#menu",
@@ -284,7 +277,7 @@
         "name": "¿Cuál es el horario de Capitán Beto?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Lunes a miércoles: 13:00–16:30 y 20:00–23:30. Jueves: 13:00–16:30 y 20:00–00:30. Viernes: 13:00–17:00 y 20:00–01:30. Sábados: 12:30–17:00 y 20:00–01:30. Domingos: 12:30–17:30."
+          "text": "Abrimos de lunes, y de miércoles a domingo en turno seguido de 14:00 a medianoche. Viernes y sábados hasta la 01:30. Los martes permanecemos cerrados."
         }
       },
       {
@@ -907,7 +900,7 @@
     <!-- Hours -->
     <section id="hours" class="section section--hours reveal" data-reveal>
       <div class="section__head">
-        <span class="eyebrow" data-i18n="hours.eyebrow">Doble turno madrileño</span>
+        <span class="eyebrow" data-i18n="hours.eyebrow">Nuestro horario</span>
         <h2 data-i18n="hours.title">Horarios</h2>
       </div>
       <div class="hours-grid" id="publicHoursGrid"><!-- rendered by JS --></div>
@@ -2521,6 +2514,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=7" defer></script>
-  <script src="script.js?v=66" defer></script>
+  <script src="script.js?v=67" defer></script>
 </body>
 </html>

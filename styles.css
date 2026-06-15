@@ -6113,3 +6113,199 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
   .onboarding-grid { grid-template-columns: 1fr; }
   .onboarding-modal { border-radius: 18px; }
 }
+
+/* =====================================================
+   ALLERGEN FILTER CHIPS (menú público)
+   ===================================================== */
+.allergen-filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0 18px;
+  animation: tourFadeIn 0.3s var(--ease-soft);
+}
+.allergen-filter__label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-mute);
+  flex-shrink: 0;
+}
+.allergen-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--card-border-soft);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-soft);
+  white-space: nowrap;
+}
+.allergen-chip:hover {
+  border-color: var(--brand-green);
+  color: var(--brand-green);
+  background: rgba(15,65,35,0.05);
+}
+.allergen-chip.is-active {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(15,65,35,0.25);
+}
+.allergen-chip--clear {
+  border-color: var(--sunset);
+  color: var(--sunset);
+  margin-left: 4px;
+}
+.allergen-chip--clear:hover {
+  background: var(--sunset);
+  color: #fff;
+}
+
+/* =====================================================
+   QR PANEL
+   ===================================================== */
+.qr-panel { display: flex; flex-direction: column; gap: 20px; max-width: 520px; }
+.qr-panel__controls { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: end; }
+.qr-panel__controls .field { display: flex; flex-direction: column; gap: 4px; }
+.qr-panel__controls input[type="color"] {
+  width: 48px; height: 38px; border-radius: 8px; border: 1.5px solid var(--card-border-soft);
+  cursor: pointer; padding: 2px; background: var(--bg-cream);
+}
+.qr-panel__canvas {
+  display: flex; justify-content: center;
+  padding: 20px; background: #fffdf4;
+  border-radius: 16px; border: 2px dashed var(--card-border-soft);
+  min-height: 120px; align-items: center;
+}
+.qr-panel__canvas img, .qr-panel__canvas canvas { border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.qr-panel__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.qr-panel__hint { max-width: 400px; }
+
+/* =====================================================
+   INSTAGRAM CAMPAIGN SECTION
+   ===================================================== */
+.section--ig {
+  background: linear-gradient(135deg, var(--forest) 0%, #0d1f14 100%);
+  padding: 80px 22px;
+}
+.ig-campaign {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.ig-campaign__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(197,160,80,0.2);
+  color: var(--brass);
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ig-campaign__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  color: var(--bg-cream);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.ig-campaign__lead {
+  color: rgba(251,246,232,0.65);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 580px;
+  margin: 0;
+}
+.ig-campaign__lead strong { color: var(--brass); }
+.ig-campaign__hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.ig-tag {
+  background: rgba(197,160,80,0.12);
+  color: var(--brass);
+  border: 1px solid rgba(197,160,80,0.25);
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.ig-campaign__ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn--ig {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #fff;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+  box-shadow: 0 8px 24px rgba(220,39,67,0.35);
+}
+.btn--ig:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.ig-campaign__ugc {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+  width: 100%;
+}
+.ig-ugc-card {
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(197,160,80,0.12);
+  border-radius: 16px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  flex: 1;
+  min-width: 160px;
+  max-width: 200px;
+  transition: background 0.2s;
+}
+.ig-ugc-card:hover { background: rgba(255,255,255,0.09); }
+.ig-ugc-card__icon { font-size: 32px; }
+.ig-ugc-card strong { color: var(--bg-cream); font-size: 14px; }
+.ig-ugc-card span { color: rgba(251,246,232,0.5); font-size: 12px; line-height: 1.4; }
+.ig-ugc-card span strong { color: var(--brass); }
+.ig-ugc-card__arrow { color: rgba(197,160,80,0.5); font-size: 22px; flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .ig-ugc-card__arrow { transform: rotate(90deg); }
+  .ig-campaign__ugc { flex-direction: column; align-items: center; }
+  .ig-ugc-card { max-width: 100%; width: 100%; }
+}

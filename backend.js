@@ -434,6 +434,26 @@
     ));
   }
   async function deleteBpicPhoto(id) { return deleteRow("bpic_photos", id); }
+  // Stats reales desde reservas (cuando aún no hay datos de consumo)
+  async function fetchReservationStats({ days = 30 } = {}) {
+    const since = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+    const url = `${REST}/reservations?select=reserve_date,reserve_time,party_size,status,zone&reserve_date=gte.${since}&order=reserve_date.asc&limit=500`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return { byDay: {}, byHour: {}, byZone: {}, bySize: {}, total: 0 };
+    const rows = await res.json();
+    const byDay = {}, byHour = {}, byZone = {}, bySize = {};
+    rows.forEach(r => {
+      byDay[r.reserve_date] = (byDay[r.reserve_date] || 0) + 1;
+      const h = r.reserve_time ? parseInt(r.reserve_time.split(":")[0], 10) : 20;
+      byHour[h] = (byHour[h] || 0) + 1;
+      const z = r.zone || "sala";
+      byZone[z] = (byZone[z] || 0) + 1;
+      const s = r.party_size || 2;
+      bySize[s] = (bySize[s] || 0) + 1;
+    });
+    return { byDay, byHour, byZone, bySize, total: rows.length };
+  }
+
   async function listAllReservations({ limit = 100 } = {}) {
     const url = `${REST}/reservations?select=*&order=reserve_date.asc,reserve_time.asc&limit=${limit}`;
     const res = await fetch(url, { headers: authHeaders() });
@@ -477,7 +497,7 @@
     uploadBpicPhoto, listBpicPhotos, listAllBpicPhotos, approveBpic, deleteBpicPhoto,
     // consumption + stats
     logConsumption,
-    fetchTopDishes, fetchDailyRevenue, fetchHourlyHeatmap, fetchRecentConsumption,
+    fetchTopDishes, fetchDailyRevenue, fetchHourlyHeatmap, fetchRecentConsumption, fetchReservationStats,
     wipeDemoConsumption,
     // dishes
     fetchDishes,

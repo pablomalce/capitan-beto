@@ -84,6 +84,22 @@
       "brand.sub": "Gastro Taberna",
       "demo.toggle": "Demo",
       "ctrl.view": "Vista",
+      "dash.nav.qr": "QR del Menú",
+      "ig.title": "Seguinos en Instagram",
+      "ig.lead": "Cada semana: vinos del momento, tapas del día, peludos en la barra y el caos bonito de una taberna de verdad. Etiquetanos con <strong>#BetosPic</strong> y aparecés en nuestra historia.",
+      "ig.follow": "Seguir en Instagram",
+      "ig.upload": "📸 Subir mi Beto's Pic",
+      "ig.ugc1.t": "Sacate una foto", "ig.ugc1.d": "En la barra, en la mesa o con tu peludo",
+      "ig.ugc2.t": "Etiquetanos", "ig.ugc2.d": "Usá <strong>#BetosPic</strong> y mencioná <strong>@capitanbeto.bardetapas</strong>",
+      "ig.ugc3.t": "Ganá la tabla", "ig.ugc3.d": "La mejor foto del mes se lleva una tabla del Capitán para dos",
+      "dash.qr.title": "📱 QR del Menú",
+      "dash.qr.lead": "Generá un código QR para poner en las mesas. Al escanearlo, los clientes ven la pizarra directamente.",
+      "dash.qr.urlLabel": "URL destino",
+      "dash.qr.colorLabel": "Color QR",
+      "dash.qr.sizeLabel": "Tamaño",
+      "dash.qr.generate": "Generar QR",
+      "dash.qr.download": "⬇ Descargar PNG",
+      "dash.qr.hint": "Imprimí el QR en A6 y ponelo en cada mesa. Los clientes no necesitan app — funciona con la cámara del móvil.",
       "nav.experience": "La Experiencia",
       "nav.reserve": "Reservar mesa",
       "hero.pill": "Gastro Taberna · Fusión Española & Argentina",
@@ -473,6 +489,22 @@
       "brand.sub": "Gastro Taberna",
       "demo.toggle": "Demo",
       "ctrl.view": "View",
+      "dash.nav.qr": "Menu QR",
+      "ig.title": "Follow us on Instagram",
+      "ig.lead": "Every week: wines of the moment, daily tapas, pets at the bar and the beautiful chaos of a real taberna. Tag us with <strong>#BetosPic</strong> and appear in our stories.",
+      "ig.follow": "Follow on Instagram",
+      "ig.upload": "📸 Upload my Beto's Pic",
+      "ig.ugc1.t": "Take a photo", "ig.ugc1.d": "At the bar, at the table or with your pet",
+      "ig.ugc2.t": "Tag us", "ig.ugc2.d": "Use <strong>#BetosPic</strong> and mention <strong>@capitanbeto.bardetapas</strong>",
+      "ig.ugc3.t": "Win the board", "ig.ugc3.d": "Best photo of the month wins a Captain's board for two",
+      "dash.qr.title": "📱 Menu QR Code",
+      "dash.qr.lead": "Generate a QR code to place on tables. Customers scan it and land directly on the menu.",
+      "dash.qr.urlLabel": "Target URL",
+      "dash.qr.colorLabel": "QR Color",
+      "dash.qr.sizeLabel": "Size",
+      "dash.qr.generate": "Generate QR",
+      "dash.qr.download": "⬇ Download PNG",
+      "dash.qr.hint": "Print the QR at A6 size and place on each table. No app needed — works with the phone camera.",
       "nav.experience": "The Experience",
       "nav.reserve": "Book a table",
       "hero.pill": "Gastro Taberna · Spanish & Argentine Fusion",
@@ -896,7 +928,8 @@
     view: "public",
     menuTab: "share",
     dashTab: "inventory",
-    invFilter: ""
+    invFilter: "",
+    allergenFilter: new Set()   // alérgenos excluidos por el usuario
   };
 
   // ---------- Helpers ----------
@@ -940,7 +973,16 @@
     const grid = $("#publicMenuGrid");
     if (!grid) return;
 
-    const cards = DISHES.filter((d) => d.cat === state.menuTab).map((d) => {
+    const cards = DISHES.filter((d) => {
+      if (d.cat !== state.menuTab) return false;
+      // Excluir platos que contengan algún alérgeno activo
+      if (state.allergenFilter.size > 0) {
+        for (const a of state.allergenFilter) {
+          if (d.allergens.includes(a)) return false;
+        }
+      }
+      return true;
+    }).map((d) => {
       const allergens = d.allergens.map((a) =>
         `<span class="tag">${ALLERGEN_LABELS[state.lang][a] || a}</span>`
       ).join("");
@@ -976,6 +1018,42 @@
     }
   }
 
+  // ---------- Render: allergen filter chips ----------
+  function renderAllergenFilter() {
+    const wrap = $("#allergenFilterWrap");
+    if (!wrap) return;
+    const lang = state.lang;
+    const allInUse = new Set();
+    DISHES.forEach(d => { if (d.cat === state.menuTab) d.allergens.forEach(a => allInUse.add(a)); });
+    if (allInUse.size === 0) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    wrap.innerHTML = `
+      <span class="allergen-filter__label">${lang === "es" ? "Sin:" : "Without:"}</span>
+      ${[...allInUse].map(a => {
+        const active = state.allergenFilter.has(a);
+        const label = ALLERGEN_LABELS[lang][a] || a;
+        const icons = { gluten:"🌾", lacteos:"🥛", huevo:"🥚", pescado:"🐟", moluscos:"🦑", sulfitos:"🍇", frutos_secos:"🥜", soja:"🫘" };
+        return `<button class="allergen-chip${active ? " is-active" : ""}" data-allergen="${a}" title="${active ? (lang==="es"?"Quitar filtro":"Remove filter") : (lang==="es"?"Filtrar":"Filter")}">${icons[a]||""} ${label}</button>`;
+      }).join("")}
+      ${state.allergenFilter.size > 0 ? `<button class="allergen-chip allergen-chip--clear" id="allergenClear">${lang==="es"?"Limpiar":"Clear"} ×</button>` : ""}
+    `;
+    wrap.querySelectorAll(".allergen-chip[data-allergen]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const a = btn.dataset.allergen;
+        if (state.allergenFilter.has(a)) state.allergenFilter.delete(a);
+        else state.allergenFilter.add(a);
+        renderAllergenFilter();
+        renderPublicMenu(true);
+      });
+    });
+    const clearBtn = wrap.querySelector("#allergenClear");
+    if (clearBtn) clearBtn.addEventListener("click", () => {
+      state.allergenFilter.clear();
+      renderAllergenFilter();
+      renderPublicMenu(true);
+    });
+  }
+
   // ---------- Render: public hours ----------
   function renderPublicHours() {
     const grid = $("#publicHoursGrid");
@@ -998,6 +1076,7 @@
   // ---------- Menu tabs ----------
   function setMenuTab(tab) {
     state.menuTab = tab;
+    state.allergenFilter.clear();   // reset filter on tab change
     $$(".tab-btn").forEach((b) => b.classList.toggle("is-active", b.dataset.menuTab === tab));
     positionTabIndicator();
     renderPublicMenu(true);
@@ -1137,6 +1216,7 @@
     $$("[data-dash-panel]").forEach((p) => {
       p.hidden = p.getAttribute("data-dash-panel") !== tab;
     });
+    if (tab === "qr") setTimeout(initQrPanel, 50);
     const titleEl = $("#dashSectionTitle");
     const map = {
       inventory: "dash.title.inventory",
@@ -1212,6 +1292,7 @@
     $$("[data-lang-switch]").forEach((b) => b.classList.toggle("is-active", b.dataset.langSwitch === lang));
     applyI18n();
     renderPublicMenu(false);
+    renderAllergenFilter();
     renderPublicHours();
     renderInventory();
     renderHoursForm();
@@ -1360,6 +1441,7 @@
     $("#year").textContent = new Date().getFullYear();
     applyI18n();
     renderPublicMenu(false);
+    renderAllergenFilter();
     renderPublicHours();
     renderInventory();
     renderHoursForm();
@@ -2160,8 +2242,12 @@
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (!rateLimit("magicLink", 3, 5 * 60 * 1000)) {
+          toast(state.lang === "es" ? "⏱ Demasiados intentos. Esperá 5 minutos." : "⏱ Too many attempts. Wait 5 minutes.");
+          return;
+        }
         const btn = form.querySelector("button[type='submit']");
-        const email = form.email.value.trim().toLowerCase();
+        const email = sanitizeInput(form.email.value).toLowerCase();
         if (!ADMIN_EMAILS.includes(email)) {
           toast(state.lang === "es" ? "Email no autorizado como admin" : "Email not authorized");
           return;
@@ -2784,6 +2870,9 @@
     document.querySelectorAll("[data-cookie-close]").forEach((b) =>
       b.addEventListener("click", closeCookieModal));
     document.getElementById("footerCookieReopen")?.addEventListener("click", openCookieModal);
+    document.getElementById("bpicOpenUpload2")?.addEventListener("click", () => {
+      document.getElementById("bpicOpenUpload")?.click();
+    });
 
     // Acceso admin discreto desde el footer → abre el login overlay
     document.getElementById("footerAdminLink")?.addEventListener("click", () => {
@@ -3448,7 +3537,21 @@
   function persistReservations() {
     try { localStorage.setItem(RESERVE_KEY, JSON.stringify(reservations)); } catch (_) {}
   }
-  function saveReservation(data) {
+  function saveReservation(rawData) {
+    if (!rateLimit("reservation", 3, 10 * 60 * 1000)) {
+      toast(state.lang === "es" ? "⏱ Demasiadas reservas seguidas. Esperá un momento." : "⏱ Too many attempts. Please wait.");
+      return;
+    }
+    const data = {
+      name:   sanitizeInput(rawData.name || ""),
+      phone:  sanitizeInput(rawData.phone || ""),
+      email:  sanitizeInput(rawData.email || ""),
+      people: sanitizeInput(String(rawData.people || "2")),
+      date:   sanitizeInput(rawData.date || ""),
+      time:   sanitizeInput(rawData.time || "20:00"),
+      zone:   sanitizeInput(rawData.zone || "sala"),
+      notes:  sanitizeInput(rawData.notes || "").slice(0, 200),
+    };
     const localEntry = {
       id: "r" + Date.now(),
       ts: Date.now(),
@@ -3476,6 +3579,39 @@
         console.warn("backend reserve failed (sigue local + email)", e);
       });
     }
+
+    // ⚡ Notificación WhatsApp al dueño — abre wa.me en segunda pestaña
+    // Solo si el dueño tiene el móvil disponible y el browser lo permite.
+    try {
+      const d = data;
+      const zone = d.zone === "terraza"
+        ? (state.lang === "es" ? "Terraza" : "Terrace")
+        : (state.lang === "es" ? "Sala" : "Indoor");
+      const waText = [
+        `🍽️ *NUEVA RESERVA — Capitán Beto*`,
+        `👤 ${d.name || "—"}`,
+        `📅 ${d.date} a las ${d.time || "20:00"}`,
+        `👥 ${d.people || 2} persona(s) · ${zone}`,
+        d.phone ? `📞 ${d.phone}` : null,
+        d.email ? `✉️ ${d.email}` : null,
+        d.notes ? `📝 ${d.notes}` : null,
+        ``,
+        `Ver todas → https://capitan-beto.com/?view=dashboard`
+      ].filter(Boolean).join("
+");
+      const ownerWaUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waText)}`;
+      // Se abre solo si hay click activo (evita bloqueo de popup en móvil)
+      if (typeof window !== "undefined") {
+        const tag = document.createElement("a");
+        tag.href = ownerWaUrl;
+        tag.target = "_blank";
+        tag.rel = "noopener";
+        tag.style.display = "none";
+        document.body.appendChild(tag);
+        tag.click();
+        setTimeout(() => tag.remove(), 1000);
+      }
+    } catch (_) {}
   }
 
   function renderReservations() {
@@ -4567,17 +4703,99 @@
     Promise.all([
       window.cbBackend.fetchDailyRevenue({ days: statsRange }),
       window.cbBackend.fetchTopDishes({ limit: 8 }),
-      window.cbBackend.fetchHourlyHeatmap()
-    ]).then(([daily, top, heat]) => {
-      statsCache = { daily, top, heat };
-      renderStatsKpis(daily);
-      renderDailyChart(daily);
-      renderTopDishes(top);
-      renderHeatmap(heat);
+      window.cbBackend.fetchHourlyHeatmap(),
+      window.cbBackend.fetchReservationStats ? window.cbBackend.fetchReservationStats({ days: statsRange }) : Promise.resolve(null)
+    ]).then(([daily, top, heat, resvStats]) => {
+      statsCache = { daily, top, heat, resvStats };
+      const hasConsumption = daily && daily.length > 0;
+      renderStatsKpis(daily, resvStats);
+      if (hasConsumption) {
+        renderDailyChart(daily);
+        renderTopDishes(top);
+        renderHeatmap(heat);
+      } else {
+        // Sin consumos aún: mostrar gráficas desde reservas
+        renderReservationCharts(resvStats);
+      }
     }).catch((e) => console.warn("stats failed", e));
   }
 
-  function renderStatsKpis(daily) {
+  function renderReservationCharts(rs) {
+    if (!rs) return;
+    const lang = state.lang;
+
+    // --- Chart diario: reservas por día ---
+    const svgDaily = document.getElementById("chartDaily");
+    if (svgDaily) {
+      const days = Object.keys(rs.byDay).sort();
+      const vals = days.map(d => rs.byDay[d]);
+      if (days.length === 0) {
+        svgDaily.innerHTML = `<text x="360" y="120" text-anchor="middle" font-size="14" fill="#a09585">${lang==="es"?"Sin reservas en este período":"No reservations in this period"}</text>`;
+      } else {
+        const W=720,H=240,pL=50,pR=12,pT=18,pB=28;
+        const max = Math.max(1,...vals);
+        const xStep = (W-pL-pR)/Math.max(1,days.length-1);
+        const yS = v => H-pB-(v/max)*(H-pT-pB);
+        const path = vals.map((v,i)=>`${i===0?"M":"L"} ${pL+i*xStep} ${yS(v)}`).join(" ");
+        const area = path + ` L ${pL+(vals.length-1)*xStep} ${H-pB} L ${pL} ${H-pB} Z`;
+        const tickEvery = Math.max(1,Math.floor(days.length/6));
+        const labels = days.map((d,i)=>{
+          if(i%tickEvery!==0&&i!==days.length-1) return "";
+          const dt=new Date(d);
+          const lbl=dt.toLocaleDateString(lang==="es"?"es-ES":"en-GB",{day:"numeric",month:"short"});
+          return `<text x="${pL+i*xStep}" y="${H-8}" font-size="10" fill="#7c726a" text-anchor="middle">${lbl}</text>`;
+        }).join("");
+        svgDaily.innerHTML = `
+          <defs><linearGradient id="ga2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f4123" stop-opacity=".25"/><stop offset="100%" stop-color="#0f4123" stop-opacity="0"/></linearGradient></defs>
+          <path d="${area}" fill="url(#ga2)"/>
+          <path d="${path}" fill="none" stroke="#0f4123" stroke-width="2.5" stroke-linejoin="round"/>
+          ${days.map((d,i)=>`<circle cx="${pL+i*xStep}" cy="${yS(vals[i])}" r="4" fill="#0f4123"/><title>${vals[i]} ${lang==="es"?"reserva(s)":"reservation(s)"}</title>`).join("")}
+          ${labels}`;
+      }
+      const note = document.getElementById("chartDailyNote");
+      if (note) note.textContent = lang==="es"
+        ? `Reservas por día · ${rs.total} total en ${statsRange} días. Cuando registres ventas, aparecerá el revenue.`
+        : `Reservations per day · ${rs.total} total in ${statsRange} days. Sales revenue will appear once you log consumptions.`;
+    }
+
+    // --- Top dishes: sin datos de consumo, mostrar mensaje ---
+    const topWrap = document.getElementById("topDishesList");
+    if (topWrap) {
+      // Mostrar distribución por zona en lugar de top platos
+      const zonas = Object.entries(rs.byZone).sort((a,b)=>b[1]-a[1]);
+      const total = zonas.reduce((s,[,v])=>s+v,0)||1;
+      const zoneLabels = { sala: lang==="es"?"Sala":"Indoor", terraza: lang==="es"?"Terraza":"Terrace", barra: lang==="es"?"Barra":"Bar" };
+      topWrap.innerHTML = `
+        <div style="padding:8px 0 12px;font-size:12px;color:var(--ink-mute);font-weight:600;text-transform:uppercase;letter-spacing:.08em">${lang==="es"?"Reservas por zona":"Reservations by zone"}</div>
+        ${zonas.length ? zonas.map(([z,n])=>`
+          <div class="top-dish-row">
+            <span>${zoneLabels[z]||z}</span>
+            <div class="top-dish-bar-wrap"><div class="top-dish-bar" style="width:${Math.round(n/total*100)}%"></div></div>
+            <strong>${n}</strong>
+          </div>`).join("") : `<p style="color:var(--ink-mute);font-size:13px">${lang==="es"?"Sin datos aún":"No data yet"}</p>`}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--card-border-soft);font-size:12px;color:var(--ink-mute)">${lang==="es"?"Los top platos aparecerán cuando registres ventas en Consumos →":"Top dishes will appear once you log sales in Consumptions →"}</div>`;
+    }
+
+    // --- Heatmap: por hora ---
+    const svgHeat = document.getElementById("chartHeatmap");
+    if (svgHeat && rs.byHour) {
+      const hours = Array.from({length:14},(_,i)=>i+11); // 11h a 00h
+      const maxH = Math.max(1,...hours.map(h=>rs.byHour[h]||0));
+      const W=720,H=80,cellW=Math.floor((W-60)/hours.length),cellH=50;
+      const cells = hours.map((h,i)=>{
+        const v=rs.byHour[h]||0;
+        const opacity=v/maxH;
+        const lbl=h===0?"00:00":`${h}:00`;
+        return `<rect x="${60+i*cellW}" y="10" width="${cellW-3}" height="${cellH}" rx="5" fill="#0f4123" opacity="${opacity.toFixed(2)}"/>
+          <text x="${60+i*cellW+cellW/2}" y="${H+5}" font-size="9" fill="#7c726a" text-anchor="middle">${lbl}</text>
+          ${v>0?`<text x="${60+i*cellW+cellW/2}" y="40" font-size="10" fill="${opacity>0.5?"#fff":"#0f4123"}" text-anchor="middle" font-weight="600">${v}</text>`:""}`;
+      }).join("");
+      svgHeat.setAttribute("viewBox",`0 0 ${W} ${H+20}`);
+      svgHeat.innerHTML = `<text x="0" y="40" font-size="11" fill="#7c726a" transform="rotate(-90,14,40)">${lang==="es"?"Resrv.":"Reserv."}</text>${cells}`;
+    }
+  }
+
+  function renderStatsKpis(daily, resvStats) {
     // Sumamos por día (las views devuelven una fila por (day, shift))
     const byDay = {};
     daily.forEach((r) => {
@@ -4599,9 +4817,47 @@
     set("kpiOrders", items.toLocaleString());
     set("kpiAvgTicket", fmtEUR(avg * 100));
     set("kpiForecast", fmtEUR(forecast));
-    set("kpiRevenueDelta", trend >= 0 ? "📈 tendencia positiva" : "📉 tendencia a la baja");
-    const elDeltaRev = document.getElementById("kpiRevenueDelta");
-    if (elDeltaRev) elDeltaRev.className = "kpi__delta " + (trend >= 0 ? "up" : "down");
+    const hasData = daily && daily.length > 0;
+    if (hasData) {
+      set("kpiRevenue", fmtEUR(rev));
+      set("kpiOrders", items.toLocaleString());
+      set("kpiAvgTicket", fmtEUR(avg * 100));
+      set("kpiForecast", fmtEUR(forecast));
+      set("kpiRevenueDelta", trend >= 0 ? "📈 tendencia positiva" : "📉 tendencia a la baja");
+      const elDeltaRev = document.getElementById("kpiRevenueDelta");
+      if (elDeltaRev) elDeltaRev.className = "kpi__delta " + (trend >= 0 ? "up" : "down");
+    } else if (resvStats) {
+      // Fallback: mostrar KPIs de reservas cuando no hay consumos
+      const lang = state.lang;
+      const busyDayEntry = Object.entries(resvStats.byDay).sort((a,b)=>b[1]-a[1])[0];
+      const busyHourEntry = Object.entries(resvStats.byHour).sort((a,b)=>b[1]-a[1])[0];
+      const avgSize = resvStats.total > 0
+        ? (Object.entries(resvStats.bySize).reduce((s,[k,v])=>s+parseInt(k)*v,0)/resvStats.total).toFixed(1)
+        : "—";
+      set("kpiRevenue", resvStats.total.toString());
+      set("kpiOrders", avgSize + " " + (lang==="es"?"pers.":"ppl."));
+      set("kpiAvgTicket", busyDayEntry ? busyDayEntry[0].slice(5) : "—"); // MM-DD
+      set("kpiForecast", busyHourEntry ? busyHourEntry[0] + ":00h" : "—");
+      // Update labels
+      const labels = { kpiRevenue: lang==="es"?"Reservas totales":"Total reservations",
+        kpiOrders: lang==="es"?"Media comensales":"Avg. party size",
+        kpiAvgTicket: lang==="es"?"Día más popular":"Busiest day",
+        kpiForecast: lang==="es"?"Hora pico":"Peak hour" };
+      Object.entries(labels).forEach(([id, lbl]) => {
+        const card = document.getElementById(id)?.closest(".kpi");
+        if (card) { const h = card.querySelector(".kpi__label"); if(h) h.textContent = lbl; }
+      });
+      const elDelta = document.getElementById("kpiRevenueDelta");
+      if (elDelta) { elDelta.textContent = lang==="es"?"Cuando registres ventas, verás el revenue":"Log sales in Consumptions to see revenue"; elDelta.className="kpi__delta"; }
+    } else {
+      set("kpiRevenue", fmtEUR(rev));
+      set("kpiOrders", items.toLocaleString());
+      set("kpiAvgTicket", fmtEUR(avg * 100));
+      set("kpiForecast", fmtEUR(forecast));
+      set("kpiRevenueDelta", trend >= 0 ? "📈 tendencia positiva" : "📉 tendencia a la baja");
+      const elDeltaRev = document.getElementById("kpiRevenueDelta");
+      if (elDeltaRev) elDeltaRev.className = "kpi__delta " + (trend >= 0 ? "up" : "down");
+    }
   }
 
   function renderDailyChart(daily) {
@@ -5210,6 +5466,37 @@
     }
   ];
 
+
+  // =====================================================
+  // SEGURIDAD · Rate limiter + anti-bot
+  // =====================================================
+  const _rateLimits = {};
+  function rateLimit(key, maxCalls, windowMs) {
+    const now = Date.now();
+    if (!_rateLimits[key]) _rateLimits[key] = [];
+    _rateLimits[key] = _rateLimits[key].filter(t => now - t < windowMs);
+    if (_rateLimits[key].length >= maxCalls) return false;
+    _rateLimits[key].push(now);
+    return true;
+  }
+
+  // Honeypot field check (spam bots rellenan campos ocultos)
+  function honeypotPassed(form) {
+    const hp = form.querySelector('[name="website"]') || form.querySelector('[name="_hp"]');
+    return !hp || hp.value === "";
+  }
+
+  // Sanitización estricta de inputs de usuario (NO admin HTML)
+  function sanitizeInput(str) {
+    if (typeof str !== "string") return "";
+    return str
+      .replace(/[<>]/g, "")          // sin tags HTML
+      .replace(/javascript:/gi, "")  // sin JS URIs
+      .replace(/on\w+\s*=/gi, "")    // sin event handlers
+      .trim()
+      .slice(0, 500);                 // max 500 chars
+  }
+
   // =====================================================
   // ONBOARDING MODAL · Cards de bienvenida (primer login)
   // =====================================================
@@ -5373,6 +5660,50 @@
   // Botón flotante "Tour" en el dashboard para reabrirlo
   window.cbStartTour = startDashboardTour;
 
+
+
+  // =====================================================
+  // QR CODE DEL MENÚ
+  // =====================================================
+  function initQrPanel() {
+    const genBtn = document.getElementById("qrGenerate");
+    const dlBtn  = document.getElementById("qrDownload");
+    const canvas = document.getElementById("qrCanvas");
+    if (!genBtn || !canvas) return;
+    let qrInstance = null;
+
+    genBtn.addEventListener("click", () => {
+      const url   = (document.getElementById("qrUrl")?.value || "https://capitan-beto.com/#menu").trim();
+      const color = document.getElementById("qrColor")?.value || "#0f4123";
+      const size  = parseInt(document.getElementById("qrSize")?.value || "300", 10);
+      canvas.innerHTML = "";
+      qrInstance = new QRCode(canvas, {
+        text: url,
+        width: size,
+        height: size,
+        colorDark: color,
+        colorLight: "#fffdf4",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      dlBtn.hidden = false;
+      // Add logo overlay after QR renders
+      setTimeout(() => {
+        const img = canvas.querySelector("img") || canvas.querySelector("canvas");
+        if (img) img.style.borderRadius = "12px";
+      }, 100);
+    });
+
+    dlBtn.addEventListener("click", () => {
+      const img = canvas.querySelector("img");
+      const cvs = canvas.querySelector("canvas");
+      const src = img ? img.src : (cvs ? cvs.toDataURL("image/png") : null);
+      if (!src) return;
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = "capitan-beto-qr-menu.png";
+      a.click();
+    });
+  }
 
   // ====================================================================
   // ============== SUPABASE MENU SYNC ==================================

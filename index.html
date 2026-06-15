@@ -11,12 +11,12 @@
   <!-- ============ SECURITY HEADERS (meta-tag fallback) ============ -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self';
-                 script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
+                 script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://w.behold.so;
                  style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://accounts.google.com;
                  font-src 'self' https://fonts.bunny.net;
-                 img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co;
+                 img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co https://*.cdninstagram.com https://*.fbcdn.net;
                  media-src 'self' blob:;
-                 connect-src 'self' https://formsubmit.co https://accounts.google.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co;
+                 connect-src 'self' https://formsubmit.co https://accounts.google.com https://ghuabxeqqmbvqzdrizrr.supabase.co https://*.supabase.co https://api.behold.so https://*.behold.so;
                  frame-src https://accounts.google.com https://drive.google.com;
                  frame-ancestors 'self';
                  form-action 'self' https://formsubmit.co https://wa.me;
@@ -84,7 +84,7 @@
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=65" />
+  <link rel="stylesheet" href="styles.css?v=66" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -877,6 +877,14 @@
           </a>
           <button class="btn btn--ghost" type="button" id="bpicOpenUpload2" data-i18n="ig.upload">📸 Subir mi Beto's Pic</button>
         </div>
+
+        <!-- ── Behold.so Instagram feed ── -->
+        <!-- Para activar: reemplazá BEHOLD_FEED_ID con tu Feed ID de behold.so -->
+        <div class="ig-behold-wrap" id="beholdFeedWrap">
+          <behold-widget feed-id="BEHOLD_FEED_ID"></behold-widget>
+        </div>
+        <script type="module" src="https://w.behold.so/widget.js"></script>
+
         <div class="ig-campaign__ugc">
           <div class="ig-ugc-card">
             <div class="ig-ugc-card__icon">📸</div>

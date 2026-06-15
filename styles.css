@@ -6256,6 +6256,24 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
   flex-wrap: wrap;
   justify-content: center;
 }
+
+/* ── Behold Instagram feed widget ── */
+.ig-behold-wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: 36px auto 0;
+}
+.ig-behold-wrap behold-widget {
+  --behold-font-family: var(--font-ui);
+  --behold-border-radius: 12px;
+  --behold-gap: 8px;
+  display: block;
+  width: 100%;
+}
+/* Ocultar si el Feed ID aún es placeholder */
+.ig-behold-wrap:has(behold-widget[feed-id="BEHOLD_FEED_ID"]) {
+  display: none;
+}
 .btn--ig {
   background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   color: #fff;

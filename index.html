@@ -1296,10 +1296,14 @@
           <span class="snav__ico">📱</span>
           <span data-i18n="dash.nav.qr">QR del Menú</span>
         </button>
+        <button class="snav" data-dash-tab="cuenta" type="button">
+          <span class="snav__ico">🔐</span>
+          <span>Mi Cuenta</span>
+        </button>
       </nav>
 
       <div class="sidebar__foot">
-        <small data-i18n="dash.foot">Madrid · doble turno</small>
+        <small data-i18n="dash.foot">Madrid · turno seguido</small>
       </div>
     </aside>
 
@@ -2168,6 +2172,34 @@
         <div id="loyaltyList" class="loyalty-list"></div>
       </section>
 
+      <section class="dash-panel" data-dash-panel="cuenta" hidden>
+        <div class="dash-panel__head">
+          <h3>🔐 Mi Cuenta</h3>
+          <p class="muted-sm">Cambiá tu contraseña para entrar sin magic link la próxima vez.</p>
+        </div>
+        <div class="dash-card" style="max-width:420px">
+          <h4 style="margin:0 0 1rem">Cambiar contraseña</h4>
+          <form id="changePasswordForm" style="display:flex;flex-direction:column;gap:.75rem">
+            <label class="field">
+              <small>Nueva contraseña <span style="color:var(--ink-mute)">(mín. 8 caracteres)</span></small>
+              <input type="password" id="cpNewPwd" minlength="8" required autocomplete="new-password"
+                     placeholder="••••••••" style="width:100%"/>
+            </label>
+            <label class="field">
+              <small>Confirmar contraseña</small>
+              <input type="password" id="cpConfirmPwd" minlength="8" required autocomplete="new-password"
+                     placeholder="••••••••" style="width:100%"/>
+            </label>
+            <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center" id="cpSubmitBtn">
+              🔒 Guardar nueva contraseña
+            </button>
+            <p id="cpMsg" style="font-size:.85rem;text-align:center;min-height:1.2em"></p>
+          </form>
+          <hr style="margin:1.5rem 0;border-color:var(--ink-faint)"/>
+          <p class="muted-sm">Una vez que tengas contraseña podés iniciar sesión directamente con email + contraseña, sin esperar el magic link.</p>
+        </div>
+      </section>
+
     </div>
   </section>
 
@@ -2514,6 +2546,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=7" defer></script>
-  <script src="script.js?v=67" defer></script>
+  <script src="script.js?v=68" defer></script>
 </body>
 </html>

@@ -1440,6 +1440,51 @@
       toast(t("toast.savedHours"));
     });
 
+    // ---------- Mi Cuenta · cambiar contraseña ----------
+    const cpForm = $("#changePasswordForm");
+    if (cpForm) {
+      cpForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newPwd     = document.getElementById("cpNewPwd").value;
+        const confirmPwd = document.getElementById("cpConfirmPwd").value;
+        const msg        = document.getElementById("cpMsg");
+        const btn        = document.getElementById("cpSubmitBtn");
+        msg.style.color  = "var(--ink-mute)";
+        msg.textContent  = "";
+        if (newPwd.length < 8) {
+          msg.style.color = "var(--danger, #c0392b)";
+          msg.textContent = "La contraseña debe tener al menos 8 caracteres.";
+          return;
+        }
+        if (newPwd !== confirmPwd) {
+          msg.style.color = "var(--danger, #c0392b)";
+          msg.textContent = "Las contraseñas no coinciden.";
+          return;
+        }
+        if (!window.cbBackend || !window.cbBackend.changePassword) {
+          msg.style.color = "var(--danger, #c0392b)";
+          msg.textContent = "Backend no disponible.";
+          return;
+        }
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Guardando…";
+        try {
+          await window.cbBackend.changePassword(newPwd);
+          cpForm.reset();
+          msg.style.color = "var(--forest, #1a3d24)";
+          msg.textContent = "✅ Contraseña actualizada. Ya podés iniciar sesión con email + contraseña.";
+        } catch (err) {
+          msg.style.color = "var(--danger, #c0392b)";
+          msg.textContent = "Error al cambiar la contraseña. Intentá de nuevo.";
+          console.warn("changePassword error:", err);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = orig;
+        }
+      });
+    }
+
     $$(".card__actions .btn--primary[data-role-restrict='admin']").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         if (state.role !== "admin") { toast(t("toast.noPerm")); return; }
@@ -1499,16 +1544,19 @@
     window.cbBackend.handleMagicLinkCallback().then((ok) => {
       if (!ok) return;
       const u = window.cbBackend.currentUser();
-      if (!u || !ADMIN_EMAILS.includes(u.email)) {
+      if (!u || !ALL_AUTH_EMAILS.includes(u.email)) {
         toast("Email no autorizado como admin");
         return;
       }
+      const role = roleForEmail(u.email);
       currentUser = {
         email: u.email,
         name: u.email.split("@")[0],
         picture: "",
+        role,
         exp: Date.now() + 12 * 60 * 60 * 1000
       };
+      state.role = role;
       persistAuth(currentUser);
       updateAuthUI();
       closeLoginOverlay();
@@ -2145,11 +2193,18 @@
   const GOOGLE_CLIENT_ID = "";
 
   // Allowlist de emails autorizados como admin
-  const ADMIN_EMAILS = [
-    "info@capitan-beto.com",          // ⭐ email profesional principal
-    "capitanbetomadrid@gmail.com",    // Gmail personal del bar
-    "malczewskipablo@gmail.com"       // dev
-  ];
+  // Emails con acceso total (admin) — pueden borrar, cambiar precios, ver todo
+  const ADMIN_EMAILS = ["malczewskipablo@gmail.com"];
+  // Emails con acceso de edición — pueden editar contenido pero no precio ni borrado
+  const EDIT_EMAILS  = ["info@capitan-beto.com", "capitanbetomadrid@gmail.com"];
+  // Todos los que pueden autenticarse
+  const ALL_AUTH_EMAILS = [...ADMIN_EMAILS, ...EDIT_EMAILS];
+
+  function roleForEmail(email) {
+    if (ADMIN_EMAILS.includes(email)) return "admin";
+    if (EDIT_EMAILS.includes(email))  return "edit";
+    return null;
+  }
 
   let currentUser = null;
 
@@ -2159,8 +2214,9 @@
       if (!raw) return;
       const obj = JSON.parse(raw);
       // Sesión expira a las 12h
-      if (obj.exp && Date.now() < obj.exp && ADMIN_EMAILS.includes(obj.email)) {
+      if (obj.exp && Date.now() < obj.exp && ALL_AUTH_EMAILS.includes(obj.email)) {
         currentUser = obj;
+        state.role = obj.role || roleForEmail(obj.email) || "edit";
       } else {
         localStorage.removeItem(AUTH_KEY);
       }
@@ -2171,11 +2227,12 @@
   }
   function clearAuth() {
     currentUser = null;
+    state.role = "edit";
     try { localStorage.removeItem(AUTH_KEY); } catch (_) {}
   }
 
   function isAuthed() {
-    return !!currentUser && ADMIN_EMAILS.includes(currentUser.email);
+    return !!currentUser && ALL_AUTH_EMAILS.includes(currentUser.email);
   }
 
   /**
@@ -2205,18 +2262,21 @@
       toast(state.lang === "es" ? "Email no verificado en Google" : "Email not verified at Google");
       return;
     }
-    if (!ADMIN_EMAILS.includes(payload.email)) {
+    if (!ALL_AUTH_EMAILS.includes(payload.email)) {
       toast(state.lang === "es"
         ? `Email ${payload.email} no autorizado como admin`
         : `Email ${payload.email} not authorized as admin`);
       return;
     }
+    const role = roleForEmail(payload.email);
     currentUser = {
       email: payload.email,
       name: payload.name || payload.email,
       picture: payload.picture || "",
+      role,
       exp: Date.now() + 12 * 60 * 60 * 1000 // 12h
     };
+    state.role = role;
     persistAuth(currentUser);
     updateAuthUI();
     closeLoginOverlay();
@@ -2231,15 +2291,37 @@
       return setTimeout(initGoogleSignIn, 500);
     }
     if (!GOOGLE_CLIENT_ID) {
-      // Magic link auth · sin contraseña. El admin recibe un email,
-      // hace click, y entra directo al dashboard.
+      // Auth con contraseña (primario) + magic link (fallback)
       slot.innerHTML = `
-        <div id="magicLinkUI" class="supa-login">
-          <div class="supa-login__icon" aria-hidden="true">✨</div>
+        <div id="pwdLoginUI" class="supa-login">
+          <div class="supa-login__icon" aria-hidden="true">🔐</div>
           <h3 class="supa-login__title">${state.lang === "es" ? "Entrar al dashboard" : "Enter the dashboard"}</h3>
+          <form id="pwdLoginForm" class="supa-login__form">
+            <label class="field">
+              <small>${state.lang === "es" ? "Email de admin" : "Admin email"}</small>
+              <input type="email" name="email" required placeholder="info@capitan-beto.com"
+                     autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" />
+            </label>
+            <label class="field">
+              <small>${state.lang === "es" ? "Contraseña" : "Password"}</small>
+              <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+            </label>
+            <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center" id="pwdLoginBtn">
+              → ${state.lang === "es" ? "Entrar" : "Sign in"}
+            </button>
+          </form>
+          <div style="text-align:center;margin-top:.75rem">
+            <button type="button" id="switchToMagicLink" class="btn btn--ghost" style="font-size:.82rem;padding:.3rem .75rem">
+              ✉️ ${state.lang === "es" ? "Entrar sin contraseña (magic link)" : "Sign in without password (magic link)"}
+            </button>
+          </div>
+        </div>
+        <div id="magicLinkUI" class="supa-login" hidden>
+          <div class="supa-login__icon" aria-hidden="true">✨</div>
+          <h3 class="supa-login__title">${state.lang === "es" ? "Link mágico" : "Magic link"}</h3>
           <p class="supa-login__lead">${state.lang === "es"
-            ? "Te enviamos un link mágico a tu email. Hacé click y entrás directo, sin contraseña."
-            : "We send a magic link to your inbox. Click it and you're in — no password needed."}</p>
+            ? "Te enviamos un link a tu email. Hacé click y entrás directo."
+            : "We send a magic link to your inbox. Click it and you're in."}</p>
           <form id="magicLinkForm" class="supa-login__form">
             <label class="field">
               <small>${state.lang === "es" ? "Tu email de admin" : "Your admin email"}</small>
@@ -2247,14 +2329,14 @@
                      autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" />
             </label>
             <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center">
-              ✉️ ${state.lang === "es" ? "Enviarme el link mágico" : "Send me the magic link"}
+              ✉️ ${state.lang === "es" ? "Enviarme el link" : "Send me the link"}
             </button>
           </form>
-          <small class="supa-login__note">
-            ${state.lang === "es"
-              ? "Sólo los emails autorizados como admin reciben el link."
-              : "Only authorized admin emails receive the link."}
-          </small>
+          <div style="text-align:center;margin-top:.75rem">
+            <button type="button" id="switchToPwd" class="btn btn--ghost" style="font-size:.82rem;padding:.3rem .75rem">
+              ← ${state.lang === "es" ? "Volver a contraseña" : "Back to password"}
+            </button>
+          </div>
         </div>
         <div id="magicLinkSent" class="supa-login supa-login--sent" hidden>
           <div class="supa-login__icon" aria-hidden="true">📬</div>
@@ -2262,10 +2344,79 @@
           <p class="supa-login__lead" id="magicLinkSentMsg"></p>
           <small class="supa-login__note">
             ${state.lang === "es"
-              ? "Si no ves el email en 1-2 min, revisá la carpeta de Spam. Usá el botón de abajo para volver."
-              : "If you don't see the email in 1-2 min, check your Spam folder. Use the button below to go back."}
+              ? "Si no ves el email en 1-2 min, revisá Spam. O volvé y usá contraseña."
+              : "Check Spam if you don't see it. Or go back and use your password."}
           </small>
+          <button type="button" id="mlBackBtn" class="btn btn--ghost" style="margin-top:.75rem;width:100%;justify-content:center">
+            ← ${state.lang === "es" ? "Volver" : "Back"}
+          </button>
         </div>`;
+
+      // Toggle magic link / password
+      slot.querySelector("#switchToMagicLink").addEventListener("click", () => {
+        slot.querySelector("#pwdLoginUI").hidden = true;
+        slot.querySelector("#magicLinkUI").hidden = false;
+      });
+      slot.querySelector("#switchToPwd").addEventListener("click", () => {
+        slot.querySelector("#magicLinkUI").hidden = true;
+        slot.querySelector("#pwdLoginUI").hidden = false;
+      });
+      slot.querySelector("#mlBackBtn").addEventListener("click", () => {
+        slot.querySelector("#magicLinkSent").hidden = true;
+        slot.querySelector("#pwdLoginUI").hidden = false;
+      });
+
+      // --- Password login ---
+      const pwdForm = slot.querySelector("#pwdLoginForm");
+      pwdForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!rateLimit("pwdLogin", 5, 5 * 60 * 1000)) {
+          toast(state.lang === "es" ? "⏱ Demasiados intentos. Esperá 5 minutos." : "⏱ Too many attempts. Wait 5 minutes.");
+          return;
+        }
+        const btn = slot.querySelector("#pwdLoginBtn");
+        const email = sanitizeInput(pwdForm.email.value).toLowerCase();
+        const password = pwdForm.password.value;
+        if (!ALL_AUTH_EMAILS.includes(email)) {
+          toast(state.lang === "es" ? "Email no autorizado" : "Email not authorized");
+          return;
+        }
+        if (!window.cbBackend || !window.cbBackend.signInWithPassword) {
+          toast("Backend no disponible");
+          return;
+        }
+        const originalLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = state.lang === "es" ? "Verificando…" : "Checking…";
+        try {
+          const data = await window.cbBackend.signInWithPassword(email, password);
+          const u = window.cbBackend.currentUser();
+          if (u && ALL_AUTH_EMAILS.includes(u.email)) {
+            const role = roleForEmail(u.email);
+            currentUser = { email: u.email, name: u.email.split("@")[0], role, exp: Date.now() + 12 * 3600 * 1000 };
+            state.role = role;
+            persistAuth(currentUser);
+            document.body.setAttribute("data-auth", "true");
+            closeLoginOverlay();
+            setDashTab(state.dashTab || "inventory");
+            toast(state.lang === "es" ? "¡Bienvenido, Capitán! 🫡" : "Welcome, Captain! 🫡");
+          } else {
+            toast(state.lang === "es" ? "Email no autorizado" : "Email not authorized");
+          }
+        } catch (err) {
+          console.warn("pwd login failed", err);
+          const msg = (err && err.message) || "";
+          const userMsg = /invalid|wrong|credentials|email.not.confirmed/i.test(msg)
+            ? (state.lang === "es" ? "Email o contraseña incorrectos." : "Wrong email or password.")
+            : (state.lang === "es" ? "Error al iniciar sesión. Usá el magic link." : "Login error. Try the magic link.");
+          toast(userMsg);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalLabel;
+        }
+      });
+
+      // --- Magic link ---
       const form = slot.querySelector("#magicLinkForm");
       const sentDiv = slot.querySelector("#magicLinkSent");
       const inputUI = slot.querySelector("#magicLinkUI");
@@ -2279,8 +2430,8 @@
         }
         const btn = form.querySelector("button[type='submit']");
         const email = sanitizeInput(form.email.value).toLowerCase();
-        if (!ADMIN_EMAILS.includes(email)) {
-          toast(state.lang === "es" ? "Email no autorizado como admin" : "Email not authorized");
+        if (!ALL_AUTH_EMAILS.includes(email)) {
+          toast(state.lang === "es" ? "Email no autorizado" : "Email not authorized");
           return;
         }
         if (!window.cbBackend || !window.cbBackend.signInWithMagicLink) {

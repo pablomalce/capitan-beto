@@ -220,7 +220,7 @@ button { font-family: inherit; cursor: pointer; }
 .navbar.is-scrolled .brand__name small { color: var(--wood); }
 .nav-links {
   display: flex;
-  gap: 32px;
+  gap: clamp(16px, 2.5vw, 32px);
   margin: 0 auto;
 }
 .nav-links a {
@@ -228,6 +228,7 @@ button { font-family: inherit; cursor: pointer; }
   color: rgba(244,234,214,0.85);
   font-weight: 500;
   letter-spacing: 0.01em;
+  white-space: nowrap;
   transition: color 0.25s var(--ease-soft);
   position: relative;
   padding: 4px 0;

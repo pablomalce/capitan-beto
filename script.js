@@ -2043,11 +2043,10 @@
   // Cuando esté vacío, se usa modo "demo email login".
   const GOOGLE_CLIENT_ID = "";
 
-  // Allowlist de emails autorizados como admin
+  // Allowlist de emails autorizados como admin · SOLO los dueños
   const ADMIN_EMAILS = [
     "info@capitan-beto.com",          // ⭐ email profesional principal
-    "capitanbetomadrid@gmail.com",
-    "malczewskipablo@gmail.com"       // dev/admin
+    "capitanbetomadrid@gmail.com"     // Gmail personal del bar
   ];
 
   let currentUser = null;

@@ -86,7 +86,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500;1,9..144,600&family=Inter:wght@300;400;500;600;700;800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=60" />
+  <link rel="stylesheet" href="styles.css?v=61" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -228,6 +228,7 @@
           <a href="#crew" data-i18n="nav.crew">The Crew</a>
           <a href="#momentos" data-i18n="nav.momentos">Momentos</a>
           <a href="#gallery" data-i18n="nav.gallery">Galería</a>
+          <a href="#eventos" data-i18n="nav.eventos">Eventos</a>
           <a href="#contact" data-i18n="nav.contact">Contacto</a>
         </nav>
         <div class="nav-right">
@@ -834,6 +835,19 @@
     </section>
 
 
+    <!-- Eventos -->
+    <section id="eventos" class="section section--events reveal" data-reveal>
+      <div class="events-inner">
+        <span class="eyebrow" data-i18n="events.eyebrow">Lo que se viene</span>
+        <h2 class="section-title" data-i18n="events.title">Eventos & Noches especiales</h2>
+        <p class="section-lead" data-i18n="events.lead">Noches de flamenco, catas de vino, tapas en colaboración con chefs invitados y mucho más. Apuntate antes que se llene.</p>
+        <div id="eventsGrid" class="events-grid">
+          <!-- populated by JS -->
+          <div class="events-empty" data-i18n="events.empty">Próximos eventos muy pronto…</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Instagram Campaign -->
     <section id="instagram" class="section section--ig reveal" data-reveal>
       <div class="ig-campaign">
@@ -1064,6 +1078,14 @@
         <button class="snav" data-dash-tab="payments" type="button">
           <span class="snav__ico">💳</span>
           <span data-i18n="dash.nav.payments">Pagos & Integraciones</span>
+        </button>
+        <button class="snav" data-dash-tab="eventos" type="button">
+          <span class="snav__ico">🎉</span>
+          <span class="snav__lbl" data-i18n="dash.eventos.nav">Eventos</span>
+        </button>
+        <button class="snav" data-dash-tab="loyalty" type="button">
+          <span class="snav__ico">⭐</span>
+          <span class="snav__lbl" data-i18n="dash.loyalty.nav">Sellos</span>
         </button>
         <button class="snav" data-dash-tab="qr" type="button">
           <span class="snav__ico">📱</span>
@@ -1884,6 +1906,63 @@
         </div>
       </section>
 
+      <!-- ===== EVENTS PANEL ===== -->
+      <section class="dash-panel" data-dash-panel="eventos" hidden>
+        <div class="panel-header">
+          <h2 data-i18n="dash.eventos.title">🎉 Gestión de Eventos</h2>
+        </div>
+        <div class="events-dash-form card" style="margin-bottom:1.5rem">
+          <h3 style="margin:0 0 1rem;font-size:1rem" data-i18n="dash.eventos.new">Nuevo evento</h3>
+          <div class="form-grid form-grid--2">
+            <label class="form-field"><span data-i18n="dash.eventos.f.title">Título</span><input id="evtTitle" type="text" placeholder="Noche de Flamenco…"/></label>
+            <label class="form-field"><span data-i18n="dash.eventos.f.date">Fecha</span><input id="evtDate" type="date"/></label>
+            <label class="form-field"><span data-i18n="dash.eventos.f.time">Hora</span><input id="evtTime" type="time" value="20:30"/></label>
+            <label class="form-field"><span data-i18n="dash.eventos.f.image">Imagen URL</span><input id="evtImage" type="url" placeholder="https://…"/></label>
+          </div>
+          <label class="form-field" style="margin-top:.75rem"><span data-i18n="dash.eventos.f.desc">Descripción</span><textarea id="evtDesc" rows="3" placeholder="Describe el evento…"></textarea></label>
+          <label class="form-field form-field--check" style="margin-top:.75rem">
+            <input id="evtPublished" type="checkbox" checked/>
+            <span data-i18n="dash.eventos.f.publish">Publicar en la web ahora</span>
+          </label>
+          <button class="btn btn--primary" style="margin-top:1rem" id="evtSave" type="button" data-i18n="dash.eventos.save">Guardar evento</button>
+        </div>
+        <h3 style="font-size:.9rem;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;margin:0 0 .75rem" data-i18n="dash.eventos.list">Eventos guardados</h3>
+        <div id="evtList" class="evt-list"></div>
+      </section>
+
+      <!-- ===== LOYALTY PANEL ===== -->
+      <section class="dash-panel" data-dash-panel="loyalty" hidden>
+        <div class="panel-header">
+          <h2 data-i18n="dash.loyalty.title">⭐ Sellos de Fidelización</h2>
+        </div>
+        <div class="loyalty-search card" style="margin-bottom:1.5rem">
+          <h3 style="margin:0 0 1rem;font-size:1rem" data-i18n="dash.loyalty.search">Buscar tarjeta de cliente</h3>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <input id="loyaltyPhone" type="tel" placeholder="+34 6XX XXX XXX" style="flex:1;min-width:180px"/>
+            <input id="loyaltyName" type="text" placeholder="Nombre (opcional)" style="flex:1;min-width:140px"/>
+            <button class="btn btn--primary" id="loyaltySearch" type="button" data-i18n="dash.loyalty.find">Buscar / Crear</button>
+          </div>
+        </div>
+        <div id="loyaltyCard" class="loyalty-card-wrap" hidden>
+          <div class="loyalty-card">
+            <div class="loyalty-card__header">
+              <span class="loyalty-card__name" id="loyaltyCardName">—</span>
+              <span class="loyalty-card__phone" id="loyaltyCardPhone">—</span>
+            </div>
+            <div class="loyalty-stamps-grid" id="loyaltyStampsGrid"></div>
+            <div class="loyalty-card__footer">
+              <span id="loyaltyProgress" class="loyalty-progress"></span>
+              <div style="display:flex;gap:.5rem">
+                <button class="btn btn--primary btn--sm" id="loyaltyAddStamp" type="button">＋ Sello</button>
+                <button class="btn btn--ghost btn--sm" id="loyaltyRedeem" type="button">🎁 Canjear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 style="font-size:.9rem;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;margin:1.5rem 0 .75rem" data-i18n="dash.loyalty.all">Todos los clientes</h3>
+        <div id="loyaltyList" class="loyalty-list"></div>
+      </section>
+
     </div>
   </section>
 
@@ -2220,7 +2299,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="backend.js?v=6" defer></script>
-  <script src="script.js?v=60" defer></script>
+  <script src="backend.js?v=7" defer></script>
+  <script src="script.js?v=61" defer></script>
 </body>
 </html>

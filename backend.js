@@ -483,6 +483,82 @@
   }
 
   // ============ EXPORT ============
+
+  // ===== EVENTS =====
+  async function listPublicEvents() {
+    const url = `${REST}/events?select=*&is_published=eq.true&order=event_date.asc&limit=20`;
+    const res = await fetch(url, { headers: { apikey: ANON_KEY, 'Content-Type': 'application/json' } });
+    if (!res.ok) return [];
+    return res.json();
+  }
+
+  async function listAllEvents() {
+    const url = `${REST}/events?select=*&order=event_date.desc&limit=50`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  }
+
+  async function saveEvent({ id, title, description, event_date, event_time, image_url, is_published }) {
+    const body = JSON.stringify({ title, description, event_date, event_time: event_time || null, image_url: image_url || null, is_published });
+    if (id) {
+      const res = await fetch(`${REST}/events?id=eq.${id}`, { method: 'PATCH', headers: { ...authHeaders(), Prefer: 'return=representation' }, body });
+      return res.ok;
+    } else {
+      const res = await fetch(`${REST}/events`, { method: 'POST', headers: { ...authHeaders(), Prefer: 'return=representation' }, body });
+      return res.ok;
+    }
+  }
+
+  async function deleteEvent(id) {
+    const res = await fetch(`${REST}/events?id=eq.${id}`, { method: 'DELETE', headers: authHeaders() });
+    return res.ok;
+  }
+
+  // ===== LOYALTY =====
+  async function getLoyaltyCard(phone) {
+    const url = `${REST}/loyalty_stamps?customer_phone=eq.${encodeURIComponent(phone)}&limit=1`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return rows[0] || null;
+  }
+
+  async function listAllLoyalty() {
+    const url = `${REST}/loyalty_stamps?select=*&order=stamps.desc&limit=100`;
+    const res = await fetch(url, { headers: authHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  }
+
+  async function addLoyaltyStamp({ phone, name, existingId, currentStamps }) {
+    if (existingId) {
+      const newStamps = (currentStamps || 0) + 1;
+      const res = await fetch(`${REST}/loyalty_stamps?id=eq.${existingId}`, {
+        method: 'PATCH', headers: { ...authHeaders(), Prefer: 'return=representation' },
+        body: JSON.stringify({ stamps: newStamps, customer_name: name || undefined, last_stamp_at: new Date().toISOString() })
+      });
+      return res.ok;
+    } else {
+      const res = await fetch(`${REST}/loyalty_stamps`, {
+        method: 'POST', headers: { ...authHeaders(), Prefer: 'return=representation' },
+        body: JSON.stringify({ customer_phone: phone, customer_name: name || null, stamps: 1 })
+      });
+      return res.ok;
+    }
+  }
+
+  async function redeemLoyalty({ id, redeemed, stamps }) {
+    const STAMPS_PER_REWARD = 10;
+    const available = Math.floor(stamps / STAMPS_PER_REWARD) - (redeemed || 0);
+    if (available < 1) return false;
+    const res = await fetch(`${REST}/loyalty_stamps?id=eq.${id}`, {
+      method: 'PATCH', headers: { ...authHeaders(), Prefer: 'return=representation' },
+      body: JSON.stringify({ redeemed: (redeemed || 0) + 1 })
+    });
+    return res.ok;
+  }
+
   window.cbBackend = {
     URL, ANON_KEY,
     // health
@@ -505,6 +581,10 @@
     createReservation, listAllReservations, updateReservationStatus,
     // customers
     upsertCustomer, listAllCustomers,
+    // events
+    listPublicEvents, listAllEvents, saveEvent, deleteEvent,
+    // loyalty
+    getLoyaltyCard, listAllLoyalty, addLoyaltyStamp, redeemLoyalty,
     // util
     PUBLIC_OBJECT
   };

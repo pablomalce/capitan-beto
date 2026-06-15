@@ -100,6 +100,22 @@
       "dash.qr.generate": "Generar QR",
       "dash.qr.download": "⬇ Descargar PNG",
       "dash.qr.hint": "Imprimí el QR en A6 y ponelo en cada mesa. Los clientes no necesitan app — funciona con la cámara del móvil.",
+      "nav.eventos": "Eventos",
+      "events.eyebrow": "Lo que se viene",
+      "events.title": "Eventos & Noches especiales",
+      "events.lead": "Noches de flamenco, catas de vino, tapas con chefs invitados y mucho más. Apuntate antes que se llene.",
+      "events.empty": "Próximos eventos muy pronto…",
+      "dash.eventos.nav": "Eventos",
+      "dash.eventos.title": "🎉 Gestión de Eventos",
+      "dash.eventos.new": "Nuevo evento",
+      "dash.eventos.f.title": "Título", "dash.eventos.f.date": "Fecha", "dash.eventos.f.time": "Hora",
+      "dash.eventos.f.image": "Imagen URL", "dash.eventos.f.desc": "Descripción", "dash.eventos.f.publish": "Publicar en la web ahora",
+      "dash.eventos.save": "Guardar evento", "dash.eventos.list": "Eventos guardados",
+      "dash.loyalty.nav": "Sellos",
+      "dash.loyalty.title": "⭐ Sellos de Fidelización",
+      "dash.loyalty.search": "Buscar tarjeta de cliente",
+      "dash.loyalty.find": "Buscar / Crear",
+      "dash.loyalty.all": "Todos los clientes",
       "nav.experience": "La Experiencia",
       "nav.reserve": "Reservar mesa",
       "hero.pill": "Gastro Taberna · Fusión Española & Argentina",
@@ -1217,6 +1233,8 @@
       p.hidden = p.getAttribute("data-dash-panel") !== tab;
     });
     if (tab === "qr") setTimeout(initQrPanel, 50);
+    if (tab === "eventos") setTimeout(initEventosPanel, 50);
+    if (tab === "loyalty") setTimeout(initLoyaltyPanel, 50);
     const titleEl = $("#dashSectionTitle");
     const map = {
       inventory: "dash.title.inventory",
@@ -1293,6 +1311,7 @@
     applyI18n();
     renderPublicMenu(false);
     renderAllergenFilter();
+    renderPublicEvents();
     renderPublicHours();
     renderInventory();
     renderHoursForm();
@@ -5709,6 +5728,231 @@
   // ============== SUPABASE MENU SYNC ==================================
   // Carga stock y precios en vivo desde la tabla `dishes` de Supabase.
   // Si el fetch falla, el menú hardcodeado sigue funcionando sin cambios.
+
+  // ====================================================================
+  // EVENTOS — panel de administración
+  // ====================================================================
+  let _evtEditing = null;
+
+  function initEventosPanel() {
+    renderEvtList();
+    const saveBtn = document.getElementById("evtSave");
+    if (saveBtn && !saveBtn._bound) {
+      saveBtn._bound = true;
+      saveBtn.addEventListener("click", handleEvtSave);
+    }
+  }
+
+  async function renderEvtList() {
+    const list = document.getElementById("evtList");
+    if (!list || !window.cbBackend) return;
+    list.innerHTML = '<p style="color:var(--ink-mute);font-size:.88rem">Cargando…</p>';
+    const rows = await window.cbBackend.listAllEvents();
+    if (!rows.length) { list.innerHTML = '<p style="color:var(--ink-mute);font-size:.88rem">Sin eventos aún.</p>'; return; }
+    list.innerHTML = rows.map(e => {
+      const d = new Date(e.event_date + 'T12:00:00').toLocaleDateString(state.lang==='es'?'es-ES':'en-GB',{day:'numeric',month:'short',year:'numeric'});
+      return `<div class="evt-item" data-evt-id="${e.id}">
+        <span class="evt-item__date">${d}</span>
+        <span class="evt-item__title">${e.title}</span>
+        <span class="evt-item__badge ${e.is_published?'evt-item__badge--pub':'evt-item__badge--draft'}">${e.is_published?(state.lang==='es'?'Publicado':'Published'):(state.lang==='es'?'Borrador':'Draft')}</span>
+        <div class="evt-item__actions">
+          <button class="btn btn--ghost btn--sm" data-evt-edit="${e.id}" type="button">✏️</button>
+          <button class="btn btn--ghost btn--sm" data-evt-del="${e.id}" type="button">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('[data-evt-edit]').forEach(btn => btn.addEventListener('click', () => loadEvtForEdit(btn.dataset.evtEdit, rows)));
+    list.querySelectorAll('[data-evt-del]').forEach(btn => btn.addEventListener('click', () => handleEvtDelete(btn.dataset.evtDel)));
+  }
+
+  function loadEvtForEdit(id, rows) {
+    const e = rows.find(r => r.id === id); if (!e) return;
+    _evtEditing = id;
+    const set = (sel, val) => { const el = document.getElementById(sel); if (el) el.value = val || ''; };
+    set('evtTitle', e.title); set('evtDate', e.event_date); set('evtTime', e.event_time || '');
+    set('evtImage', e.image_url || ''); set('evtDesc', e.description || '');
+    const pub = document.getElementById('evtPublished'); if (pub) pub.checked = e.is_published;
+    const saveBtn = document.getElementById('evtSave');
+    if (saveBtn) saveBtn.textContent = state.lang==='es'?'Actualizar evento':'Update event';
+    document.getElementById('evtTitle')?.focus();
+  }
+
+  async function handleEvtSave() {
+    const g = id => document.getElementById(id);
+    const title = g('evtTitle')?.value.trim();
+    if (!title) { alert(state.lang==='es'?'El título es obligatorio.':'Title is required.'); return; }
+    const payload = {
+      id: _evtEditing || undefined,
+      title,
+      description: g('evtDesc')?.value.trim() || null,
+      event_date: g('evtDate')?.value,
+      event_time: g('evtTime')?.value || null,
+      image_url: g('evtImage')?.value.trim() || null,
+      is_published: g('evtPublished')?.checked ?? true
+    };
+    if (!payload.event_date) { alert(state.lang==='es'?'La fecha es obligatoria.':'Date is required.'); return; }
+    const btn = g('evtSave'); if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    const ok = await window.cbBackend.saveEvent(payload);
+    if (ok) {
+      _evtEditing = null;
+      ['evtTitle','evtDate','evtTime','evtImage','evtDesc'].forEach(id => { const el = g(id); if(el) el.value=''; });
+      const pub = g('evtPublished'); if (pub) pub.checked = true;
+      if (btn) { btn.disabled = false; btn.textContent = state.lang==='es'?'Guardar evento':'Save event'; }
+      renderEvtList();
+      // refresh public grid
+      renderPublicEvents();
+    } else {
+      alert(state.lang==='es'?'Error al guardar. Intentá de nuevo.':'Error saving. Please try again.');
+      if (btn) { btn.disabled = false; btn.textContent = state.lang==='es'?'Guardar evento':'Save event'; }
+    }
+  }
+
+  async function handleEvtDelete(id) {
+    if (!confirm(state.lang==='es'?'¿Eliminar este evento?':'Delete this event?')) return;
+    const ok = await window.cbBackend.deleteEvent(id);
+    if (ok) { renderEvtList(); renderPublicEvents(); }
+  }
+
+  // Public-facing events grid
+  async function renderPublicEvents() {
+    const grid = document.getElementById('eventsGrid');
+    if (!grid || !window.cbBackend) return;
+    const rows = await window.cbBackend.listPublicEvents().catch(() => []);
+    const lang = state.lang;
+    if (!rows.length) {
+      grid.innerHTML = `<div class="events-empty">${lang==='es'?'Próximos eventos muy pronto…':'Upcoming events coming soon…'}</div>`;
+      return;
+    }
+    grid.innerHTML = rows.map(e => {
+      const d = new Date(e.event_date + 'T12:00:00').toLocaleDateString(lang==='es'?'es-ES':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+      const timeStr = e.event_time ? ' · ' + e.event_time.slice(0,5) + 'h' : '';
+      const imgHtml = e.image_url
+        ? `<img class="event-card__img" src="${e.image_url}" alt="${e.title}" loading="lazy"/>`
+        : `<div class="event-card__img-placeholder">🎉</div>`;
+      return `<article class="event-card">
+        ${imgHtml}
+        <div class="event-card__body">
+          <span class="event-card__date">${d}</span>
+          <h3 class="event-card__title">${e.title}</h3>
+          ${e.description ? `<p class="event-card__desc">${e.description}</p>` : ''}
+          ${timeStr ? `<span class="event-card__time">🕗 ${timeStr.replace(' · ','')}</span>` : ''}
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  // ====================================================================
+  // LOYALTY STAMPS — panel de administración
+  // ====================================================================
+  const STAMPS_PER_REWARD = 10;
+  let _loyaltyActive = null; // current card row
+
+  function initLoyaltyPanel() {
+    renderLoyaltyList();
+    const searchBtn = document.getElementById('loyaltySearch');
+    if (searchBtn && !searchBtn._bound) {
+      searchBtn._bound = true;
+      searchBtn.addEventListener('click', handleLoyaltySearch);
+    }
+    document.getElementById('loyaltyPhone')?.addEventListener('keydown', e => { if(e.key==='Enter') handleLoyaltySearch(); });
+  }
+
+  async function renderLoyaltyList() {
+    const list = document.getElementById('loyaltyList');
+    if (!list || !window.cbBackend) return;
+    list.innerHTML = '<p style="color:var(--ink-mute);font-size:.88rem">Cargando…</p>';
+    const rows = await window.cbBackend.listAllLoyalty();
+    if (!rows.length) { list.innerHTML = '<p style="color:var(--ink-mute);font-size:.88rem">' + (state.lang==='es'?'Sin tarjetas aún.':'No cards yet.') + '</p>'; return; }
+    list.innerHTML = rows.map(r => {
+      const earned = Math.floor(r.stamps / STAMPS_PER_REWARD);
+      const redeemed = r.redeemed || 0;
+      const available = earned - redeemed;
+      return `<div class="loyalty-row" data-loyalty-id="${r.id}">
+        <span class="loyalty-row__name">${r.customer_name || '—'}</span>
+        <span class="loyalty-row__phone">${r.customer_phone}</span>
+        <span class="loyalty-row__stamps">⭐ ${r.stamps} sello${r.stamps!==1?'s':''} ${available>0?`· 🎁 ${available} premi${available!==1?'os':'o'}`:''}  </span>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('.loyalty-row').forEach(row => row.addEventListener('click', () => {
+      const r = rows.find(x => x.id === row.dataset.loyaltyId);
+      if (r) openLoyaltyCard(r);
+    }));
+  }
+
+  async function handleLoyaltySearch() {
+    const phone = document.getElementById('loyaltyPhone')?.value.trim();
+    if (!phone) { alert(state.lang==='es'?'Ingresá el teléfono del cliente.':'Enter the customer phone.'); return; }
+    const name = document.getElementById('loyaltyName')?.value.trim() || '';
+    let card = await window.cbBackend.getLoyaltyCard(phone);
+    if (!card) {
+      // create
+      await window.cbBackend.addLoyaltyStamp({ phone, name, existingId: null, currentStamps: 0 });
+      card = await window.cbBackend.getLoyaltyCard(phone);
+    }
+    if (card) { openLoyaltyCard(card); renderLoyaltyList(); }
+  }
+
+  function openLoyaltyCard(card) {
+    _loyaltyActive = card;
+    const wrap = document.getElementById('loyaltyCard');
+    if (!wrap) return;
+    wrap.hidden = false;
+    document.getElementById('loyaltyCardName').textContent = card.customer_name || '—';
+    document.getElementById('loyaltyCardPhone').textContent = card.customer_phone;
+    renderLoyaltyStamps(card);
+    // wire buttons
+    const addBtn = document.getElementById('loyaltyAddStamp');
+    const redeemBtn = document.getElementById('loyaltyRedeem');
+    if (addBtn) { addBtn.onclick = null; addBtn.onclick = handleAddStamp; }
+    if (redeemBtn) { redeemBtn.onclick = null; redeemBtn.onclick = handleRedeem; }
+  }
+
+  function renderLoyaltyStamps(card) {
+    const grid = document.getElementById('loyaltyStampsGrid');
+    const progress = document.getElementById('loyaltyProgress');
+    if (!grid) return;
+    const TOTAL = 30; // show 30 slots (3 reward cycles)
+    const stamps = card.stamps || 0;
+    const redeemed = card.redeemed || 0;
+    const redeemedStamps = redeemed * STAMPS_PER_REWARD;
+    let html = '';
+    for (let i = 0; i < TOTAL; i++) {
+      if (i < redeemedStamps) html += '<div class="loyalty-stamp loyalty-stamp--redeemed">✓</div>';
+      else if (i < stamps) html += '<div class="loyalty-stamp loyalty-stamp--filled">⭐</div>';
+      else html += '<div class="loyalty-stamp loyalty-stamp--empty"></div>';
+    }
+    grid.innerHTML = html;
+    const earned = Math.floor(stamps / STAMPS_PER_REWARD);
+    const available = earned - redeemed;
+    if (progress) progress.textContent = `${stamps} sellos · ${available > 0 ? available + (state.lang==='es'?' premio disponible':' reward available') : (STAMPS_PER_REWARD - (stamps % STAMPS_PER_REWARD)) + (state.lang==='es'?' para próximo premio':' to next reward')}`;
+  }
+
+  async function handleAddStamp() {
+    if (!_loyaltyActive) return;
+    const btn = document.getElementById('loyaltyAddStamp');
+    if (btn) btn.disabled = true;
+    const ok = await window.cbBackend.addLoyaltyStamp({ phone: _loyaltyActive.customer_phone, name: _loyaltyActive.customer_name, existingId: _loyaltyActive.id, currentStamps: _loyaltyActive.stamps });
+    if (ok) {
+      _loyaltyActive.stamps = (_loyaltyActive.stamps || 0) + 1;
+      renderLoyaltyStamps(_loyaltyActive);
+      renderLoyaltyList();
+    }
+    if (btn) btn.disabled = false;
+  }
+
+  async function handleRedeem() {
+    if (!_loyaltyActive) return;
+    const available = Math.floor((_loyaltyActive.stamps || 0) / STAMPS_PER_REWARD) - (_loyaltyActive.redeemed || 0);
+    if (available < 1) { alert(state.lang==='es'?'No hay premios disponibles para canjear.':'No rewards available to redeem.'); return; }
+    if (!confirm(state.lang==='es'?`¿Canjear 1 premio para ${_loyaltyActive.customer_name || _loyaltyActive.customer_phone}?`:`Redeem 1 reward for ${_loyaltyActive.customer_name || _loyaltyActive.customer_phone}?`)) return;
+    const ok = await window.cbBackend.redeemLoyalty({ id: _loyaltyActive.id, redeemed: _loyaltyActive.redeemed || 0, stamps: _loyaltyActive.stamps });
+    if (ok) {
+      _loyaltyActive.redeemed = (_loyaltyActive.redeemed || 0) + 1;
+      renderLoyaltyStamps(_loyaltyActive);
+      renderLoyaltyList();
+    }
+  }
+
   // ====================================================================
   function syncMenuFromSupabase() {
     if (!window.cbBackend || typeof window.cbBackend.fetchDishes !== "function") return;

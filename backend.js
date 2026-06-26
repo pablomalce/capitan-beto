@@ -187,6 +187,28 @@
     } catch (_) { return null; }
   }
 
+  // ============ SETTINGS (key-value compartido, RLS: lectura pública / escritura admin) ============
+  async function getSetting(key) {
+    try {
+      const res = await fetch(`${REST}/settings?key=eq.${encodeURIComponent(key)}&select=value`, {
+        headers: headers()
+      });
+      if (!res.ok) return null;
+      const rows = await res.json();
+      return rows && rows[0] ? rows[0].value : null;
+    } catch (_) { return null; }
+  }
+  async function setSetting(key, value) {
+    // upsert vía POST con Prefer resolution=merge-duplicates
+    const res = await fetch(`${REST}/settings?on_conflict=key`, {
+      method: "POST",
+      headers: Object.assign(authHeaders(), { "Prefer": "resolution=merge-duplicates,return=minimal" }),
+      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error(`setSetting failed: ${res.status} ${await res.text()}`);
+    return true;
+  }
+
   // ============ HEALTH ============
   async function ping() {
     try {
@@ -586,6 +608,8 @@
     // auth
     signInWithPassword, signInWithMagicLink, handleMagicLinkCallback,
     signOut, getSession, currentUser, refreshSession, changePassword, fetchMyRole,
+    // settings
+    getSetting, setSetting,
     // pet
     uploadPetPhoto, listPetPhotos, listAllPetPhotos,
     approvePetPhoto, rejectPetPhoto, deletePetPhoto,

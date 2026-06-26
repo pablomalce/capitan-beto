@@ -189,6 +189,10 @@
       "dash.nav.hours": "Horarios",
       "dash.nav.channels": "Canales",
       "dash.nav.design": "Diseño",
+      "dash.nav.sections": "Secciones",
+      "dash.sections.title": "🧩 Orden de las secciones",
+      "dash.sections.hint": "Arrastrá las secciones o usá las flechas para cambiar su orden en la página. El interruptor las oculta o muestra. El Hero (arriba) y el Contacto (abajo) quedan fijos. Los cambios se aplican en vivo y se guardan para todos los visitantes.",
+      "dash.sections.reset": "Restaurar orden",
       "dash.nav.payments": "Pagos & Integraciones",
       "dash.nav.pets": "Peludos",
       "dash.nav.backup": "Backup CMS",
@@ -597,6 +601,10 @@
       "dash.nav.hours": "Hours",
       "dash.nav.channels": "Channels",
       "dash.nav.design": "Design",
+      "dash.nav.sections": "Sections",
+      "dash.sections.title": "🧩 Section order",
+      "dash.sections.hint": "Drag the sections or use the arrows to change their order on the page. The switch hides or shows them. Hero (top) and Contact (bottom) stay fixed. Changes apply live and are saved for all visitors.",
+      "dash.sections.reset": "Restore order",
       "dash.nav.payments": "Payments & Integrations",
       "dash.nav.pets": "Furry friends",
       "dash.nav.backup": "CMS Backup",
@@ -1316,6 +1324,7 @@
     if (tab === "backup") renderBackupPanel();
     if (tab === "stats") renderStatsPanel();
     if (tab === "consumption") renderConsumptionPanel();
+    if (tab === "sections") renderSectionsPanel();
   }
 
   // ---------- Role ----------
@@ -4359,9 +4368,11 @@
     bindBackupPanel();
     bindStatsPanel();
     bindConsumptionPanel();
+    bindSectionsPanel();
     bindGReview();
     applyGReviewToButton();
     applyDesignFromStorage();
+    loadSectionLayout();
     updateDashBadges();
     // Aplicar imágenes custom guardadas
     setTimeout(applyAllImages, 80);
@@ -5479,6 +5490,194 @@
       }
     });
   }
+
+  // ====================================================================
+  // ============== SECTIONS · reordenar + ocultar desde el dashboard ===
+  // ====================================================================
+  // Hero (arriba) y Contact (abajo) quedan FIJOS. Estas 10 se reordenan.
+  const SECTION_DEFS = [
+    { id: "menu",      icon: "🍽️", es: "La Pizarra (menú)",   en: "The Slate (menu)" },
+    { id: "pet",       icon: "🐾", es: "Pet-Friendly",         en: "Pet-Friendly" },
+    { id: "crew",      icon: "👥", es: "The Crew",             en: "The Crew" },
+    { id: "gallery",   icon: "🖼️", es: "Galería evento",       en: "Event gallery" },
+    { id: "momentos",  icon: "📸", es: "Momentos",             en: "Moments" },
+    { id: "hours",     icon: "🕒", es: "Horarios",             en: "Opening hours" },
+    { id: "reserve",   icon: "🗓️", es: "Reservar mesa",        en: "Book a table" },
+    { id: "eventos",   icon: "🎉", es: "Eventos",              en: "Events" },
+    { id: "instagram", icon: "📷", es: "Instagram",            en: "Instagram" },
+    { id: "resenas",   icon: "⭐", es: "Reseñas",              en: "Reviews" }
+  ];
+  const SECTION_LAYOUT_KEY = "cb.sections.layout.v1";
+  let sectionLayout = null; // { order: [...ids], hidden: [...ids] }
+
+  function defaultSectionLayout() {
+    return { order: SECTION_DEFS.map((s) => s.id), hidden: [] };
+  }
+  function normalizeLayout(layout) {
+    const def = defaultSectionLayout();
+    if (!layout || !Array.isArray(layout.order)) return def;
+    // Mantener solo ids válidos + añadir los que falten al final
+    const valid = SECTION_DEFS.map((s) => s.id);
+    const order = layout.order.filter((id) => valid.includes(id));
+    valid.forEach((id) => { if (!order.includes(id)) order.push(id); });
+    const hidden = Array.isArray(layout.hidden) ? layout.hidden.filter((id) => valid.includes(id)) : [];
+    return { order, hidden };
+  }
+
+  function loadSectionLayout() {
+    // 1. localStorage rápido
+    try {
+      const raw = localStorage.getItem(SECTION_LAYOUT_KEY);
+      if (raw) sectionLayout = normalizeLayout(JSON.parse(raw));
+    } catch (_) {}
+    if (!sectionLayout) sectionLayout = defaultSectionLayout();
+    applySectionLayout();
+    // 2. Backend (fuente de verdad cross-device) — diferido
+    if (window.cbBackend && window.cbBackend.getSetting) {
+      const fetchRemote = () => window.cbBackend.getSetting("section_layout").then((remote) => {
+        if (!remote) return;
+        sectionLayout = normalizeLayout(remote);
+        try { localStorage.setItem(SECTION_LAYOUT_KEY, JSON.stringify(sectionLayout)); } catch (_) {}
+        applySectionLayout();
+      }).catch(() => {});
+      if ("requestIdleCallback" in window) requestIdleCallback(fetchRemote, { timeout: 2000 });
+      else setTimeout(fetchRemote, 800);
+    }
+  }
+
+  function applySectionLayout() {
+    const main = document.getElementById("publicSite");
+    if (!main || !sectionLayout) return;
+    const contact = document.getElementById("contact");
+    // Reordenar: insertar cada sección en orden, justo antes de #contact (que queda al final)
+    sectionLayout.order.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (contact) main.insertBefore(el, contact);
+      else main.appendChild(el);
+    });
+    // Mostrar/ocultar
+    SECTION_DEFS.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (!el) return;
+      el.style.display = sectionLayout.hidden.includes(s.id) ? "none" : "";
+    });
+  }
+
+  function persistSectionLayout() {
+    try { localStorage.setItem(SECTION_LAYOUT_KEY, JSON.stringify(sectionLayout)); } catch (_) {}
+    if (window.cbBackend && window.cbBackend.setSetting) {
+      window.cbBackend.setSetting("section_layout", sectionLayout).catch((e) => {
+        console.warn("No se pudo guardar el orden en Supabase (¿admin logueado?):", e);
+      });
+    }
+  }
+
+  function renderSectionsPanel() {
+    const list = document.getElementById("sectionsList");
+    if (!list) return;
+    if (!sectionLayout) sectionLayout = defaultSectionLayout();
+    const lang = state.lang;
+    list.innerHTML = sectionLayout.order.map((id, idx) => {
+      const def = SECTION_DEFS.find((s) => s.id === id);
+      if (!def) return "";
+      const hidden = sectionLayout.hidden.includes(id);
+      return `
+        <li class="sec-row ${hidden ? "sec-row--off" : ""}" draggable="true" data-sec-id="${id}">
+          <span class="sec-row__grip" aria-hidden="true">⠿</span>
+          <span class="sec-row__icon">${def.icon}</span>
+          <span class="sec-row__name">${lang === "es" ? def.es : def.en}</span>
+          <span class="sec-row__actions">
+            <button class="sec-btn" data-sec-up="${id}" ${idx === 0 ? "disabled" : ""} aria-label="Subir" title="Subir">↑</button>
+            <button class="sec-btn" data-sec-down="${id}" ${idx === sectionLayout.order.length - 1 ? "disabled" : ""} aria-label="Bajar" title="Bajar">↓</button>
+            <label class="sec-toggle" title="${hidden ? (lang === "es" ? "Oculta" : "Hidden") : (lang === "es" ? "Visible" : "Visible")}">
+              <input type="checkbox" data-sec-toggle="${id}" ${hidden ? "" : "checked"} />
+              <span></span>
+            </label>
+          </span>
+        </li>`;
+    }).join("");
+  }
+
+  function moveSectionInOrder(id, dir) {
+    const order = sectionLayout.order;
+    const i = order.indexOf(id);
+    if (i < 0) return;
+    const j = i + dir;
+    if (j < 0 || j >= order.length) return;
+    [order[i], order[j]] = [order[j], order[i]];
+    sectionLayout.order = order;
+    persistSectionLayout();
+    applySectionLayout();
+    renderSectionsPanel();
+  }
+
+  function bindSectionsPanel() {
+    const panel = document.querySelector('[data-dash-panel="sections"]');
+    if (!panel) return;
+    // Flechas + toggle
+    panel.addEventListener("click", (e) => {
+      const up = e.target.closest("[data-sec-up]");
+      const down = e.target.closest("[data-sec-down]");
+      if (up) moveSectionInOrder(up.getAttribute("data-sec-up"), -1);
+      else if (down) moveSectionInOrder(down.getAttribute("data-sec-down"), 1);
+    });
+    panel.addEventListener("change", (e) => {
+      const tg = e.target.closest("[data-sec-toggle]");
+      if (!tg) return;
+      const id = tg.getAttribute("data-sec-toggle");
+      const visible = tg.checked;
+      sectionLayout.hidden = sectionLayout.hidden.filter((x) => x !== id);
+      if (!visible) sectionLayout.hidden.push(id);
+      persistSectionLayout();
+      applySectionLayout();
+      renderSectionsPanel();
+    });
+    // Drag and drop
+    let dragId = null;
+    panel.addEventListener("dragstart", (e) => {
+      const row = e.target.closest("[data-sec-id]");
+      if (!row) return;
+      dragId = row.getAttribute("data-sec-id");
+      row.classList.add("sec-row--dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    panel.addEventListener("dragend", (e) => {
+      const row = e.target.closest("[data-sec-id]");
+      if (row) row.classList.remove("sec-row--dragging");
+      dragId = null;
+    });
+    panel.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const over = e.target.closest("[data-sec-id]");
+      if (!over || !dragId) return;
+      const overId = over.getAttribute("data-sec-id");
+      if (overId === dragId) return;
+      const order = sectionLayout.order;
+      const from = order.indexOf(dragId);
+      const to = order.indexOf(overId);
+      if (from < 0 || to < 0) return;
+      order.splice(from, 1);
+      order.splice(to, 0, dragId);
+      sectionLayout.order = order;
+      renderSectionsPanel();
+    });
+    panel.addEventListener("drop", (e) => {
+      e.preventDefault();
+      persistSectionLayout();
+      applySectionLayout();
+    });
+    // Reset
+    document.getElementById("sectionsReset")?.addEventListener("click", () => {
+      if (!confirm(state.lang === "es" ? "¿Restaurar el orden original de las secciones?" : "Restore original section order?")) return;
+      sectionLayout = defaultSectionLayout();
+      persistSectionLayout();
+      applySectionLayout();
+      renderSectionsPanel();
+      toast(state.lang === "es" ? "Orden restaurado ✓" : "Order restored ✓");
+    });
+  }
+
   function renderDesignPanel() {
     const d = loadDesign();
     document.querySelectorAll("[data-design-var]").forEach((el) => {

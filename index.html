@@ -84,7 +84,7 @@
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=69" />
+  <link rel="stylesheet" href="styles.css?v=70" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1263,6 +1263,10 @@
           <span class="snav__ico">📡</span>
           <span data-i18n="dash.nav.channels">Canales</span>
         </button>
+        <button class="snav" data-dash-tab="sections" type="button">
+          <span class="snav__ico">🧩</span>
+          <span data-i18n="dash.nav.sections">Secciones</span>
+        </button>
         <button class="snav" data-dash-tab="design" type="button">
           <span class="snav__ico">🎨</span>
           <span data-i18n="dash.nav.design">Diseño</span>
@@ -1611,6 +1615,20 @@
       </section>
 
       <!-- ============ DESIGN VIEW ============ -->
+      <!-- ============ SECTIONS · reordenar y ocultar ============ -->
+      <section class="dash-panel" data-dash-panel="sections" hidden>
+        <div class="card">
+          <div class="card__head">
+            <div>
+              <h3 data-i18n="dash.sections.title">🧩 Orden de las secciones</h3>
+              <p class="muted-sm" data-i18n="dash.sections.hint">Arrastrá las secciones o usá las flechas para cambiar su orden en la página. El interruptor las oculta o muestra. El Hero (arriba) y el Contacto (abajo) quedan fijos. Los cambios se aplican en vivo y se guardan para todos los visitantes.</p>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="sectionsReset" type="button" data-i18n="dash.sections.reset">Restaurar orden</button>
+          </div>
+          <ul class="sections-list" id="sectionsList"></ul>
+        </div>
+      </section>
+
       <section class="dash-panel" data-dash-panel="design" hidden>
         <div class="design-grid">
           <div class="card">
@@ -2545,6 +2563,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=74" defer></script>
+  <script src="script.js?v=75" defer></script>
 </body>
 </html>

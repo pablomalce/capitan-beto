@@ -2316,6 +2316,8 @@
     persistAuth(currentUser);
     updateAuthUI();
     closeLoginOverlay();
+    setDashTab(state.dashTab || "inventory");
+    setView("dashboard");
     toast(state.lang === "es" ? `Bienvenido, ${currentUser.name}` : `Welcome, ${currentUser.name}`);
   }
 
@@ -2433,8 +2435,10 @@
             state.role = role;
             persistAuth(currentUser);
             document.body.setAttribute("data-auth", "true");
+            updateAuthUI();
             closeLoginOverlay();
             setDashTab(state.dashTab || "inventory");
+            setView("dashboard");
             toast(state.lang === "es" ? "¡Bienvenido, Capitán! 🫡" : "Welcome, Captain! 🫡");
           } else {
             toast(state.lang === "es" ? "Email no autorizado" : "Email not authorized");

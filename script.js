@@ -1577,14 +1577,14 @@
    */
   function handleMagicLinkArrival() {
     if (!window.cbBackend || !window.cbBackend.handleMagicLinkCallback) return;
-    window.cbBackend.handleMagicLinkCallback().then((ok) => {
+    window.cbBackend.handleMagicLinkCallback().then(async (ok) => {
       if (!ok) return;
       const u = window.cbBackend.currentUser();
-      if (!u || !ALL_AUTH_EMAILS.includes(u.email)) {
+      const role = await resolveRole(u && u.email);
+      if (!u || !role) {
         toast("Email no autorizado como admin");
         return;
       }
-      const role = roleForEmail(u.email);
       currentUser = {
         email: u.email,
         name: u.email.split("@")[0],
@@ -2242,6 +2242,21 @@
     return null;
   }
 
+  /**
+   * Resuelve el rol con Supabase como fuente de verdad (tabla admin_emails
+   * vía RPC my_role), con fallback al array local si el backend no responde.
+   * Permite gestionar admins desde Supabase Studio sin redeploy.
+   */
+  async function resolveRole(email) {
+    if (window.cbBackend && window.cbBackend.fetchMyRole) {
+      try {
+        const remote = await window.cbBackend.fetchMyRole();
+        if (remote === "admin" || remote === "edit") return remote;
+      } catch (_) {}
+    }
+    return roleForEmail(email); // fallback offline
+  }
+
   let currentUser = null;
 
   function loadAuth() {
@@ -2429,8 +2444,9 @@
         try {
           const data = await window.cbBackend.signInWithPassword(email, password);
           const u = window.cbBackend.currentUser();
-          if (u && ALL_AUTH_EMAILS.includes(u.email)) {
-            const role = roleForEmail(u.email);
+          // Rol desde Supabase (admin_emails, fuente de verdad) con fallback al array local
+          const role = await resolveRole(u && u.email);
+          if (u && role) {
             currentUser = { email: u.email, name: u.email.split("@")[0], role, exp: Date.now() + 12 * 3600 * 1000 };
             state.role = role;
             persistAuth(currentUser);

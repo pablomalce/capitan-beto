@@ -167,6 +167,26 @@
     } catch (_) { return null; }
   }
 
+  /**
+   * Consulta a Supabase el rol del usuario autenticado vía RPC my_role().
+   * Devuelve "admin", "edit", o null si no está en la allowlist.
+   * Fuente de verdad: tabla public.admin_emails (gestionable sin redeploy).
+   */
+  async function fetchMyRole() {
+    const s = getSession();
+    if (!s) return null;
+    try {
+      const res = await fetch(`${REST}/rpc/my_role`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: "{}"
+      });
+      if (!res.ok) return null;
+      const role = await res.json(); // devuelve "admin" | "edit" | null
+      return (role === "admin" || role === "edit") ? role : null;
+    } catch (_) { return null; }
+  }
+
   // ============ HEALTH ============
   async function ping() {
     try {
@@ -565,7 +585,7 @@
     ping,
     // auth
     signInWithPassword, signInWithMagicLink, handleMagicLinkCallback,
-    signOut, getSession, currentUser, refreshSession, changePassword,
+    signOut, getSession, currentUser, refreshSession, changePassword, fetchMyRole,
     // pet
     uploadPetPhoto, listPetPhotos, listAllPetPhotos,
     approvePetPhoto, rejectPetPhoto, deletePetPhoto,

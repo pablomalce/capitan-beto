@@ -2230,9 +2230,9 @@
 
   // Allowlist de emails autorizados como admin
   // Emails con acceso total (admin) — pueden borrar, cambiar precios, ver todo
-  const ADMIN_EMAILS = ["malczewskipablo@gmail.com"];
+  const ADMIN_EMAILS = ["info@capitan-beto.com", "malczewskipablo@gmail.com"];
   // Emails con acceso de edición — pueden editar contenido pero no precio ni borrado
-  const EDIT_EMAILS  = ["info@capitan-beto.com", "capitanbetomadrid@gmail.com"];
+  const EDIT_EMAILS  = ["capitanbetomadrid@gmail.com"];
   // Todos los que pueden autenticarse
   const ALL_AUTH_EMAILS = [...ADMIN_EMAILS, ...EDIT_EMAILS];
 

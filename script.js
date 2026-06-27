@@ -1353,6 +1353,8 @@
     if (view === "dashboard") {
       renderInventory();
       renderHoursForm();
+      // Coach mark de Secciones (una vez), si no hay otro onboarding activo
+      setTimeout(() => { try { maybeShowSectionsCoach(); } catch (_) {} }, 700);
     }
     const label = view === "public" ? (state.lang === "es" ? "Sitio Público" : "Public Site") : "Backoffice";
     toast(`${t("toast.viewSwitched")} ${label}`);
@@ -1613,6 +1615,7 @@
       setTimeout(() => {
         const seen = localStorage.getItem("cb.onboard.seen");
         if (!seen) showOnboardingModal();
+        else maybeShowSectionsCoach();
       }, 600);
     });
   }
@@ -6214,7 +6217,125 @@
   // Botón flotante "Tour" en el dashboard para reabrirlo
   window.cbStartTour = startDashboardTour;
 
+  // ====================================================================
+  // ============== COACH MARK · feature "Secciones" ====================
+  // ====================================================================
+  // 2 pasos: (1) ilumina la pestaña Secciones, (2) explica qué se puede
+  // hacer al entrar. Se muestra hasta que el admin lo completa una vez.
+  const SECTIONS_COACH_KEY = "cb.sectionsCoach.done.v1";
+  let _coachShownThisSession = false;
 
+  function maybeShowSectionsCoach() {
+    if (_coachShownThisSession) return;
+    if (state.view !== "dashboard") return;
+    try { if (localStorage.getItem(SECTIONS_COACH_KEY)) return; } catch (_) {}
+    // No pisar el onboarding inicial ni el tour
+    if (document.getElementById("onboardModal") || document.querySelector(".tour-overlay")) return;
+    _coachShownThisSession = true;
+    setTimeout(showSectionsCoachStep1, 1100);
+  }
+
+  function buildCoachOverlay(innerHTML) {
+    const ov = document.createElement("div");
+    ov.className = "coach-overlay";
+    ov.id = "coachOverlay";
+    ov.innerHTML = `<div class="coach-spot" id="coachSpot"></div>${innerHTML}`;
+    document.body.appendChild(ov);
+    return ov;
+  }
+  function clearCoach() {
+    const ov = document.getElementById("coachOverlay");
+    if (ov) ov.remove();
+  }
+  function finishSectionsCoach() {
+    clearCoach();
+    try { localStorage.setItem(SECTIONS_COACH_KEY, "1"); } catch (_) {}
+  }
+
+  function showSectionsCoachStep1() {
+    const tabBtn = document.querySelector('[data-dash-tab="sections"]');
+    if (!tabBtn) return;
+    const es = state.lang === "es";
+    const ov = buildCoachOverlay(`
+      <div class="coach-card" id="coachCard">
+        <div class="coach-step">${es ? "Paso 1 de 2" : "Step 1 of 2"}</div>
+        <div class="coach-icon">🧩</div>
+        <h3>${es ? "Organizá tu página desde acá" : "Organize your page here"}</h3>
+        <p>${es
+          ? "Desde <strong>Secciones</strong> podés cambiar el orden de las secciones del sitio, ocultarlas y darles color. Hacé clic en <strong>“Secciones”</strong> en el menú (resaltado) para empezar."
+          : "From <strong>Sections</strong> you can reorder the site sections, hide them and theme their colors. Click <strong>“Sections”</strong> in the menu (highlighted) to start."}</p>
+        <div class="coach-actions">
+          <button class="btn btn--ghost btn--sm" id="coachSkip">${es ? "Omitir" : "Skip"}</button>
+          <button class="btn btn--primary btn--sm" id="coachGo">${es ? "Ir a Secciones →" : "Go to Sections →"}</button>
+        </div>
+      </div>`);
+    positionCoachSpot(tabBtn);
+    positionCoachCardNear(tabBtn);
+    // Acciones
+    ov.querySelector("#coachSkip").addEventListener("click", finishSectionsCoach);
+    ov.querySelector("#coachGo").addEventListener("click", () => {
+      setDashTab("sections");
+      clearCoach();
+      setTimeout(showSectionsCoachStep2, 350);
+    });
+    // Si hace clic en la propia pestaña resaltada, avanza también
+    const onTabClick = () => {
+      tabBtn.removeEventListener("click", onTabClick);
+      clearCoach();
+      setTimeout(showSectionsCoachStep2, 350);
+    };
+    tabBtn.addEventListener("click", onTabClick);
+    // Reposicionar en resize
+    window.addEventListener("resize", () => positionCoachSpot(tabBtn), { once: true });
+  }
+
+  function showSectionsCoachStep2() {
+    const panel = document.querySelector('[data-dash-panel="sections"]');
+    const es = state.lang === "es";
+    const ov = buildCoachOverlay(`
+      <div class="coach-card coach-card--center" id="coachCard">
+        <div class="coach-step">${es ? "Paso 2 de 2" : "Step 2 of 2"}</div>
+        <div class="coach-icon">🎨</div>
+        <h3>${es ? "Esto es lo que podés hacer" : "Here's what you can do"}</h3>
+        <ul class="coach-list">
+          <li><strong>↕ Reordenar:</strong> ${es ? "arrastrá una sección o usá las flechas ↑↓." : "drag a section or use the ↑↓ arrows."}</li>
+          <li><strong>👁 Ocultar/mostrar:</strong> ${es ? "el interruptor apaga o enciende una sección entera." : "the toggle turns a whole section on or off."}</li>
+          <li><strong>🎨 Color:</strong> ${es ? "elegí una de las 8 paletas del bar para cada sección." : "pick one of 8 bar palettes per section."}</li>
+          <li><strong>✍️ Fuente:</strong> ${es ? "cambiá la tipografía de los títulos de cada sección." : "change the heading font per section."}</li>
+        </ul>
+        <p class="coach-note">${es
+          ? "Todo se aplica en vivo y se guarda para todos los visitantes. El Hero (arriba) y el Contacto (abajo) quedan fijos."
+          : "Everything applies live and saves for all visitors. Hero (top) and Contact (bottom) stay fixed."}</p>
+        <div class="coach-actions">
+          <button class="btn btn--primary btn--sm" id="coachDone">${es ? "¡Entendido! 🚀" : "Got it! 🚀"}</button>
+        </div>
+      </div>`);
+    // Iluminar el panel si está visible
+    if (panel && panel.offsetParent !== null) positionCoachSpot(panel, 4);
+    else ov.querySelector("#coachSpot").style.display = "none";
+    ov.querySelector("#coachDone").addEventListener("click", finishSectionsCoach);
+  }
+
+  function positionCoachSpot(el, pad) {
+    const spot = document.getElementById("coachSpot");
+    if (!spot || !el) return;
+    const r = el.getBoundingClientRect();
+    const p = pad == null ? 6 : pad;
+    spot.style.display = "block";
+    spot.style.top = (r.top + window.scrollY - p) + "px";
+    spot.style.left = (r.left + window.scrollX - p) + "px";
+    spot.style.width = (r.width + p * 2) + "px";
+    spot.style.height = (r.height + p * 2) + "px";
+  }
+  function positionCoachCardNear(el) {
+    const card = document.getElementById("coachCard");
+    if (!card || !el) return;
+    const r = el.getBoundingClientRect();
+    // A la derecha de la pestaña del sidebar
+    card.style.position = "fixed";
+    card.style.top = Math.max(20, Math.min(r.top, window.innerHeight - 320)) + "px";
+    card.style.left = (r.right + 18) + "px";
+  }
 
   // =====================================================
   // QR CODE DEL MENÚ

@@ -6720,3 +6720,84 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
   .sec-row__name { font-size: 14px; }
   .sec-row { padding: 10px 11px; gap: 9px; }
 }
+
+/* ============ PER-SECTION THEMING (color + font por sección) ============ */
+/* Aplicado vía data-sec-theme + variables inline desde el dashboard.
+   Mantiene la paleta del bar — los temas son combinaciones curadas. */
+section[data-sec-theme] {
+  background: var(--sec-bg) !important;
+  color: var(--sec-fg);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+section[data-sec-theme] h1,
+section[data-sec-theme] h2,
+section[data-sec-theme] h3,
+section[data-sec-theme] h4,
+section[data-sec-theme] .section__title,
+section[data-sec-theme] .section__lead,
+section[data-sec-theme] p,
+section[data-sec-theme] li,
+section[data-sec-theme] small,
+section[data-sec-theme] span:not(.eyebrow):not([class*="badge"]):not([class*="tag"]) {
+  color: var(--sec-fg);
+}
+section[data-sec-theme] .eyebrow,
+section[data-sec-theme] .section__eyebrow {
+  color: var(--sec-accent) !important;
+}
+/* Líneas decorativas / bordes que usan el verde de marca → al acento del tema */
+section[data-sec-theme] .section__title::after,
+section[data-sec-theme] hr {
+  background: var(--sec-accent);
+  border-color: var(--sec-accent);
+}
+/* Fuente de títulos por sección */
+section[data-sec-font] h1,
+section[data-sec-font] h2,
+section[data-sec-font] h3,
+section[data-sec-font] .section__title,
+section[data-sec-font] .section__eyebrow,
+section[data-sec-font] .eyebrow {
+  font-family: var(--sec-font) !important;
+}
+
+/* ===== Dashboard: editor de estilo por sección ===== */
+.sec-style {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--card-border-soft, #e5ddc8);
+  width: 100%;
+}
+.sec-style__group { display: inline-flex; align-items: center; gap: 6px; }
+.sec-style__label { font-size: 11px; color: var(--ink-mute, #948574); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.sec-swatches { display: inline-flex; gap: 5px; flex-wrap: wrap; }
+.sec-swatch {
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.12s, border-color 0.15s;
+  padding: 0;
+}
+.sec-swatch:hover { transform: scale(1.12); }
+.sec-swatch.is-active { border-color: var(--ink, #2C2620); box-shadow: 0 0 0 2px #fff inset; }
+.sec-swatch__dot { position: absolute; right: 2px; bottom: 2px; width: 8px; height: 8px; border-radius: 50%; }
+.sec-font-select {
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border-soft, #e5ddc8);
+  background: #fff;
+  color: var(--ink, #2C2620);
+  cursor: pointer;
+}
+.sec-row { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .sec-style { gap: 6px; }
+  .sec-swatch { width: 24px; height: 24px; }
+}

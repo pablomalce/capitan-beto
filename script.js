@@ -5507,21 +5507,47 @@
     { id: "instagram", icon: "📷", es: "Instagram",            en: "Instagram" },
     { id: "resenas",   icon: "⭐", es: "Reseñas",              en: "Reviews" }
   ];
+  // Temas curados — todos combinan con la identidad de Capitán Beto.
+  // bg=fondo, fg=texto, accent=detalles (eyebrows, líneas).
+  const SECTION_THEMES = [
+    { id: "default",   es: "Por defecto",     en: "Default",        bg: "",        fg: "",        accent: "" },
+    { id: "cream",     es: "Crema",           en: "Cream",          bg: "#F7EFDC", fg: "#2C2620", accent: "#C9612F" },
+    { id: "creamDeep", es: "Crema cálida",    en: "Warm cream",     bg: "#EFE3C5", fg: "#2C2620", accent: "#a44a1f" },
+    { id: "green",     es: "Verde Capitán",   en: "Captain green",  bg: "#1F4A2E", fg: "#F7EFDC", accent: "#C29B63" },
+    { id: "forest",    es: "Bosque",          en: "Forest",         bg: "#1a3d24", fg: "#F7EFDC", accent: "#C9612F" },
+    { id: "wood",      es: "Madera",          en: "Wood",           bg: "#6E4A2C", fg: "#F7EFDC", accent: "#E8C99B" },
+    { id: "charcoal",  es: "Carbón",          en: "Charcoal",       bg: "#19281d", fg: "#F4EAD6", accent: "#C29B63" },
+    { id: "sunset",    es: "Atardecer",       en: "Sunset",         bg: "#C9612F", fg: "#FBF3E4", accent: "#FFE3B8" }
+  ];
+  // Fuentes curadas (todas cargadas desde bunny.net)
+  const SECTION_FONTS = [
+    { id: "default",  es: "Por defecto (Fraunces)", en: "Default (Fraunces)", stack: "" },
+    { id: "cormorant", es: "Cormorant (refinada)",  en: "Cormorant (refined)", stack: '"Cormorant Garamond", Georgia, serif' },
+    { id: "space",     es: "Space Grotesk (moderna)", en: "Space Grotesk (modern)", stack: '"Space Grotesk", "Inter", sans-serif' },
+    { id: "inter",     es: "Inter (limpia)",        en: "Inter (clean)",       stack: '"Inter", system-ui, sans-serif' }
+  ];
+
   const SECTION_LAYOUT_KEY = "cb.sections.layout.v1";
-  let sectionLayout = null; // { order: [...ids], hidden: [...ids] }
+  // sectionLayout = { order:[ids], hidden:[ids], styles:{ id:{theme, font} } }
+  let sectionLayout = null;
 
   function defaultSectionLayout() {
-    return { order: SECTION_DEFS.map((s) => s.id), hidden: [] };
+    return { order: SECTION_DEFS.map((s) => s.id), hidden: [], styles: {} };
   }
   function normalizeLayout(layout) {
-    const def = defaultSectionLayout();
-    if (!layout || !Array.isArray(layout.order)) return def;
-    // Mantener solo ids válidos + añadir los que falten al final
+    if (!layout || !Array.isArray(layout.order)) return defaultSectionLayout();
     const valid = SECTION_DEFS.map((s) => s.id);
     const order = layout.order.filter((id) => valid.includes(id));
     valid.forEach((id) => { if (!order.includes(id)) order.push(id); });
     const hidden = Array.isArray(layout.hidden) ? layout.hidden.filter((id) => valid.includes(id)) : [];
-    return { order, hidden };
+    const styles = {};
+    if (layout.styles && typeof layout.styles === "object") {
+      valid.forEach((id) => {
+        const s = layout.styles[id];
+        if (s) styles[id] = { theme: s.theme || "default", font: s.font || "default" };
+      });
+    }
+    return { order, hidden, styles };
   }
 
   function loadSectionLayout() {
@@ -5556,21 +5582,57 @@
       if (contact) main.insertBefore(el, contact);
       else main.appendChild(el);
     });
-    // Mostrar/ocultar
+    // Mostrar/ocultar + aplicar tema/fuente por sección
     SECTION_DEFS.forEach((s) => {
       const el = document.getElementById(s.id);
       if (!el) return;
       el.style.display = sectionLayout.hidden.includes(s.id) ? "none" : "";
+      applySectionStyle(el, (sectionLayout.styles || {})[s.id]);
     });
   }
 
+  function applySectionStyle(el, style) {
+    // Limpiar primero
+    el.removeAttribute("data-sec-theme");
+    el.removeAttribute("data-sec-font");
+    el.style.removeProperty("--sec-bg");
+    el.style.removeProperty("--sec-fg");
+    el.style.removeProperty("--sec-accent");
+    el.style.removeProperty("--sec-font");
+    if (!style) return;
+    // Tema de color
+    if (style.theme && style.theme !== "default") {
+      const t = SECTION_THEMES.find((x) => x.id === style.theme);
+      if (t && t.bg) {
+        el.setAttribute("data-sec-theme", t.id);
+        el.style.setProperty("--sec-bg", t.bg);
+        el.style.setProperty("--sec-fg", t.fg);
+        el.style.setProperty("--sec-accent", t.accent);
+      }
+    }
+    // Fuente de títulos
+    if (style.font && style.font !== "default") {
+      const f = SECTION_FONTS.find((x) => x.id === style.font);
+      if (f && f.stack) {
+        el.setAttribute("data-sec-font", f.id);
+        el.style.setProperty("--sec-font", f.stack);
+      }
+    }
+  }
+
   function persistSectionLayout() {
+    if (!sectionLayout.styles) sectionLayout.styles = {};
     try { localStorage.setItem(SECTION_LAYOUT_KEY, JSON.stringify(sectionLayout)); } catch (_) {}
     if (window.cbBackend && window.cbBackend.setSetting) {
       window.cbBackend.setSetting("section_layout", sectionLayout).catch((e) => {
         console.warn("No se pudo guardar el orden en Supabase (¿admin logueado?):", e);
       });
     }
+  }
+  function getSectionStyle(id) {
+    if (!sectionLayout.styles) sectionLayout.styles = {};
+    if (!sectionLayout.styles[id]) sectionLayout.styles[id] = { theme: "default", font: "default" };
+    return sectionLayout.styles[id];
   }
 
   function renderSectionsPanel() {
@@ -5582,6 +5644,18 @@
       const def = SECTION_DEFS.find((s) => s.id === id);
       if (!def) return "";
       const hidden = sectionLayout.hidden.includes(id);
+      const st = getSectionStyle(id);
+      const swatches = SECTION_THEMES.map((t) => {
+        const isActive = (st.theme || "default") === t.id;
+        const bgStyle = t.bg
+          ? `background:${t.bg}`
+          : "background:repeating-linear-gradient(45deg,#fff,#fff 5px,#eee 5px,#eee 10px)";
+        const dot = t.accent ? `<span class="sec-swatch__dot" style="background:${t.accent}"></span>` : "";
+        return `<button type="button" class="sec-swatch ${isActive ? "is-active" : ""}" data-sec-theme-pick="${id}" data-theme="${t.id}" title="${lang === "es" ? t.es : t.en}" style="${bgStyle}">${dot}</button>`;
+      }).join("");
+      const fontOpts = SECTION_FONTS.map((f) =>
+        `<option value="${f.id}" ${(st.font || "default") === f.id ? "selected" : ""}>${lang === "es" ? f.es : f.en}</option>`
+      ).join("");
       return `
         <li class="sec-row ${hidden ? "sec-row--off" : ""}" draggable="true" data-sec-id="${id}">
           <span class="sec-row__grip" aria-hidden="true">⠿</span>
@@ -5595,6 +5669,16 @@
               <span></span>
             </label>
           </span>
+          <div class="sec-style">
+            <div class="sec-style__group">
+              <span class="sec-style__label">${lang === "es" ? "Color" : "Color"}</span>
+              <span class="sec-swatches">${swatches}</span>
+            </div>
+            <div class="sec-style__group">
+              <span class="sec-style__label">${lang === "es" ? "Fuente" : "Font"}</span>
+              <select class="sec-font-select" data-sec-font-pick="${id}">${fontOpts}</select>
+            </div>
+          </div>
         </li>`;
     }).join("");
   }
@@ -5615,23 +5699,47 @@
   function bindSectionsPanel() {
     const panel = document.querySelector('[data-dash-panel="sections"]');
     if (!panel) return;
-    // Flechas + toggle
+    // Flechas + toggle + swatch de color
     panel.addEventListener("click", (e) => {
       const up = e.target.closest("[data-sec-up]");
       const down = e.target.closest("[data-sec-down]");
-      if (up) moveSectionInOrder(up.getAttribute("data-sec-up"), -1);
-      else if (down) moveSectionInOrder(down.getAttribute("data-sec-down"), 1);
+      const swatch = e.target.closest("[data-sec-theme-pick]");
+      if (up) { moveSectionInOrder(up.getAttribute("data-sec-up"), -1); return; }
+      if (down) { moveSectionInOrder(down.getAttribute("data-sec-down"), 1); return; }
+      if (swatch) {
+        const id = swatch.getAttribute("data-sec-theme-pick");
+        const theme = swatch.getAttribute("data-theme");
+        getSectionStyle(id).theme = theme;
+        const el = document.getElementById(id);
+        if (el) applySectionStyle(el, getSectionStyle(id));
+        persistSectionLayout();
+        renderSectionsPanel();
+        toast(state.lang === "es" ? "Color de sección aplicado ✓" : "Section color applied ✓");
+      }
     });
     panel.addEventListener("change", (e) => {
+      // Toggle visibilidad
       const tg = e.target.closest("[data-sec-toggle]");
-      if (!tg) return;
-      const id = tg.getAttribute("data-sec-toggle");
-      const visible = tg.checked;
-      sectionLayout.hidden = sectionLayout.hidden.filter((x) => x !== id);
-      if (!visible) sectionLayout.hidden.push(id);
-      persistSectionLayout();
-      applySectionLayout();
-      renderSectionsPanel();
+      if (tg) {
+        const id = tg.getAttribute("data-sec-toggle");
+        const visible = tg.checked;
+        sectionLayout.hidden = sectionLayout.hidden.filter((x) => x !== id);
+        if (!visible) sectionLayout.hidden.push(id);
+        persistSectionLayout();
+        applySectionLayout();
+        renderSectionsPanel();
+        return;
+      }
+      // Fuente por sección
+      const fp = e.target.closest("[data-sec-font-pick]");
+      if (fp) {
+        const id = fp.getAttribute("data-sec-font-pick");
+        getSectionStyle(id).font = fp.value;
+        const el = document.getElementById(id);
+        if (el) applySectionStyle(el, getSectionStyle(id));
+        persistSectionLayout();
+        toast(state.lang === "es" ? "Fuente aplicada ✓" : "Font applied ✓");
+      }
     });
     // Drag and drop
     let dragId = null;

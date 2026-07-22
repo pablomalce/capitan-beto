@@ -4971,7 +4971,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v84",
+        release: "capitan-beto@v85",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data
@@ -6122,10 +6122,12 @@
     // Limpiar primero
     el.removeAttribute("data-sec-theme");
     el.removeAttribute("data-sec-font");
+    el.removeAttribute("data-sec-fg");
     el.style.removeProperty("--sec-bg");
     el.style.removeProperty("--sec-fg");
     el.style.removeProperty("--sec-accent");
     el.style.removeProperty("--sec-font");
+    el.style.removeProperty("--sec-fg-custom");
     if (!style) return;
     // Tema de color
     if (style.theme && style.theme !== "default") {
@@ -6144,6 +6146,11 @@
         el.setAttribute("data-sec-font", f.id);
         el.style.setProperty("--sec-font", f.stack);
       }
+    }
+    // Color de texto personalizado
+    if (style.fgColor) {
+      el.style.setProperty("--sec-fg-custom", style.fgColor);
+      el.setAttribute("data-sec-fg", "1");
     }
   }
 
@@ -6198,8 +6205,15 @@
           </span>
           <div class="sec-style">
             <div class="sec-style__group">
-              <span class="sec-style__label">${lang === "es" ? "Color" : "Color"}</span>
+              <span class="sec-style__label">${lang === "es" ? "Color fondo" : "Background"}</span>
               <span class="sec-swatches">${swatches}</span>
+            </div>
+            <div class="sec-style__group">
+              <span class="sec-style__label">${lang === "es" ? "Color texto" : "Text color"}</span>
+              <div class="sec-fg-row">
+                <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || '#1a1a1a'}" title="${lang === "es" ? "Color de fuente" : "Font color"}" />
+                <button type="button" class="sec-fg-reset" data-sec-fg-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+              </div>
             </div>
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Fuente" : "Font"}</span>
@@ -6267,6 +6281,36 @@
         persistSectionLayout();
         toast(state.lang === "es" ? "Fuente aplicada ✓" : "Font applied ✓");
       }
+    });
+    // Color de texto por sección (input type=color)
+    panel.addEventListener("input", (e) => {
+      const cp = e.target.closest("[data-sec-fg-pick]");
+      if (!cp) return;
+      const id = cp.getAttribute("data-sec-fg-pick");
+      const st = getSectionStyle(id);
+      st.fgColor = cp.value;
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.setProperty("--sec-fg-custom", cp.value);
+        el.setAttribute("data-sec-fg", "1");
+      }
+      persistSectionLayout();
+    });
+    // Botón reset de color de texto
+    panel.addEventListener("click", (e) => {
+      const rb = e.target.closest("[data-sec-fg-reset]");
+      if (!rb) return;
+      const id = rb.getAttribute("data-sec-fg-reset");
+      const st = getSectionStyle(id);
+      delete st.fgColor;
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.removeProperty("--sec-fg-custom");
+        el.removeAttribute("data-sec-fg");
+      }
+      persistSectionLayout();
+      renderSectionsPanel();
+      toast(state.lang === "es" ? "Color de texto restablecido" : "Text color reset");
     });
     // Drag and drop
     let dragId = null;

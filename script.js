@@ -3180,6 +3180,14 @@
         { path: "contact.title", label: "Título",  type: "text",     selector: '[data-content="contact.title"]' },
         { path: "contact.lead",  label: "Texto",   type: "longtext", selector: '[data-content="contact.lead"]' }
       ]
+    },
+    hours: {
+      label: "Horarios",
+      icon: "🕒",
+      fields: [
+        { path: "hours.title", label: "Título sección",  type: "text",     selector: '[data-i18n="hours.title"]' },
+        { path: "hours.sub",   label: "Subtítulo (días/turno)", type: "text", selector: '[data-content="hours.sub"]' }
+      ]
     }
   };
 
@@ -6121,6 +6129,7 @@
           styles[id] = { theme: s.theme || "default", font: s.font || "default" };
           if (s.fgColor)    styles[id].fgColor    = s.fgColor;
           if (s.titleColor) styles[id].titleColor = s.titleColor;
+          if (s.subColor)   styles[id].subColor   = s.subColor;
         }
       });
     }
@@ -6174,12 +6183,14 @@
     el.removeAttribute("data-sec-font");
     el.removeAttribute("data-sec-fg");
     el.removeAttribute("data-sec-title");
+    el.removeAttribute("data-sec-sub");
     el.style.removeProperty("--sec-bg");
     el.style.removeProperty("--sec-fg");
     el.style.removeProperty("--sec-accent");
     el.style.removeProperty("--sec-font");
     el.style.removeProperty("--sec-fg-custom");
     el.style.removeProperty("--sec-title-custom");
+    el.style.removeProperty("--sec-sub-custom");
     if (!style) return;
     // Tema de color
     if (style.theme && style.theme !== "default") {
@@ -6208,6 +6219,11 @@
     if (style.titleColor) {
       el.style.setProperty("--sec-title-custom", style.titleColor);
       el.setAttribute("data-sec-title", "1");
+    }
+    // Color de subtítulo personalizado
+    if (style.subColor) {
+      el.style.setProperty("--sec-sub-custom", style.subColor);
+      el.setAttribute("data-sec-sub", "1");
     }
   }
 
@@ -6277,6 +6293,13 @@
               <div class="sec-fg-row">
                 <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || '#1a1a1a'}" title="${lang === "es" ? "Color del título" : "Title color"}" />
                 <button type="button" class="sec-title-reset" data-sec-title-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+              </div>
+            </div>
+            <div class="sec-style__group">
+              <span class="sec-style__label">${lang === "es" ? "Color subtítulo" : "Subtitle color"}</span>
+              <div class="sec-fg-row">
+                <input type="color" class="sec-sub-pick" data-sec-sub-pick="${id}" value="${st.subColor || '#5a4e42'}" title="${lang === "es" ? "Color del subtítulo" : "Subtitle color"}" />
+                <button type="button" class="sec-sub-reset" data-sec-sub-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
@@ -6366,6 +6389,16 @@
         const el = document.getElementById(id);
         if (el) { el.style.setProperty("--sec-title-custom", tp.value); el.setAttribute("data-sec-title", "1"); }
         persistSectionLayout();
+        return;
+      }
+      const sp = e.target.closest("[data-sec-sub-pick]");
+      if (sp) {
+        const id = sp.getAttribute("data-sec-sub-pick");
+        const st = getSectionStyle(id);
+        st.subColor = sp.value;
+        const el = document.getElementById(id);
+        if (el) { el.style.setProperty("--sec-sub-custom", sp.value); el.setAttribute("data-sec-sub", "1"); }
+        persistSectionLayout();
       }
     });
     // Botón reset de color de texto
@@ -6391,6 +6424,17 @@
         persistSectionLayout();
         renderSectionsPanel();
         toast(state.lang === "es" ? "Color de título restablecido" : "Title color reset");
+      }
+      const sb = e.target.closest("[data-sec-sub-reset]");
+      if (sb) {
+        const id = sb.getAttribute("data-sec-sub-reset");
+        const st = getSectionStyle(id);
+        delete st.subColor;
+        const el = document.getElementById(id);
+        if (el) { el.style.removeProperty("--sec-sub-custom"); el.removeAttribute("data-sec-sub"); }
+        persistSectionLayout();
+        renderSectionsPanel();
+        toast(state.lang === "es" ? "Color de subtítulo restablecido" : "Subtitle color reset");
       }
     });
     // Drag and drop

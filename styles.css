@@ -6895,6 +6895,13 @@ section[data-sec-title] .section__title {
   color: var(--sec-title-custom) !important;
 }
 
+/* Color de subtítulo personalizado por sección (.section__sub, .section__head p) */
+section[data-sec-sub] .section__sub,
+section[data-sec-sub] .section__head p,
+section[data-sec-sub] .section__head small {
+  color: var(--sec-sub-custom) !important;
+}
+
 /* Swatch + picker de color de fuente en el panel de secciones */
 .sec-fg-row {
   display: flex;
@@ -6911,7 +6918,8 @@ section[data-sec-title] .section__title {
   cursor: pointer;
 }
 .sec-fg-reset,
-.sec-title-reset {
+.sec-title-reset,
+.sec-sub-reset {
   background: none;
   border: 1px solid var(--card-border-soft);
   border-radius: 6px;
@@ -6923,8 +6931,10 @@ section[data-sec-title] .section__title {
   transition: color .15s;
 }
 .sec-fg-reset:hover,
-.sec-title-reset:hover { color: var(--sunset); border-color: var(--sunset); }
-.sec-title-pick {
+.sec-title-reset:hover,
+.sec-sub-reset:hover { color: var(--sunset); border-color: var(--sunset); }
+.sec-title-pick,
+.sec-sub-pick {
   width: 36px;
   height: 28px;
   padding: 2px;

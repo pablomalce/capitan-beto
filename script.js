@@ -4792,6 +4792,7 @@
     registerServiceWorker();
     initAnalytics();
     initSentry();
+    initBeholdFeed();
   };
 
   // ====================================================================
@@ -4914,6 +4915,17 @@
       });
     };
     document.head.appendChild(s);
+  }
+
+  // ============== BEHOLD.SO · Instagram feed ==========================
+  function initBeholdFeed() {
+    try {
+      const payments = JSON.parse(localStorage.getItem("cb.payments.v1") || "{}");
+      const cfg = payments.behold;
+      if (!cfg || !cfg.enabled || !cfg.feedId) return;
+      const widget = document.querySelector("behold-widget");
+      if (widget) widget.setAttribute("feed-id", cfg.feedId.trim());
+    } catch (_) {}
   }
 
   // ====================================================================
@@ -6378,6 +6390,7 @@
         p[id][field] = el.value;
       });
       persistPayments(p);
+      if (id === "behold") initBeholdFeed();
       toast(state.lang === "es"
         ? `Config de ${id} guardada ✓`
         : `${id} config saved ✓`);

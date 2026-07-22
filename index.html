@@ -2081,6 +2081,30 @@
             </div>
           </div>
 
+          <!-- Behold.so · Instagram feed -->
+          <div class="card pay-card" data-pay-id="behold">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--ig">📸</div>
+                <div>
+                  <h3>Instagram Feed · Behold.so</h3>
+                  <small>Muestra tus últimas fotos de Instagram en el sitio</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="behold" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Feed ID (lo encontrás en behold.so → tu feed → Settings)</small>
+              <input type="text" data-pay-field="behold.feedId" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="behold" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
           <!-- Google Analytics / Tag Manager -->
           <div class="card pay-card" data-pay-id="analytics">
             <div class="card__head">
@@ -2573,6 +2597,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=81" defer></script>
+  <script src="script.js?v=82" defer></script>
 </body>
 </html>

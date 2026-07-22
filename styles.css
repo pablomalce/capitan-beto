@@ -1521,6 +1521,10 @@ button { font-family: inherit; cursor: pointer; }
   .photo-credit__body strong { font-size: 14px; }
 }
 
+/* Hours — título y subtítulo en crema por defecto (fondo oscuro de sección) */
+#hours .section__head h2       { color: #F7EFDC; }
+#hours .section__head .section__sub { color: #F7EFDC; }
+
 /* Hours grid (public) */
 .hours-grid {
   display: grid;
@@ -6933,6 +6937,7 @@ section[data-sec-sub] .section__head small {
 .sec-fg-reset:hover,
 .sec-title-reset:hover,
 .sec-sub-reset:hover { color: var(--sunset); border-color: var(--sunset); }
+.sec-fg-pick,
 .sec-title-pick,
 .sec-sub-pick {
   width: 36px;
@@ -6942,6 +6947,18 @@ section[data-sec-sub] .section__head small {
   border-radius: 6px;
   background: none;
   cursor: pointer;
+  flex-shrink: 0;
+}
+.sec-hex-text {
+  width: 72px;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  padding: 3px 5px;
+  border: 1px solid var(--card-border-soft);
+  border-radius: 6px;
+  background: var(--surface-0, #fff);
+  color: var(--ink);
+  letter-spacing: .02em;
 }
 
 /* ===== Dashboard: editor de estilo por sección ===== */

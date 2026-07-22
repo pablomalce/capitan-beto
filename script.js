@@ -6284,22 +6284,25 @@
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color texto" : "Text color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || '#1a1a1a'}" title="${lang === "es" ? "Color de fuente" : "Font color"}" />
-                <button type="button" class="sec-fg-reset" data-sec-fg-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+                <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || '#1a1a1a'}" />
+                <input type="text" class="sec-hex-text" data-sec-fg-text="${id}" value="${st.fgColor || ''}" maxlength="7" placeholder="#1a1a1a" />
+                <button type="button" class="sec-fg-reset" data-sec-fg-reset="${id}" title="↺">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color título" : "Title color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || '#1a1a1a'}" title="${lang === "es" ? "Color del título" : "Title color"}" />
-                <button type="button" class="sec-title-reset" data-sec-title-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+                <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || '#1a1a1a'}" />
+                <input type="text" class="sec-hex-text" data-sec-title-text="${id}" value="${st.titleColor || ''}" maxlength="7" placeholder="#1a1a1a" />
+                <button type="button" class="sec-title-reset" data-sec-title-reset="${id}" title="↺">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color subtítulo" : "Subtitle color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-sub-pick" data-sec-sub-pick="${id}" value="${st.subColor || '#5a4e42'}" title="${lang === "es" ? "Color del subtítulo" : "Subtitle color"}" />
-                <button type="button" class="sec-sub-reset" data-sec-sub-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+                <input type="color" class="sec-sub-pick" data-sec-sub-pick="${id}" value="${st.subColor || '#5a4e42'}" />
+                <input type="text" class="sec-hex-text" data-sec-sub-text="${id}" value="${st.subColor || ''}" maxlength="7" placeholder="#5a4e42" />
+                <button type="button" class="sec-sub-reset" data-sec-sub-reset="${id}" title="↺">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
@@ -6369,36 +6372,74 @@
         toast(state.lang === "es" ? "Fuente aplicada ✓" : "Font applied ✓");
       }
     });
-    // Color de texto por sección (input type=color)
+    // Color de texto/título/subtítulo por sección — sincroniza picker ↔ campo hex
+    const applySecColor = (id, type, hex) => {
+      const el = document.getElementById(id);
+      const st = getSectionStyle(id);
+      if (type === "fg") {
+        st.fgColor = hex;
+        if (el) { el.style.setProperty("--sec-fg-custom", hex); el.setAttribute("data-sec-fg", "1"); }
+        // sync sibling
+        const sib = panel.querySelector(`[data-sec-fg-${type === "fg" ? "text" : "pick"}="${id}"]`);
+      } else if (type === "title") {
+        st.titleColor = hex;
+        if (el) { el.style.setProperty("--sec-title-custom", hex); el.setAttribute("data-sec-title", "1"); }
+      } else if (type === "sub") {
+        st.subColor = hex;
+        if (el) { el.style.setProperty("--sec-sub-custom", hex); el.setAttribute("data-sec-sub", "1"); }
+      }
+      persistSectionLayout();
+    };
+    const isValidHex = (v) => /^#[0-9a-fA-F]{6}$/.test(v);
     panel.addEventListener("input", (e) => {
+      // Color pickers → también actualiza el campo de texto
       const cp = e.target.closest("[data-sec-fg-pick]");
       if (cp) {
         const id = cp.getAttribute("data-sec-fg-pick");
-        const st = getSectionStyle(id);
-        st.fgColor = cp.value;
-        const el = document.getElementById(id);
-        if (el) { el.style.setProperty("--sec-fg-custom", cp.value); el.setAttribute("data-sec-fg", "1"); }
-        persistSectionLayout();
+        const txt = panel.querySelector(`[data-sec-fg-text="${id}"]`);
+        if (txt) txt.value = cp.value;
+        applySecColor(id, "fg", cp.value);
         return;
       }
       const tp = e.target.closest("[data-sec-title-pick]");
       if (tp) {
         const id = tp.getAttribute("data-sec-title-pick");
-        const st = getSectionStyle(id);
-        st.titleColor = tp.value;
-        const el = document.getElementById(id);
-        if (el) { el.style.setProperty("--sec-title-custom", tp.value); el.setAttribute("data-sec-title", "1"); }
-        persistSectionLayout();
+        const txt = panel.querySelector(`[data-sec-title-text="${id}"]`);
+        if (txt) txt.value = tp.value;
+        applySecColor(id, "title", tp.value);
         return;
       }
       const sp = e.target.closest("[data-sec-sub-pick]");
       if (sp) {
         const id = sp.getAttribute("data-sec-sub-pick");
-        const st = getSectionStyle(id);
-        st.subColor = sp.value;
-        const el = document.getElementById(id);
-        if (el) { el.style.setProperty("--sec-sub-custom", sp.value); el.setAttribute("data-sec-sub", "1"); }
-        persistSectionLayout();
+        const txt = panel.querySelector(`[data-sec-sub-text="${id}"]`);
+        if (txt) txt.value = sp.value;
+        applySecColor(id, "sub", sp.value);
+        return;
+      }
+      // Campos de texto hex → también actualiza el color picker
+      const fgTxt = e.target.closest("[data-sec-fg-text]");
+      if (fgTxt && isValidHex(fgTxt.value)) {
+        const id = fgTxt.getAttribute("data-sec-fg-text");
+        const pick = panel.querySelector(`[data-sec-fg-pick="${id}"]`);
+        if (pick) pick.value = fgTxt.value;
+        applySecColor(id, "fg", fgTxt.value);
+        return;
+      }
+      const titleTxt = e.target.closest("[data-sec-title-text]");
+      if (titleTxt && isValidHex(titleTxt.value)) {
+        const id = titleTxt.getAttribute("data-sec-title-text");
+        const pick = panel.querySelector(`[data-sec-title-pick="${id}"]`);
+        if (pick) pick.value = titleTxt.value;
+        applySecColor(id, "title", titleTxt.value);
+        return;
+      }
+      const subTxt = e.target.closest("[data-sec-sub-text]");
+      if (subTxt && isValidHex(subTxt.value)) {
+        const id = subTxt.getAttribute("data-sec-sub-text");
+        const pick = panel.querySelector(`[data-sec-sub-pick="${id}"]`);
+        if (pick) pick.value = subTxt.value;
+        applySecColor(id, "sub", subTxt.value);
       }
     });
     // Botón reset de color de texto

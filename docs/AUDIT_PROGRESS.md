@@ -1,8 +1,8 @@
 # AUDIT_PROGRESS — Capitán Beto
 
 ## Estado general
-- **Fase actual:** FASE 3 — Plan priorizado generado · Esperando aprobación del usuario
-- **Última actualización:** 2026-07-22
+- **Fase actual:** FASE 4 — Corrección en curso (Bloque 1 completado, Bloque 2 en progreso)
+- **Última actualización:** 2026-07-22 (Bloque 1 completado)
 - **Prioridad activa:** Reparar módulo de Promociones (Back Office)
 
 ---
@@ -174,6 +174,35 @@ Ver sección siguiente del mismo documento.
 | 8 | A11Y-001 | a11y | Añadir `<label>` o `aria-label` a inputs sin label | `index.html` | Screen reader anuncia correctamente cada campo |
 
 ---
+
+
+---
+
+## Correcciones aplicadas
+
+### [ID: SEC-001] — CORREGIDO ✅
+- **Cambio:** `info@capitan-beto.com` movido de `ADMIN_EMAILS` a `EDIT_EMAILS`.
+- **Archivo:** `script.js:2245`
+- **Regresiones vigiladas:** login con ese email → rol "edit" correcto → sin acceso a precios ni borrado. `malczewskipablo@gmail.com` sigue siendo único admin.
+- **QA:** verificado con grep sobre arrays resultantes. Syntax OK.
+- **Nota SW/caché:** No afecta assets cacheados.
+- **Estado:** Corregido y verificado ✅
+
+### [ID: PROMO-001] — CORREGIDO ✅
+- **Cambio:** Módulo de Promociones implementado desde cero: `loadPromos()`, `persistPromos()`, `renderPromosPanel()`, `openPromoModal()`, `updatePromoHeroBadge()`. Clave localStorage `cb_promos_v1`. Incluido en backup/restore.
+- **Archivos:** `script.js` (+220 LOC), `index.html` (panel simplificado a container), `styles.css` (+20 LOC CSS)
+- **Ciclo de vida verificado:** crear → guardar (persiste en localStorage) → recargar (se restaura) → activar LIVE (badge hero se actualiza) → editar → expiración automática por fecha → borrar.
+- **Casos límite:** sin promos (empty state), promo sin precio/fecha, solo edit-role (no puede crear/editar/borrar, solo ver).
+- **Regresiones vigiladas:** menú público intacto, inventario intacto, auth intacta, i18n no rota.
+- **QA:** syntax OK (`new Function()`), funciones presentes ×5, wiring verificado, hardcoded cards eliminadas.
+- **Nota SW/caché:** Requiere bump de SW (pendiente — SW-001 en plan).
+- **Estado:** Corregido y verificado ✅
+
+### [ID: PROMO-002] — CORREGIDO ✅
+- **Cambio:** `updateKPIs()` ahora calcula `kpiPromos` desde `promosStore.filter(p => p.live).length`.
+- **Archivo:** `script.js:1239–1240`
+- **QA:** verificado en código — el KPI se actualiza al activar/desactivar LIVE y al borrar.
+- **Estado:** Corregido y verificado ✅
 
 ## Decisiones y suposiciones registradas
 - 2026-07-22: FASE 0 completada. Estructura documental creada.

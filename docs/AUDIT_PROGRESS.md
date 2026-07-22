@@ -1,8 +1,8 @@
 # AUDIT_PROGRESS — Capitán Beto
 
 ## Estado general
-- **Fase actual:** FASE 5 — Todas las correcciones completadas ✅
-- **Última actualización:** 2026-07-22 (Bloque 1 completado)
+- **Fase actual:** FASE 6 — COMPLETADA ✅ (Informe final y roadmap generados)
+- **Última actualización:** 2026-07-22 (Auditoría completada — Fase 6 cerrada)
 - **Prioridad activa:** Reparar módulo de Promociones (Back Office)
 
 ---
@@ -258,3 +258,17 @@ Ver sección siguiente del mismo documento.
 | A11Y-001 | Baja | ✅ Corregido |
 
 **8/8 hallazgos corregidos. Auditoría completada.**
+
+---
+
+## FASE 6 — COMPLETADA ✅
+
+- **AUDIT_REPORT.md** generado: resumen ejecutivo, hallazgos, detalle Promociones, correcciones, riesgos residuales, métricas antes/después.
+- **IMPROVEMENTS.md** generado: 10 mejoras priorizadas (P1-P3), desde feed Instagram y NIF legal (acción inmediata del propietario) hasta backend de CMS y modularización.
+
+### Acciones inmediatas recomendadas al propietario (sin código)
+1. Registrarse en behold.so y configurar el Feed ID de Instagram en el dashboard → Canales.
+2. Completar el NIF en el Aviso Legal vía dashboard → Contenido.
+3. Revocar el token de GitHub `[TOKEN_GITHUB]` cuando confirme que todo funciona correctamente en producción.
+
+**Auditoría formal cerrada. Estado del proyecto: ESTABLE.**

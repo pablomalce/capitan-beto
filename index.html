@@ -84,7 +84,7 @@
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800|cormorant-garamond:400,500,600,700,400i,600i|space-grotesk:400,500,600,700&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=72" />
+  <link rel="stylesheet" href="styles.css?v=73" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1485,38 +1485,7 @@
 
       <!-- ============ PROMOS VIEW ============ -->
       <section class="dash-panel" data-dash-panel="promos" hidden>
-        <div class="promo-grid">
-          <div class="card promo-card" data-live="true">
-            <div class="promo-card__head">
-              <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
-              <h4 data-i18n="dash.promo.p1.title">Empanadas + Malbec</h4>
-            </div>
-            <p data-i18n="dash.promo.p1.desc">3 empanadas criollas + copa de Malbec por 9€. Lunes a jueves de 18 a 20h.</p>
-            <div class="promo-card__foot">
-              <strong>9,00 €</strong>
-              <button class="btn btn--ghost btn--sm" data-role-restrict="admin" data-i18n="dash.promo.edit">Editar</button>
-            </div>
-          </div>
-
-          <div class="card promo-card" data-live="true">
-            <div class="promo-card__head">
-              <span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>
-              <h4 data-i18n="dash.promo.p2.title">Provoleta + Vermut</h4>
-            </div>
-            <p data-i18n="dash.promo.p2.desc">Provoleta a la parrilla + vermut de grifo por 12€ todo el sábado.</p>
-            <div class="promo-card__foot">
-              <strong>12,00 €</strong>
-              <button class="btn btn--ghost btn--sm" data-role-restrict="admin" data-i18n="dash.promo.edit">Editar</button>
-            </div>
-          </div>
-
-          <div class="card promo-card promo-card--new" data-role-restrict="admin">
-            <button class="promo-card__add" id="newPromoBtn" type="button">
-              <span>+</span>
-              <small data-i18n="dash.promo.new">Nueva promoción</small>
-            </button>
-          </div>
-        </div>
+        <div class="promo-grid" id="promoGrid"><!-- rendered by JS --></div>
       </section>
 
       <!-- ============ HOURS VIEW ============ -->
@@ -2563,6 +2532,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=77" defer></script>
+  <script src="script.js?v=78" defer></script>
 </body>
 </html>

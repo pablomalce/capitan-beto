@@ -1236,6 +1236,8 @@
   function updateKPIs() {
     $("#kpiProducts").textContent = DISHES.filter((d) => d.stock).length;
     $("#kpiOutstock").textContent = DISHES.filter((d) => !d.stock).length;
+    const kpiPromos = $("#kpiPromos");
+    if (kpiPromos) kpiPromos.textContent = (typeof promosStore !== "undefined" ? promosStore.filter((p) => p.live).length : 0);
     // shift indicator (computed from current time, lightly)
     const now = new Date();
     const h = now.getHours();
@@ -1244,6 +1246,242 @@
       ? (state.lang === "es" ? "Comidas" : "Lunch")
       : (state.lang === "es" ? "Cenas" : "Dinner");
     $("#kpiShiftHours").textContent = isLunch ? "13:00 — 16:30" : "20:00 — 23:30";
+  }
+
+
+  /* =====================================================
+     PROMOTIONS MODULE · CRUD completo con localStorage
+     Clave: cb_promos_v1
+     Estructura: [{ id, title:{es,en}, desc:{es,en}, price, live, createdAt, expiresAt }]
+     ===================================================== */
+  const PROMOS_KEY = "cb_promos_v1";
+  let promosStore = [];
+
+  function loadPromos() {
+    try { promosStore = JSON.parse(localStorage.getItem(PROMOS_KEY) || "[]"); }
+    catch (_) { promosStore = []; }
+  }
+
+  function persistPromos() {
+    safeSetItem(PROMOS_KEY, JSON.stringify(promosStore));
+  }
+
+  /** Actualiza el badge del hero con la primera promo LIVE */
+  function updatePromoHeroBadge() {
+    const live = promosStore.filter((p) => p.live);
+    if (live.length === 0) return;
+    const first = live[0];
+    const lang = state.lang;
+    const title = (first.title && (first.title[lang] || first.title.es)) || "";
+    const price = first.price != null ? " · " + fmtPrice(first.price) : "";
+    const text  = title + price;
+    if (typeof setContent === "function" && text) {
+      setContent("hero.live", text);
+      applyContentToDOM();
+    }
+  }
+
+  /** Abre el modal de crear/editar promo */
+  function openPromoModal(promoId) {
+    const lang = state.lang;
+    const existing = promoId ? promosStore.find((p) => p.id === promoId) : null;
+
+    let modal = document.getElementById("promoModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "promoModal";
+      modal.className = "modal";
+      document.body.appendChild(modal);
+    }
+
+    const v = (s) => escapeHtml(s || "");
+    modal.innerHTML = `
+      <div class="modal__backdrop"></div>
+      <div class="modal__panel" style="max-width:520px">
+        <button class="modal__close" id="promoModalClose" type="button" aria-label="Cerrar">×</button>
+        <div class="modal__head">
+          <h3>${existing ? (lang === "es" ? "Editar promoción" : "Edit promotion") : (lang === "es" ? "Nueva promoción" : "New promotion")}</h3>
+          <p>${lang === "es" ? "Los cambios se guardan en este navegador." : "Changes are saved in this browser."}</p>
+        </div>
+        <form id="promoForm">
+          <div class="promo-form__row">
+            <label class="field">
+              <small>${lang === "es" ? "Título (español) *" : "Title (Spanish) *"}</small>
+              <input type="text" name="titleEs" required maxlength="60" value="${v(existing?.title?.es)}" placeholder="Empanadas + Malbec" />
+            </label>
+            <label class="field">
+              <small>${lang === "es" ? "Título (inglés)" : "Title (English)"}</small>
+              <input type="text" name="titleEn" maxlength="60" value="${v(existing?.title?.en)}" placeholder="Empanadas + Malbec" />
+            </label>
+          </div>
+          <div class="promo-form__row">
+            <label class="field">
+              <small>${lang === "es" ? "Descripción (español)" : "Description (Spanish)"}</small>
+              <textarea name="descEs" rows="2" maxlength="160">${v(existing?.desc?.es)}</textarea>
+            </label>
+            <label class="field">
+              <small>${lang === "es" ? "Descripción (inglés)" : "Description (English)"}</small>
+              <textarea name="descEn" rows="2" maxlength="160">${v(existing?.desc?.en)}</textarea>
+            </label>
+          </div>
+          <div class="promo-form__row">
+            <label class="field">
+              <small>${lang === "es" ? "Precio (opcional)" : "Price (optional)"}</small>
+              <input type="number" name="price" step="0.10" min="0" value="${existing?.price != null ? existing.price.toFixed(2) : ""}" placeholder="9.00" />
+            </label>
+            <label class="field">
+              <small>${lang === "es" ? "Expira el (opcional)" : "Expires on (optional)"}</small>
+              <input type="date" name="expiresAt" value="${existing?.expiresAt ? new Date(existing.expiresAt).toISOString().split("T")[0] : ""}" />
+            </label>
+          </div>
+          <div class="promo-form__actions">
+            <button type="button" class="btn btn--ghost" id="promoModalCancel">${lang === "es" ? "Cancelar" : "Cancel"}</button>
+            <button type="submit" class="btn btn--primary">💾 ${lang === "es" ? "Guardar" : "Save"}</button>
+          </div>
+        </form>
+      </div>`;
+
+    // Animate open
+    requestAnimationFrame(() => { requestAnimationFrame(() => { modal.classList.add("is-open"); }); });
+    document.body.style.overflow = "hidden";
+
+    const close = () => {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+    };
+    document.getElementById("promoModalClose").addEventListener("click", close);
+    document.getElementById("promoModalCancel").addEventListener("click", close);
+    modal.querySelector(".modal__backdrop").addEventListener("click", close);
+
+    document.getElementById("promoForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const titleEs = sanitizeInput((fd.get("titleEs") || "").trim());
+      if (!titleEs) { toast(lang === "es" ? "El título en español es obligatorio." : "Spanish title is required."); return; }
+      const titleEn  = sanitizeInput((fd.get("titleEn") || "").trim()) || titleEs;
+      const descEs   = sanitizeInput((fd.get("descEs") || "").trim());
+      const descEn   = sanitizeInput((fd.get("descEn") || "").trim()) || descEs;
+      const priceRaw = fd.get("price");
+      const price    = (priceRaw !== "" && priceRaw != null) ? Math.max(0, parseFloat(priceRaw)) : null;
+      const expRaw   = fd.get("expiresAt");
+      const expiresAt = expRaw ? new Date(expRaw).getTime() : null;
+
+      if (existing) {
+        Object.assign(existing, { title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, expiresAt });
+      } else {
+        promosStore.unshift({ id: "promo_" + Date.now(), title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, live: false, createdAt: Date.now(), expiresAt });
+      }
+      persistPromos();
+      updatePromoHeroBadge();
+      updateKPIs();
+      renderPromosPanel();
+      close();
+      toast(lang === "es" ? "✅ Promoción guardada" : "✅ Promotion saved");
+    });
+  }
+
+  /** Renderiza el panel de Promociones completo */
+  function renderPromosPanel() {
+    const grid = document.getElementById("promoGrid");
+    if (!grid) return;
+    const isAdmin = state.role === "admin";
+    const lang    = state.lang;
+
+    // Auto-expirar promos vencidas
+    const now = Date.now();
+    let changed = false;
+    promosStore.forEach((p) => {
+      if (p.live && p.expiresAt && now > p.expiresAt) { p.live = false; changed = true; }
+    });
+    if (changed) { persistPromos(); updateKPIs(); }
+
+    const cards = promosStore.map((p) => {
+      const title   = (p.title && (p.title[lang] || p.title.es)) || (lang === "es" ? "Sin título" : "Untitled");
+      const desc    = (p.desc  && (p.desc[lang]  || p.desc.es))  || "";
+      const price   = p.price != null ? fmtPrice(p.price) : "";
+      const expires = p.expiresAt
+        ? new Date(p.expiresAt).toLocaleDateString(lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "short" })
+        : "";
+      const liveCls = p.live ? " promo-card--live" : "";
+      const badge   = p.live
+        ? `<span class="badge badge--live"><span class="pulse-dot"></span>LIVE</span>`
+        : `<span class="badge badge--draft">${lang === "es" ? "Borrador" : "Draft"}</span>`;
+
+      return `
+        <div class="card promo-card${liveCls}" data-promo-id="${p.id}">
+          <div class="promo-card__head">
+            ${badge}
+            <h4>${escapeHtml(title)}</h4>
+          </div>
+          ${desc ? `<p class="promo-card__desc">${escapeHtml(desc)}</p>` : ""}
+          <div class="promo-card__foot">
+            <div class="promo-card__meta">
+              ${price   ? `<strong>${price}</strong>` : ""}
+              ${expires ? `<small class="promo-card__exp">⏱ ${expires}</small>` : ""}
+            </div>
+            <div class="promo-card__btns">
+              <label class="switch promo-live-switch" title="${lang === "es" ? p.live ? "Desactivar LIVE" : "Activar LIVE" : p.live ? "Deactivate" : "Go LIVE"}">
+                <input type="checkbox" class="promo-live-toggle" data-promo-id="${p.id}" ${p.live ? "checked" : ""} ${isAdmin ? "" : "disabled"} />
+                <span class="slider"></span>
+              </label>
+              ${isAdmin ? `<button class="btn btn--ghost btn--sm promo-edit-btn" data-promo-id="${p.id}">${lang === "es" ? "Editar" : "Edit"}</button>` : ""}
+              ${isAdmin ? `<button class="icon-btn icon-btn--danger promo-del-btn" data-promo-id="${p.id}" title="${lang === "es" ? "Eliminar" : "Delete"}">🗑</button>` : ""}
+            </div>
+          </div>
+        </div>`;
+    }).join("");
+
+    const newCard = isAdmin ? `
+      <div class="card promo-card promo-card--new">
+        <button class="promo-card__add" id="newPromoBtn" type="button">
+          <span>+</span>
+          <small>${lang === "es" ? "Nueva promoción" : "New promotion"}</small>
+        </button>
+      </div>` : "";
+
+    const empty = promosStore.length === 0 && !isAdmin
+      ? `<p style="color:var(--ink-mute);grid-column:1/-1;text-align:center;padding:2rem 0">—</p>`
+      : "";
+
+    grid.innerHTML = cards + newCard + empty;
+
+    // Wire toggle LIVE
+    grid.querySelectorAll(".promo-live-toggle").forEach((cb) => {
+      cb.addEventListener("change", (e) => {
+        const promo = promosStore.find((p) => p.id === e.target.dataset.promoId);
+        if (!promo) return;
+        promo.live = e.target.checked;
+        persistPromos();
+        updatePromoHeroBadge();
+        updateKPIs();
+        renderPromosPanel();
+        toast(promo.live
+          ? (lang === "es" ? "✅ Promo activada · LIVE" : "✅ Promo activated · LIVE")
+          : (lang === "es" ? "Promo desactivada" : "Promo deactivated"));
+      });
+    });
+
+    // Wire edit
+    grid.querySelectorAll(".promo-edit-btn").forEach((btn) => {
+      btn.addEventListener("click", () => openPromoModal(btn.dataset.promoId));
+    });
+
+    // Wire delete
+    grid.querySelectorAll(".promo-del-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!confirm(lang === "es" ? "¿Eliminar esta promoción?" : "Delete this promotion?")) return;
+        promosStore = promosStore.filter((p) => p.id !== btn.dataset.promoId);
+        persistPromos();
+        updatePromoHeroBadge();
+        updateKPIs();
+        renderPromosPanel();
+        toast(lang === "es" ? "Promoción eliminada" : "Promotion deleted");
+      });
+    });
+
+    // Wire new
+    const newBtn = document.getElementById("newPromoBtn");
+    if (newBtn) newBtn.addEventListener("click", () => openPromoModal(null));
   }
 
   // ---------- Dashboard: hours form ----------
@@ -1290,6 +1528,7 @@
     if (tab === "qr") setTimeout(initQrPanel, 50);
     if (tab === "eventos") setTimeout(initEventosPanel, 50);
     if (tab === "loyalty") setTimeout(initLoyaltyPanel, 50);
+    if (tab === "promos") setTimeout(renderPromosPanel, 50);
     const titleEl = $("#dashSectionTitle");
     const map = {
       inventory: "dash.title.inventory",
@@ -2242,9 +2481,9 @@
 
   // Allowlist de emails autorizados como admin
   // Emails con acceso total (admin) — pueden borrar, cambiar precios, ver todo
-  const ADMIN_EMAILS = ["info@capitan-beto.com", "malczewskipablo@gmail.com"];
+  const ADMIN_EMAILS = ["malczewskipablo@gmail.com"];
   // Emails con acceso de edición — pueden editar contenido pero no precio ni borrado
-  const EDIT_EMAILS  = ["capitanbetomadrid@gmail.com"];
+  const EDIT_EMAILS  = ["info@capitan-beto.com", "capitanbetomadrid@gmail.com"];
   // Todos los que pueden autenticarse
   const ALL_AUTH_EMAILS = [...ADMIN_EMAILS, ...EDIT_EMAILS];
 
@@ -4358,6 +4597,7 @@
     loadContent();
     loadImages();
     loadReservations();
+    loadPromos();
     renderEventGrid();
     // Aplicar contenido editable después de que el i18n inicial corra
     setTimeout(applyContentToDOM, 60);
@@ -5370,6 +5610,7 @@
   // ============== BACKUP CMS (export / import / clear) ================
   // ====================================================================
   const BACKUP_KEYS = [
+    "cb_promos_v1",
     "cb_content_v1",
     "cb_reservations_v1",
     "cb.images.v1",

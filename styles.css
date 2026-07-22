@@ -3285,6 +3285,20 @@ body[data-role="editor"] .role-hint[data-show-for="editor"] { display: inline-fl
   transition: transform 0.3s var(--ease-soft);
 }
 .promo-card__add:hover span { transform: rotate(90deg); background: var(--brass); color: var(--olive-dark); }
+/* Promo card states */
+.promo-card--live { border-color: var(--brand-green); box-shadow: 0 0 0 2px rgba(31,74,46,.15), var(--shadow-2); }
+.promo-card__desc { color: var(--ink-soft); font-size: 14px; margin: 0; line-height: 1.5; }
+.promo-card__meta { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.promo-card__exp  { color: var(--ink-mute); font-size: 12px; }
+.promo-card__btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.promo-live-switch { flex-shrink: 0; }
+.badge--draft { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; background: var(--ink-mute); color: #fff; opacity: .6; }
+
+/* Promo modal form */
+.promo-form__row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.promo-form__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+@media (max-width: 520px) { .promo-form__row { grid-template-columns: 1fr; } }
+
 
 /* Hours form */
 .hours-form {

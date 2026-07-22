@@ -6563,6 +6563,84 @@ body[data-view="dashboard"][data-auth="true"] .tour-trigger { display: inline-fl
 .event-card__desc { font-size: .875rem; color: rgba(251,246,232,.55); line-height: 1.55; flex: 1; }
 .event-card__time { font-size: .82rem; color: rgba(251,246,232,.4); margin-top: auto; padding-top: .5rem; }
 
+/* ===== PROMOCIONES — sección pública ===== */
+.section--promos {
+  background: linear-gradient(160deg, #13221a 0%, #1a0f09 100%);
+  padding: 5rem 1.5rem;
+}
+.promos-pub-inner { max-width: 960px; margin: 0 auto; }
+.section--promos .section__head { text-align: center; margin-bottom: 3rem; }
+.section--promos .section__head h2 { color: var(--bg-cream); }
+.section--promos .eyebrow { color: var(--brass); }
+.section--promos .section__sub { color: rgba(251,246,232,.55); margin-top: .5rem; }
+.promos-pub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.promo-pub-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(194,155,99,.25);
+  border-radius: 18px;
+  padding: 1.6rem 1.75rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.promo-pub-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  border-color: rgba(194,155,99,.45);
+}
+.promo-pub-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--brass);
+}
+.promo-pub-card__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--bg-cream);
+  line-height: 1.25;
+  margin: 0;
+}
+.promo-pub-card__desc {
+  font-size: .9rem;
+  color: rgba(251,246,232,.6);
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+.promo-pub-card__foot {
+  display: flex;
+  align-items: baseline;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-top: .25rem;
+  padding-top: .75rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.promo-pub-card__price {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--brass);
+  font-weight: 700;
+}
+.promo-pub-card__exp {
+  font-size: .78rem;
+  color: rgba(251,246,232,.38);
+}
+@media (max-width: 600px) {
+  .section--promos { padding: 3.5rem 1rem; }
+  .promo-pub-card { padding: 1.25rem 1.3rem 1.1rem; }
+}
+
 /* ===== EVENTS — dash panel ===== */
 .evt-list { display: flex; flex-direction: column; gap: .75rem; }
 .evt-item {

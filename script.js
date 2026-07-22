@@ -126,6 +126,9 @@
       "hero.ctaMenu": "Ver la Pizarra",
       "hero.ctaBook": "Reservar mesa",
       "hero.live": "Promo en directo · Empanadas (×3) + Malbec 9€",
+      "promos.eyebrow": "Solo por tiempo limitado",
+      "promos.title": "Promociones especiales",
+      "promos.sub": "Nuestras ofertas de esta semana · Válidas en el local",
       "menu.title": "La Pizarra",
       "menu.lead": "Precios honestos. Producto cercano. Cambia cada semana, como en cualquier tasca que se precie.",
       "menu.tabShare": "Para Compartir",
@@ -582,6 +585,9 @@
       "hero.ctaMenu": "View the Slate Menu",
       "hero.ctaBook": "Book a table",
       "hero.live": "Live deal · Empanadas (×3) + Malbec glass 9€",
+      "promos.eyebrow": "Limited time only",
+      "promos.title": "Special Promotions",
+      "promos.sub": "This week\'s deals · Available in the bar",
       "menu.title": "La Pizarra",
       "menu.lead": "Honest prices. Local produce. Changes every week, like any tavern worth its salt.",
       "menu.tabShare": "To Share",
@@ -1378,7 +1384,20 @@
   /** Actualiza el badge del hero con la primera promo LIVE */
   function updatePromoHeroBadge() {
     const live = promosStore.filter((p) => p.live);
-    if (live.length === 0) return;
+    const heroMeta = document.querySelector(".hero__meta");
+    if (live.length === 0) {
+      // Ocultar el badge del hero y limpiar texto almacenado
+      if (heroMeta) heroMeta.hidden = true;
+      const badgeEl = document.querySelector('[data-content="hero.live"]');
+      if (badgeEl) badgeEl.textContent = "";
+      if (typeof setContent === "function") {
+        setContent("hero.live", "");
+        persistContent();
+      }
+      renderPublicPromos();
+      return;
+    }
+    if (heroMeta) heroMeta.hidden = false;
     const first = live[0];
     const lang = state.lang;
     const title = (first.title && (first.title[lang] || first.title.es)) || "";
@@ -1388,6 +1407,7 @@
       setContent("hero.live", text);
       applyContentToDOM();
     }
+    renderPublicPromos();
   }
 
   /** Abre el modal de crear/editar promo */
@@ -1591,6 +1611,44 @@
     // Wire new
     const newBtn = document.getElementById("newPromoBtn");
     if (newBtn) newBtn.addEventListener("click", () => openPromoModal(null));
+  }
+
+  /** Renderiza las promos LIVE en la sección pública del sitio */
+  function renderPublicPromos() {
+    const section = document.getElementById("promos");
+    const grid    = document.getElementById("publicPromosGrid");
+    if (!section || !grid) return;
+
+    const live = promosStore.filter((p) => p.live);
+    const lang = state.lang;
+
+    if (live.length === 0) {
+      section.hidden = true;
+      return;
+    }
+
+    section.hidden = false;
+    grid.innerHTML = live.map((p) => {
+      const title   = (p.title && (p.title[lang] || p.title.es)) || (lang === "es" ? "Sin título" : "Untitled");
+      const desc    = (p.desc  && (p.desc[lang]  || p.desc.es))  || "";
+      const price   = p.price  != null ? fmtPrice(p.price) : "";
+      const expires = p.expiresAt
+        ? new Date(p.expiresAt).toLocaleDateString(lang === "es" ? "es-ES" : "en-GB", { day: "numeric", month: "long" })
+        : "";
+      return `
+        <div class="promo-pub-card">
+          <div class="promo-pub-card__badge">
+            <span class="pulse-dot"></span>
+            ${lang === "es" ? "Oferta activa" : "Live deal"}
+          </div>
+          <h3 class="promo-pub-card__title">${escapeHtml(title)}</h3>
+          ${desc ? `<p class="promo-pub-card__desc">${escapeHtml(desc)}</p>` : ""}
+          <div class="promo-pub-card__foot">
+            ${price   ? `<strong class="promo-pub-card__price">${price}</strong>` : ""}
+            ${expires ? `<small  class="promo-pub-card__exp">⏱ ${lang === "es" ? "Hasta el" : "Until"} ${expires}</small>` : ""}
+          </div>
+        </div>`;
+    }).join("");
   }
 
   // ---------- Dashboard: hours form ----------
@@ -4753,6 +4811,17 @@
     loadImages();
     loadReservations();
     loadPromos();
+    renderPublicPromos();
+
+    // Sincronización entre pestañas: si el dashboard actualiza promos en otra pestaña,
+    // el sitio público se actualiza automáticamente
+    window.addEventListener("storage", (e) => {
+      if (e.key === PROMOS_KEY) {
+        loadPromos();
+        updatePromoHeroBadge();
+        renderPublicPromos();
+      }
+    });
     loadHours();
     renderEventGrid();
     // Aplicar contenido editable después de que el i18n inicial corra
@@ -4902,7 +4971,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v80",
+        release: "capitan-beto@v83",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data

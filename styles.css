@@ -6878,18 +6878,21 @@ section[data-sec-font] .eyebrow {
 section[data-sec-fg] {
   color: var(--sec-fg-custom) !important;
 }
-section[data-sec-fg] h1,
-section[data-sec-fg] h2,
-section[data-sec-fg] h3,
-section[data-sec-fg] h4,
 section[data-sec-fg] p,
 section[data-sec-fg] li,
 section[data-sec-fg] small,
 section[data-sec-fg] span:not([class*="badge"]):not([class*="tag"]):not(.pulse-dot),
 section[data-sec-fg] .section__sub,
-section[data-sec-fg] .section__lead,
-section[data-sec-fg] .section__title {
+section[data-sec-fg] .section__lead {
   color: var(--sec-fg-custom) !important;
+}
+
+/* Color de título personalizado por sección (solo h1/h2/h3) */
+section[data-sec-title] h1,
+section[data-sec-title] h2,
+section[data-sec-title] h3,
+section[data-sec-title] .section__title {
+  color: var(--sec-title-custom) !important;
 }
 
 /* Swatch + picker de color de fuente en el panel de secciones */
@@ -6907,7 +6910,8 @@ section[data-sec-fg] .section__title {
   background: none;
   cursor: pointer;
 }
-.sec-fg-reset {
+.sec-fg-reset,
+.sec-title-reset {
   background: none;
   border: 1px solid var(--card-border-soft);
   border-radius: 6px;
@@ -6918,7 +6922,17 @@ section[data-sec-fg] .section__title {
   line-height: 1;
   transition: color .15s;
 }
-.sec-fg-reset:hover { color: var(--sunset); border-color: var(--sunset); }
+.sec-fg-reset:hover,
+.sec-title-reset:hover { color: var(--sunset); border-color: var(--sunset); }
+.sec-title-pick {
+  width: 36px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid var(--card-border-soft);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
 
 /* ===== Dashboard: editor de estilo por sección ===== */
 .sec-style {

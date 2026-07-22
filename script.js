@@ -6119,7 +6119,8 @@
         const s = layout.styles[id];
         if (s) {
           styles[id] = { theme: s.theme || "default", font: s.font || "default" };
-          if (s.fgColor) styles[id].fgColor = s.fgColor;
+          if (s.fgColor)    styles[id].fgColor    = s.fgColor;
+          if (s.titleColor) styles[id].titleColor = s.titleColor;
         }
       });
     }
@@ -6172,11 +6173,13 @@
     el.removeAttribute("data-sec-theme");
     el.removeAttribute("data-sec-font");
     el.removeAttribute("data-sec-fg");
+    el.removeAttribute("data-sec-title");
     el.style.removeProperty("--sec-bg");
     el.style.removeProperty("--sec-fg");
     el.style.removeProperty("--sec-accent");
     el.style.removeProperty("--sec-font");
     el.style.removeProperty("--sec-fg-custom");
+    el.style.removeProperty("--sec-title-custom");
     if (!style) return;
     // Tema de color
     if (style.theme && style.theme !== "default") {
@@ -6200,6 +6203,11 @@
     if (style.fgColor) {
       el.style.setProperty("--sec-fg-custom", style.fgColor);
       el.setAttribute("data-sec-fg", "1");
+    }
+    // Color de título personalizado
+    if (style.titleColor) {
+      el.style.setProperty("--sec-title-custom", style.titleColor);
+      el.setAttribute("data-sec-title", "1");
     }
   }
 
@@ -6262,6 +6270,13 @@
               <div class="sec-fg-row">
                 <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || '#1a1a1a'}" title="${lang === "es" ? "Color de fuente" : "Font color"}" />
                 <button type="button" class="sec-fg-reset" data-sec-fg-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
+              </div>
+            </div>
+            <div class="sec-style__group">
+              <span class="sec-style__label">${lang === "es" ? "Color título" : "Title color"}</span>
+              <div class="sec-fg-row">
+                <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || '#1a1a1a'}" title="${lang === "es" ? "Color del título" : "Title color"}" />
+                <button type="button" class="sec-title-reset" data-sec-title-reset="${id}" title="${lang === "es" ? "Restablecer" : "Reset"}">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
@@ -6334,32 +6349,49 @@
     // Color de texto por sección (input type=color)
     panel.addEventListener("input", (e) => {
       const cp = e.target.closest("[data-sec-fg-pick]");
-      if (!cp) return;
-      const id = cp.getAttribute("data-sec-fg-pick");
-      const st = getSectionStyle(id);
-      st.fgColor = cp.value;
-      const el = document.getElementById(id);
-      if (el) {
-        el.style.setProperty("--sec-fg-custom", cp.value);
-        el.setAttribute("data-sec-fg", "1");
+      if (cp) {
+        const id = cp.getAttribute("data-sec-fg-pick");
+        const st = getSectionStyle(id);
+        st.fgColor = cp.value;
+        const el = document.getElementById(id);
+        if (el) { el.style.setProperty("--sec-fg-custom", cp.value); el.setAttribute("data-sec-fg", "1"); }
+        persistSectionLayout();
+        return;
       }
-      persistSectionLayout();
+      const tp = e.target.closest("[data-sec-title-pick]");
+      if (tp) {
+        const id = tp.getAttribute("data-sec-title-pick");
+        const st = getSectionStyle(id);
+        st.titleColor = tp.value;
+        const el = document.getElementById(id);
+        if (el) { el.style.setProperty("--sec-title-custom", tp.value); el.setAttribute("data-sec-title", "1"); }
+        persistSectionLayout();
+      }
     });
     // Botón reset de color de texto
     panel.addEventListener("click", (e) => {
       const rb = e.target.closest("[data-sec-fg-reset]");
-      if (!rb) return;
-      const id = rb.getAttribute("data-sec-fg-reset");
-      const st = getSectionStyle(id);
-      delete st.fgColor;
-      const el = document.getElementById(id);
-      if (el) {
-        el.style.removeProperty("--sec-fg-custom");
-        el.removeAttribute("data-sec-fg");
+      if (rb) {
+        const id = rb.getAttribute("data-sec-fg-reset");
+        const st = getSectionStyle(id);
+        delete st.fgColor;
+        const el = document.getElementById(id);
+        if (el) { el.style.removeProperty("--sec-fg-custom"); el.removeAttribute("data-sec-fg"); }
+        persistSectionLayout();
+        renderSectionsPanel();
+        toast(state.lang === "es" ? "Color de texto restablecido" : "Text color reset");
       }
-      persistSectionLayout();
-      renderSectionsPanel();
-      toast(state.lang === "es" ? "Color de texto restablecido" : "Text color reset");
+      const tb = e.target.closest("[data-sec-title-reset]");
+      if (tb) {
+        const id = tb.getAttribute("data-sec-title-reset");
+        const st = getSectionStyle(id);
+        delete st.titleColor;
+        const el = document.getElementById(id);
+        if (el) { el.style.removeProperty("--sec-title-custom"); el.removeAttribute("data-sec-title"); }
+        persistSectionLayout();
+        renderSectionsPanel();
+        toast(state.lang === "es" ? "Color de título restablecido" : "Title color reset");
+      }
     });
     // Drag and drop
     let dragId = null;

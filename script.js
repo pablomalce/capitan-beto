@@ -940,6 +940,26 @@
     { day: "dom", open: true,  lunch: ["14:00", "00:00"], dinner: [null, null] }
   ];
 
+  const HOURS_KEY = "cb_hours_v1";
+
+  function loadHours() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HOURS_KEY) || "null");
+      if (!saved || !Array.isArray(saved) || saved.length !== HOURS.length) return;
+      // Merge saved values into HOURS (validate structure per row)
+      saved.forEach((s, i) => {
+        if (!s || s.day !== HOURS[i].day) return;
+        HOURS[i].open   = !!s.open;
+        HOURS[i].lunch  = Array.isArray(s.lunch)  ? [s.lunch[0]  || null, s.lunch[1]  || null] : HOURS[i].lunch;
+        HOURS[i].dinner = Array.isArray(s.dinner) ? [s.dinner[0] || null, s.dinner[1] || null] : HOURS[i].dinner;
+      });
+    } catch (_) {}
+  }
+
+  function persistHours() {
+    try { localStorage.setItem(HOURS_KEY, JSON.stringify(HOURS)); } catch (_) {}
+  }
+
   const DAY_NAMES = {
     es: { lun: "Lunes", mar: "Martes", mie: "Miércoles", jue: "Jueves", vie: "Viernes", sab: "Sábado", dom: "Domingo" },
     en: { lun: "Monday", mar: "Tuesday", mie: "Wednesday", jue: "Thursday", vie: "Friday", sab: "Saturday", dom: "Sunday" }
@@ -1510,7 +1530,7 @@
         <input type="time" value="${h.dinner[1] || ""}" ${readonly} data-hours="${h.day}-dinner-close"/>
       </div>
       <label class="switch">
-        <input type="checkbox" ${h.open ? "checked" : ""} ${readonly}/>
+        <input type="checkbox" data-hours-open="${h.day}" ${h.open ? "checked" : ""} ${readonly}/>
         <span class="slider"></span>
       </label>
     `).join("");
@@ -1723,6 +1743,23 @@
     const saveHours = $("#saveHoursBtn");
     if (saveHours) saveHours.addEventListener("click", () => {
       if (state.role !== "admin") { toast(t("toast.noPerm")); return; }
+      // Read all time inputs and checkboxes from the form and update HOURS
+      const form = $("#hoursForm");
+      if (!form) return;
+      HOURS.forEach((h) => {
+        const lo  = form.querySelector(`[data-hours="${h.day}-lunch-open"]`);
+        const lc  = form.querySelector(`[data-hours="${h.day}-lunch-close"]`);
+        const do_ = form.querySelector(`[data-hours="${h.day}-dinner-open"]`);
+        const dc  = form.querySelector(`[data-hours="${h.day}-dinner-close"]`);
+        const chk = form.querySelector(`[data-hours-open="${h.day}"]`);
+        if (lo)  h.lunch[0]  = lo.value  || null;
+        if (lc)  h.lunch[1]  = lc.value  || null;
+        if (do_) h.dinner[0] = do_.value || null;
+        if (dc)  h.dinner[1] = dc.value  || null;
+        if (chk) h.open      = chk.checked;
+      });
+      persistHours();
+      renderPublicHours();
       toast(t("toast.savedHours"));
     });
 
@@ -4598,6 +4635,7 @@
     loadImages();
     loadReservations();
     loadPromos();
+    loadHours();
     renderEventGrid();
     // Aplicar contenido editable después de que el i18n inicial corra
     setTimeout(applyContentToDOM, 60);
@@ -5611,6 +5649,7 @@
   // ====================================================================
   const BACKUP_KEYS = [
     "cb_promos_v1",
+    "cb_hours_v1",
     "cb_content_v1",
     "cb_reservations_v1",
     "cb.images.v1",

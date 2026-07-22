@@ -1463,6 +1463,17 @@
               <input type="date" name="expiresAt" value="${existing?.expiresAt ? new Date(existing.expiresAt).toISOString().split("T")[0] : ""}" />
             </label>
           </div>
+          <label class="field">
+            <small>${lang === "es" ? "Imagen (opcional)" : "Image (optional)"}</small>
+            <div class="promo-img-row">
+              <input type="text" name="imageUrl" placeholder="https://..." value="${v(existing?.imageUrl)}" class="promo-img-url" />
+              <label class="btn btn--ghost btn--sm promo-img-upload-label" title="${lang === "es" ? "Subir imagen" : "Upload image"}">
+                📎 ${lang === "es" ? "Subir" : "Upload"}
+                <input type="file" name="imageFile" accept="image/*" class="promo-img-file" style="display:none" />
+              </label>
+            </div>
+            ${existing?.imageUrl ? `<img src="${v(existing.imageUrl)}" class="promo-img-preview" alt="preview" />` : `<div class="promo-img-preview" style="display:none"></div>`}
+          </label>
           <div class="promo-form__actions">
             <button type="button" class="btn btn--ghost" id="promoModalCancel">${lang === "es" ? "Cancelar" : "Cancel"}</button>
             <button type="submit" class="btn btn--primary">💾 ${lang === "es" ? "Guardar" : "Save"}</button>
@@ -1482,6 +1493,35 @@
     document.getElementById("promoModalCancel").addEventListener("click", close);
     modal.querySelector(".modal__backdrop").addEventListener("click", close);
 
+    // File upload → preview + URL field
+    const fileInput = modal.querySelector(".promo-img-file");
+    const urlInput  = modal.querySelector(".promo-img-url");
+    const preview   = modal.querySelector(".promo-img-preview");
+    if (fileInput) {
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.size > 500 * 1024) {
+          toast(lang === "es" ? "Imagen demasiado grande (máx 500 KB)" : "Image too large (max 500 KB)");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          if (urlInput) urlInput.value = dataUrl;
+          if (preview) { preview.src = dataUrl; preview.style.display = "block"; }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    if (urlInput && preview) {
+      urlInput.addEventListener("input", () => {
+        const val = urlInput.value.trim();
+        if (val) { preview.src = val; preview.style.display = "block"; }
+        else preview.style.display = "none";
+      });
+    }
+
     document.getElementById("promoForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
@@ -1494,11 +1534,12 @@
       const price    = (priceRaw !== "" && priceRaw != null) ? Math.max(0, parseFloat(priceRaw)) : null;
       const expRaw   = fd.get("expiresAt");
       const expiresAt = expRaw ? new Date(expRaw).getTime() : null;
+      const imageUrl  = (fd.get("imageUrl") || "").trim() || null;
 
       if (existing) {
-        Object.assign(existing, { title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, expiresAt });
+        Object.assign(existing, { title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, expiresAt, imageUrl });
       } else {
-        promosStore.unshift({ id: "promo_" + Date.now(), title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, live: false, createdAt: Date.now(), expiresAt });
+        promosStore.unshift({ id: "promo_" + Date.now(), title: { es: titleEs, en: titleEn }, desc: { es: descEs, en: descEn }, price, live: false, createdAt: Date.now(), expiresAt, imageUrl });
       }
       persistPromos();
       updatePromoHeroBadge();
@@ -1538,6 +1579,7 @@
 
       return `
         <div class="card promo-card${liveCls}" data-promo-id="${p.id}">
+          ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" class="promo-card__img" alt="${escapeHtml(title)}" loading="lazy" />` : ""}
           <div class="promo-card__head">
             ${badge}
             <h4>${escapeHtml(title)}</h4>
@@ -1637,15 +1679,18 @@
         : "";
       return `
         <div class="promo-pub-card">
-          <div class="promo-pub-card__badge">
-            <span class="pulse-dot"></span>
-            ${lang === "es" ? "Oferta activa" : "Live deal"}
-          </div>
-          <h3 class="promo-pub-card__title">${escapeHtml(title)}</h3>
-          ${desc ? `<p class="promo-pub-card__desc">${escapeHtml(desc)}</p>` : ""}
-          <div class="promo-pub-card__foot">
-            ${price   ? `<strong class="promo-pub-card__price">${price}</strong>` : ""}
-            ${expires ? `<small  class="promo-pub-card__exp">⏱ ${lang === "es" ? "Hasta el" : "Until"} ${expires}</small>` : ""}
+          ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" class="promo-pub-card__img" alt="${escapeHtml(title)}" loading="lazy" />` : ""}
+          <div class="promo-pub-card__body">
+            <div class="promo-pub-card__badge">
+              <span class="pulse-dot"></span>
+              ${lang === "es" ? "Oferta activa" : "Live deal"}
+            </div>
+            <h3 class="promo-pub-card__title">${escapeHtml(title)}</h3>
+            ${desc ? `<p class="promo-pub-card__desc">${escapeHtml(desc)}</p>` : ""}
+            <div class="promo-pub-card__foot">
+              ${price   ? `<strong class="promo-pub-card__price">${price}</strong>` : ""}
+              ${expires ? `<small  class="promo-pub-card__exp">⏱ ${lang === "es" ? "Hasta el" : "Until"} ${expires}</small>` : ""}
+            </div>
           </div>
         </div>`;
     }).join("");
@@ -6024,6 +6069,7 @@
   // Hero (arriba) y Contact (abajo) quedan FIJOS. Estas 10 se reordenan.
   const SECTION_DEFS = [
     { id: "menu",      icon: "🍽️", es: "La Pizarra (menú)",   en: "The Slate (menu)" },
+    { id: "promos",    icon: "🔥", es: "Promociones",           en: "Promotions" },
     { id: "pet",       icon: "🐾", es: "Pet-Friendly",         en: "Pet-Friendly" },
     { id: "crew",      icon: "👥", es: "The Crew",             en: "The Crew" },
     { id: "gallery",   icon: "🖼️", es: "Galería evento",       en: "Event gallery" },
@@ -6071,7 +6117,10 @@
     if (layout.styles && typeof layout.styles === "object") {
       valid.forEach((id) => {
         const s = layout.styles[id];
-        if (s) styles[id] = { theme: s.theme || "default", font: s.font || "default" };
+        if (s) {
+          styles[id] = { theme: s.theme || "default", font: s.font || "default" };
+          if (s.fgColor) styles[id].fgColor = s.fgColor;
+        }
       });
     }
     return { order, hidden, styles };

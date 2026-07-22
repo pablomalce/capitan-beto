@@ -1218,6 +1218,7 @@
 
   // ---------- Menu tabs ----------
   function setMenuTab(tab) {
+    track("menu_tab_click", { tab_name: tab });
     state.menuTab = tab;
     state.allergenFilter.clear();   // reset filter on tab change
     $$(".tab-btn").forEach((b) => b.classList.toggle("is-active", b.dataset.menuTab === tab));
@@ -2324,6 +2325,7 @@
   };
 
   function openChat() {
+    track("chatbot_open");
     $("#chatWidget").classList.add("is-open");
     $("#chatWidget").setAttribute("aria-hidden", "false");
     $("#chatUnread").setAttribute("hidden", "");
@@ -4504,6 +4506,32 @@
     els.forEach((el) => io.observe(el));
   }
 
+  // ---------- Section view tracking (fires once per section) ----------
+  function initSectionTracking() {
+    if (!("IntersectionObserver" in window)) return;
+    const TRACKED = {
+      "#menu":     "menu_section_view",
+      "#promos":   "promos_section_view",
+      "#reservas": "reservations_section_view",
+      "#reviews":  "reviews_section_view",
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = "#" + entry.target.id;
+          if (TRACKED[id]) {
+            track(TRACKED[id]);
+            io.unobserve(entry.target);
+          }
+        }
+      });
+    }, { threshold: 0.3 });
+    Object.keys(TRACKED).forEach((sel) => {
+      const el = $(sel);
+      if (el) io.observe(el);
+    });
+  }
+
   // Detectar dispositivos sin pointer fino (móvil/tablet) → desactivar
   // efectos hover que sólo añaden jank en touch.
   const HAS_FINE_POINTER = typeof window.matchMedia === "function" &&
@@ -4624,6 +4652,7 @@
     $("[data-reserve-next]")?.addEventListener("click", () => {
       const form = $("#reserveForm");
       if (!form.reportValidity()) return;
+      track("reservation_start");
       const data = readReserveForm();
       $("#reserveSummary").innerHTML = reserveSummaryHTML(data);
       $("#waSendBtn").href = buildWaURL(data);
@@ -4633,6 +4662,7 @@
     $("[data-reserve-back]")?.addEventListener("click", () => goToReserveStep(1));
 
     $("#waSendBtn")?.addEventListener("click", () => {
+      track("reservation_whatsapp");
       const data = readReserveForm();
       saveReservation(data);
       toast(t("chat.confirm.wa"));
@@ -4754,12 +4784,14 @@
     bindPetsModeration();
     updateDashBadgesPet();
     initScrollReveal();
+    initSectionTracking();
     initMagnetic();
     initDishTilt();
     initKpiGlow();
     setTimeout(initCountUp, 350);
     registerServiceWorker();
     initAnalytics();
+    initSentry();
   };
 
   // ====================================================================
@@ -4839,6 +4871,49 @@
       anonymize_ip: true,
       allow_google_signals: false
     });
+  }
+
+  // ---------- GA4 event helper (safe: no-op if GA not loaded) ----------
+  function track(eventName, params) {
+    try {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", eventName, params || {});
+      }
+    } catch (_) {}
+  }
+
+  // ============== SENTRY (error monitoring) ============================
+  function initSentry() {
+    let dsn = "";
+    try {
+      const payments = JSON.parse(localStorage.getItem("cb.payments.v1") || "{}");
+      if (payments.sentry && payments.sentry.enabled && payments.sentry.dsn) {
+        dsn = payments.sentry.dsn.trim();
+      }
+    } catch (_) {}
+    if (!dsn) return;
+
+    // Load Sentry SDK from CDN
+    const s = document.createElement("script");
+    s.src = "https://browser.sentry-cdn.com/7.119.2/bundle.min.js";
+    s.crossOrigin = "anonymous";
+    s.onload = () => {
+      if (!window.Sentry) return;
+      window.Sentry.init({
+        dsn,
+        release: "capitan-beto@v80",
+        environment: location.hostname === "capitan-beto.com" ? "production" : "development",
+        tracesSampleRate: 0.05,   // 5% of sessions — low footprint
+        sendDefaultPii: false,    // no personal data
+        ignoreErrors: [
+          "ResizeObserver loop",
+          "Non-Error promise rejection",
+          "Load failed",
+          "NetworkError"
+        ]
+      });
+    };
+    document.head.appendChild(s);
   }
 
   // ====================================================================

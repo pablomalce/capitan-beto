@@ -10,7 +10,7 @@
 
   <!-- ============ SECURITY HEADERS (meta-tag fallback) ============ -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com https://w.behold.so; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://accounts.google.com; font-src 'self' https://fonts.bunny.net; img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://*.supabase.co https://*.cdninstagram.com https://scontent.cdninstagram.com https://*.fbcdn.net; media-src 'self' blob:; connect-src 'self' https://formsubmit.co https://accounts.google.com https://*.supabase.co https://api.behold.so https://*.behold.so; frame-src https://accounts.google.com https://drive.google.com https://api.behold.so https://*.behold.so; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co https://wa.me; upgrade-insecure-requests" />
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com https://w.behold.so https://browser.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://accounts.google.com; font-src 'self' https://fonts.bunny.net; img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://*.supabase.co https://*.cdninstagram.com https://scontent.cdninstagram.com https://*.fbcdn.net; media-src 'self' blob:; connect-src 'self' https://formsubmit.co https://accounts.google.com https://*.supabase.co https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io; frame-src https://accounts.google.com https://drive.google.com https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co https://wa.me; upgrade-insecure-requests" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self), payment=()" />
@@ -418,7 +418,7 @@
       <div class="pet__layout">
         <div class="pet__visual">
           <div class="pet__photo">
-            <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900&h=1100&fit=crop&q=80"
+            <img loading="lazy" src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900&h=1100&fit=crop&q=80"
                  alt="Perro feliz en la taberna" loading="lazy"
                  onerror="this.src='https://images.unsplash.com/photo-1546238232-20216dec9f72?w=900&h=1100&fit=crop&q=80'" />
             <div class="pet__photo-badge">
@@ -639,16 +639,22 @@
       <article class="crew-unified reveal" data-reveal>
         <div class="crew-unified__photos">
           <figure class="crew-unified__photo" data-crew-card="0">
-            <img id="crewImg0" src="crew/beto.jpg" alt="Matías" loading="lazy"
+            <picture>
+              <source srcset="crew/beto.webp" type="image/webp" />
+              <img id="crewImg0" src="crew/beto.jpg" alt="Matías" loading="lazy"
                  onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='crew/familia.jpg';}" />
+            </picture>
             <button class="crew-card__edit" data-crew-edit="0" aria-label="Cambiar foto" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
               <span data-i18n="crew.change">Cambiar foto</span>
             </button>
           </figure>
           <figure class="crew-unified__photo" data-crew-card="1">
-            <img id="crewImg1" src="crew/marina.jpg" alt="Natalia (la Polaca)" loading="lazy"
+            <picture>
+              <source srcset="crew/marina.webp" type="image/webp" />
+              <img id="crewImg1" src="crew/marina.jpg" alt="Natalia (la Polaca)" loading="lazy"
                  onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='crew/familia.jpg';}" />
+            </picture>
             <button class="crew-card__edit" data-crew-edit="1" aria-label="Cambiar foto" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
               <span data-i18n="crew.change">Cambiar foto</span>
@@ -736,7 +742,10 @@
 
         <!-- 2: Vinos -->
         <figure class="m-tile m-tile--tall">
-          <img src="momentos/vinos.jpg" alt="Vinos en la barra" loading="lazy" />
+          <picture>
+            <source srcset="momentos/vinos.webp" type="image/webp" />
+            <img src="momentos/vinos.jpg" alt="Vinos en la barra" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.vinos">Bodega</span>
             <strong data-i18n="momentos.t.vinos">Ribera y Rioja, a copa</strong>
@@ -745,7 +754,10 @@
 
         <!-- 3: Cervezas -->
         <figure class="m-tile">
-          <img src="momentos/cervezas.jpg" alt="Cañas tiradas" loading="lazy" />
+          <picture>
+            <source srcset="momentos/cervezas.webp" type="image/webp" />
+            <img src="momentos/cervezas.jpg" alt="Cañas tiradas" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.cervezas">Tirador</span>
             <strong data-i18n="momentos.t.cervezas">Cañas con espuma honesta</strong>
@@ -754,7 +766,10 @@
 
         <!-- 4: Cartel a mano -->
         <figure class="m-tile">
-          <img src="momentos/cartel.jpg" alt="Cartel pintado a mano" loading="lazy" />
+          <picture>
+            <source srcset="momentos/cartel.webp" type="image/webp" />
+            <img src="momentos/cartel.jpg" alt="Cartel pintado a mano" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.cartel">El cartel</span>
             <strong data-i18n="momentos.t.cartel">Pintado a mano</strong>
@@ -763,7 +778,10 @@
 
         <!-- 5: Puerta + perro -->
         <figure class="m-tile m-tile--wide">
-          <img src="momentos/puerta.jpg" alt="La puerta de Capitán Beto" loading="lazy" />
+          <picture>
+            <source srcset="momentos/puerta.webp" type="image/webp" />
+            <img src="momentos/puerta.jpg" alt="La puerta de Capitán Beto" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.puerta">La puerta</span>
             <strong data-i18n="momentos.t.puerta">Pet-friendly · siempre abierto</strong>
@@ -772,7 +790,10 @@
 
         <!-- 6: Interior -->
         <figure class="m-tile">
-          <img src="momentos/interior.jpg" alt="Comedor con pared verde" loading="lazy" />
+          <picture>
+            <source srcset="momentos/interior.webp" type="image/webp" />
+            <img src="momentos/interior.jpg" alt="Comedor con pared verde" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.interior">Comedor</span>
             <strong data-i18n="momentos.t.interior">El rincón verde</strong>
@@ -781,7 +802,10 @@
 
         <!-- 7: Fachada -->
         <figure class="m-tile m-tile--tall">
-          <img src="momentos/fachada.jpg" alt="Fachada Capitán Beto" loading="lazy" />
+          <picture>
+            <source srcset="momentos/fachada.webp" type="image/webp" />
+            <img src="momentos/fachada.jpg" alt="Fachada Capitán Beto" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.fachada">Calle</span>
             <strong data-i18n="momentos.t.fachada">Te esperamos</strong>
@@ -790,7 +814,10 @@
 
         <!-- 8: Barra completa -->
         <figure class="m-tile">
-          <img src="momentos/barra.jpg" alt="La barra de Capitán Beto" loading="lazy" />
+          <picture>
+            <source srcset="momentos/barra.webp" type="image/webp" />
+            <img src="momentos/barra.jpg" alt="La barra de Capitán Beto" loading="lazy" />
+          </picture>
           <figcaption>
             <span class="m-tile__kicker" data-i18n="momentos.k.barra">La barra</span>
             <strong data-i18n="momentos.t.barra">Tu sitio favorito</strong>
@@ -2079,6 +2106,31 @@
           </div>
         </div>
 
+          <!-- SENTRY -->
+          <div class="card pay-card" data-pay-id="sentry">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--sentry">⚡</div>
+                <div>
+                  <h3>Sentry · Monitorización de errores</h3>
+                  <small>Captura errores JS en producción sin datos personales</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="sentry" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>DSN (obtenelo en sentry.io → Settings → Client Keys)</small>
+              <input type="text" data-pay-field="sentry.dsn" placeholder="https://xxxx@oXXX.ingest.sentry.io/XXXXXXX" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="sentry" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+        </div>
+
         <div class="card pay-roadmap">
           <h3 data-i18n="dash.pay.next">🛣️ Próximos pasos para activar pagos reales</h3>
           <ol class="pay-roadmap__list">
@@ -2521,6 +2573,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=80" defer></script>
+  <script src="script.js?v=81" defer></script>
 </body>
 </html>

@@ -7,7 +7,7 @@
  *  - Stale-while-revalidate for fonts/external CSS
  */
 
-const VERSION = "v79";
+const VERSION = "v81";
 const SHELL_CACHE = `cb-shell-${VERSION}`;
 const ASSETS_CACHE = `cb-assets-${VERSION}`;
 const RUNTIME_CACHE = `cb-runtime-${VERSION}`;
@@ -16,7 +16,7 @@ const SHELL_URLS = [
   "/",
   "/index.html",
   "/styles.css?v=73",
-  "/script.js?v=79",
+  "/script.js?v=81",
   "/manifest.webmanifest",
   "/logo.svg",
   "/logo.png",
@@ -25,7 +25,10 @@ const SHELL_URLS = [
   "/apple-touch-icon.png",
   "/icon-192.png",
   "/icon-512.png",
-  "/og-image.png"
+  "/og-image.png",
+  "/crew/beto.webp",
+  "/crew/marina.webp",
+  "/momentos/puerta.webp"
 ];
 
 self.addEventListener("install", (event) => {

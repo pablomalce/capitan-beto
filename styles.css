@@ -1555,6 +1555,9 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--danger);
   font-style: italic;
 }
+/* Día cerrado: nombre + label en rojo, resistente a temas de sección */
+.hours-day.is-closed strong { color: var(--danger) !important; }
+.hours-day.is-closed .closed { color: var(--danger) !important; font-weight: 600; }
 
 /* Contact */
 

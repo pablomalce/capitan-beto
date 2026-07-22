@@ -4825,7 +4825,7 @@
     loadHours();
     renderEventGrid();
     // Aplicar contenido editable después de que el i18n inicial corra
-    setTimeout(applyContentToDOM, 60);
+    setTimeout(() => { applyContentToDOM(); updatePromoHeroBadge(); }, 60);
     // Wire up dashboard CMS panels
     bindContentEditor();
     bindReservations();
@@ -4971,7 +4971,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v83",
+        release: "capitan-beto@v84",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data

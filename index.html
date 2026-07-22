@@ -1309,7 +1309,7 @@
         </div>
         <div class="dash-top__actions">
           <div class="search">
-            <input id="invSearch" type="text" placeholder="Buscar plato, categoría, alérgeno…" data-i18n-placeholder="dash.search" />
+            <input id="invSearch" type="text" placeholder="Buscar plato, categoría, alérgeno…" data-i18n-placeholder="dash.search" aria-label="Buscar plato, categoría o alérgeno" />
           </div>
           <button class="btn btn--primary btn--sm" id="addProductBtn" data-role-restrict="admin">
             <span data-i18n="dash.addProduct">+ Nuevo Plato</span>
@@ -1815,11 +1815,11 @@
           <div class="qr-panel__controls">
             <div class="field">
               <small data-i18n="dash.qr.urlLabel">URL destino</small>
-              <input id="qrUrl" type="url" value="https://capitan-beto.com/#menu" />
+              <input id="qrUrl" type="url" value="https://capitan-beto.com/#menu" aria-label="URL destino del QR" />
             </div>
             <div class="field">
               <small data-i18n="dash.qr.colorLabel">Color</small>
-              <input id="qrColor" type="color" value="#0f4123" />
+              <input id="qrColor" type="color" value="#0f4123" aria-label="Color del QR" />
             </div>
             <div class="field">
               <small data-i18n="dash.qr.sizeLabel">Tamaño (px)</small>
@@ -2122,8 +2122,8 @@
         <div class="loyalty-search card" style="margin-bottom:1.5rem">
           <h3 style="margin:0 0 1rem;font-size:1rem" data-i18n="dash.loyalty.search">Buscar tarjeta de cliente</h3>
           <div style="display:flex;gap:.75rem;flex-wrap:wrap">
-            <input id="loyaltyPhone" type="tel" placeholder="+34 6XX XXX XXX" style="flex:1;min-width:180px"/>
-            <input id="loyaltyName" type="text" placeholder="Nombre (opcional)" style="flex:1;min-width:140px"/>
+            <input id="loyaltyPhone" type="tel" placeholder="+34 6XX XXX XXX" aria-label="Teléfono del cliente" style="flex:1;min-width:180px"/>
+            <input id="loyaltyName" type="text" placeholder="Nombre (opcional)" aria-label="Nombre del cliente" style="flex:1;min-width:140px"/>
             <button class="btn btn--primary" id="loyaltySearch" type="button" data-i18n="dash.loyalty.find">Buscar / Crear</button>
           </div>
         </div>
@@ -2310,7 +2310,7 @@
     <div class="chat-body" id="chatBody" aria-live="polite"></div>
     <div class="chat-quick" id="chatQuick"></div>
     <form class="chat-input" id="chatInputForm" autocomplete="off">
-      <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." data-i18n-placeholder="chat.input" />
+      <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." data-i18n-placeholder="chat.input" aria-label="Escribe tu pregunta al asistente" />
       <button type="submit" aria-label="send">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 21 3l-8.5 18-2-7.5L3 11.5Z"/></svg>
       </button>

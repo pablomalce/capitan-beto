@@ -6082,7 +6082,7 @@
     { id: "crew",      icon: "👥", es: "The Crew",             en: "The Crew" },
     { id: "gallery",   icon: "🖼️", es: "Galería evento",       en: "Event gallery" },
     { id: "momentos",  icon: "📸", es: "Momentos",             en: "Moments" },
-    { id: "hours",     icon: "🕒", es: "Horarios",             en: "Opening hours" },
+    { id: "hours",     icon: "🕒", es: "Horarios",             en: "Opening hours", defaultTitleColor: "#F7EFDC", defaultSubColor: "#F7EFDC" },
     { id: "reserve",   icon: "🗓️", es: "Reservar mesa",        en: "Book a table" },
     { id: "eventos",   icon: "🎉", es: "Eventos",              en: "Events" },
     { id: "instagram", icon: "📷", es: "Instagram",            en: "Instagram" },
@@ -6284,24 +6284,24 @@
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color texto" : "Text color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || '#1a1a1a'}" />
-                <input type="text" class="sec-hex-text" data-sec-fg-text="${id}" value="${st.fgColor || ''}" maxlength="7" placeholder="#1a1a1a" />
+                <input type="color" class="sec-fg-pick" data-sec-fg-pick="${id}" value="${st.fgColor || def.defaultFgColor || '#1a1a1a'}" />
+                <input type="text" class="sec-hex-text" data-sec-fg-text="${id}" value="${st.fgColor || def.defaultFgColor || ''}" maxlength="7" placeholder="#1a1a1a" />
                 <button type="button" class="sec-fg-reset" data-sec-fg-reset="${id}" title="↺">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color título" : "Title color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || '#1a1a1a'}" />
-                <input type="text" class="sec-hex-text" data-sec-title-text="${id}" value="${st.titleColor || ''}" maxlength="7" placeholder="#1a1a1a" />
+                <input type="color" class="sec-title-pick" data-sec-title-pick="${id}" value="${st.titleColor || def.defaultTitleColor || '#1a1a1a'}" />
+                <input type="text" class="sec-hex-text" data-sec-title-text="${id}" value="${st.titleColor || def.defaultTitleColor || ''}" maxlength="7" placeholder="#1a1a1a" />
                 <button type="button" class="sec-title-reset" data-sec-title-reset="${id}" title="↺">↺</button>
               </div>
             </div>
             <div class="sec-style__group">
               <span class="sec-style__label">${lang === "es" ? "Color subtítulo" : "Subtitle color"}</span>
               <div class="sec-fg-row">
-                <input type="color" class="sec-sub-pick" data-sec-sub-pick="${id}" value="${st.subColor || '#5a4e42'}" />
-                <input type="text" class="sec-hex-text" data-sec-sub-text="${id}" value="${st.subColor || ''}" maxlength="7" placeholder="#5a4e42" />
+                <input type="color" class="sec-sub-pick" data-sec-sub-pick="${id}" value="${st.subColor || def.defaultSubColor || '#5a4e42'}" />
+                <input type="text" class="sec-hex-text" data-sec-sub-text="${id}" value="${st.subColor || def.defaultSubColor || ''}" maxlength="7" placeholder="#5a4e42" />
                 <button type="button" class="sec-sub-reset" data-sec-sub-reset="${id}" title="↺">↺</button>
               </div>
             </div>

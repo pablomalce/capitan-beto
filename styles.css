@@ -1522,8 +1522,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* Hours — título y subtítulo en crema por defecto (fondo oscuro de sección) */
-#hours .section__head h2       { color: #F7EFDC; }
-#hours .section__head .section__sub { color: #F7EFDC; }
+#hours .section__head h2            { color: #F7EFDC !important; }
+#hours .section__head .section__sub { color: #F7EFDC !important; }
 
 /* Hours grid (public) */
 .hours-grid {

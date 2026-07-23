@@ -2462,6 +2462,73 @@ body.is-locked #dashboard { filter: blur(4px); pointer-events: none; user-select
   border-color: var(--brass);
   box-shadow: 0 0 0 3px rgba(194,155,99,0.18);
 }
+/* ── Barra de estilo por-elemento (color / fuente / tamaño) ── */
+.ce-style-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: var(--card-border-soft, #f2ead9);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.ce-style-row.is-set {
+  border-color: var(--brass);
+  background: rgba(194,155,99,0.10);
+}
+.ce-style-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-mute);
+  padding: 0 2px;
+  letter-spacing: .02em;
+}
+.ce-style-color {
+  display: inline-flex;
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  flex-shrink: 0;
+  cursor: pointer;
+  background: #fff;
+}
+.ce-style-row input[type="color"] {
+  width: 44px; height: 44px;
+  padding: 0; margin: -7px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.ce-style-sel {
+  width: auto !important;
+  flex: 1 1 auto;
+  min-width: 90px;
+  padding: 6px 8px !important;
+  border: 1px solid var(--card-border);
+  border-radius: 7px;
+  background: #fff;
+  font-size: 12.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.ce-style-sel--sm { flex: 0 0 auto; min-width: 76px; }
+.ce-style-reset {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--card-border);
+  background: #fff;
+  color: var(--ink-mute);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.ce-style-reset:hover { background: var(--brass); color: #fff; border-color: var(--brass); }
+
 .ce-actions {
   display: flex;
   justify-content: space-between;

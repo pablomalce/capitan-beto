@@ -7,7 +7,7 @@
  *  - Stale-while-revalidate for fonts/external CSS
  */
 
-const VERSION = "v104";
+const VERSION = "v106";
 const SHELL_CACHE = `cb-shell-${VERSION}`;
 const ASSETS_CACHE = `cb-assets-${VERSION}`;
 const RUNTIME_CACHE = `cb-runtime-${VERSION}`;
@@ -15,8 +15,8 @@ const RUNTIME_CACHE = `cb-runtime-${VERSION}`;
 const SHELL_URLS = [
   "/",
   "/index.html",
-  "/styles.css?v=89",
-  "/script.js?v=102",
+  "/styles.css?v=90",
+  "/script.js?v=104",
   "/manifest.webmanifest",
   "/logo.svg",
   "/logo.png",

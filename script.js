@@ -3217,16 +3217,100 @@
         { path: "hours.title", label: "Título sección",  type: "text",     selector: '[data-i18n="hours.title"]' },
         { path: "hours.sub",   label: "Subtítulo (días/turno)", type: "text", selector: '[data-content="hours.sub"]' }
       ]
+    },
+    menu: {
+      label: "La Pizarra (menú)",
+      icon: "🍽️",
+      fields: [
+        { path: "menu.title", label: "Título",     type: "text",     selector: '[data-content="menu.title"]' },
+        { path: "menu.lead",  label: "Subtítulo",  type: "textarea", selector: '[data-content="menu.lead"]' }
+      ]
+    },
+    promos: {
+      label: "Promociones",
+      icon: "🔥",
+      fields: [
+        { path: "promos.eyebrow", label: "Eyebrow",   type: "text",     selector: '[data-content="promos.eyebrow"]' },
+        { path: "promos.title",   label: "Título",    type: "text",     selector: '[data-content="promos.title"]' },
+        { path: "promos.sub",     label: "Subtítulo", type: "textarea", selector: '[data-content="promos.sub"]' }
+      ]
+    },
+    gallery: {
+      label: "Galería evento",
+      icon: "🖼️",
+      fields: [
+        { path: "gallery.eyebrow", label: "Eyebrow",  type: "text",     selector: '[data-content="gallery.eyebrow"]' },
+        { path: "gallery.title",   label: "Título",   type: "text",     selector: '[data-content="gallery.title"]' },
+        { path: "gallery.lead",    label: "Texto",    type: "longtext", selector: '[data-content="gallery.lead"]' }
+      ]
+    },
+    momentos: {
+      label: "Momentos",
+      icon: "📸",
+      fields: [
+        { path: "momentos.eyebrow", label: "Eyebrow", type: "text",     selector: '[data-content="momentos.eyebrow"]' },
+        { path: "momentos.title",   label: "Título",  type: "text",     selector: '[data-content="momentos.title"]' },
+        { path: "momentos.lead",    label: "Texto",   type: "longtext", selector: '[data-content="momentos.lead"]' }
+      ]
+    },
+    reserve: {
+      label: "Reservar mesa",
+      icon: "🗓️",
+      fields: [
+        { path: "reserveCta.eyebrow", label: "Eyebrow",  type: "text",     selector: '[data-content="reserveCta.eyebrow"]' },
+        { path: "reserveCta.title",   label: "Título",   type: "text",     selector: '[data-content="reserveCta.title"]' },
+        { path: "reserveCta.lead",    label: "Texto",    type: "textarea", selector: '[data-content="reserveCta.lead"]' }
+      ]
+    },
+    eventos: {
+      label: "Eventos",
+      icon: "🎉",
+      fields: [
+        { path: "events.eyebrow", label: "Eyebrow",  type: "text",     selector: '[data-content="events.eyebrow"]' },
+        { path: "events.title",   label: "Título",   type: "text",     selector: '[data-content="events.title"]' },
+        { path: "events.lead",    label: "Texto",    type: "longtext", selector: '[data-content="events.lead"]' }
+      ]
+    },
+    instagram: {
+      label: "Instagram",
+      icon: "📷",
+      fields: [
+        { path: "ig.title", label: "Título", type: "text", selector: '[data-content="ig.title"]' }
+      ]
     }
   };
+
+  const CONTENT_SETTING_KEY = "site_content"; // clave en la tabla settings de Supabase
 
   function loadContent() {
     try { contentStore = JSON.parse(localStorage.getItem(CONTENT_KEY) || "{}"); }
     catch (_) { contentStore = {}; }
   }
+  // Trae el contenido publicado desde el backend (fuente de verdad cross-device/público).
+  function fetchRemoteContent() {
+    if (!(window.cbBackend && window.cbBackend.getSetting)) return;
+    const run = () => window.cbBackend.getSetting(CONTENT_SETTING_KEY).then((remote) => {
+      if (!remote || typeof remote !== "object") return;
+      contentStore = remote;
+      try { localStorage.setItem(CONTENT_KEY, JSON.stringify(contentStore)); } catch (_) {}
+      applyContentToDOM();
+    }).catch(() => {});
+    if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 2000 });
+    else setTimeout(run, 800);
+  }
+  let __contentPushTimer = null;
   function persistContent() {
     try { localStorage.setItem(CONTENT_KEY, JSON.stringify(contentStore)); }
     catch (_) {}
+    // Publicar al backend (solo admin logueado; para el resto falla silenciosamente)
+    if (window.cbBackend && window.cbBackend.setSetting) {
+      clearTimeout(__contentPushTimer);
+      __contentPushTimer = setTimeout(() => {
+        window.cbBackend.setSetting(CONTENT_SETTING_KEY, contentStore).catch((e) => {
+          console.warn("No se pudo publicar el contenido en Supabase (¿admin logueado?):", e && e.message);
+        });
+      }, 1200);
+    }
   }
   function getContent(path, fallback) {
     const parts = path.split(".");
@@ -3249,8 +3333,71 @@
   }
   function resetContent(section) {
     delete contentStore[section];
+    // Limpiar también los estilos por-elemento de esa sección
+    if (contentStore.__style) {
+      Object.keys(contentStore.__style).forEach((p) => {
+        if (p === section || p.startsWith(section + ".")) delete contentStore.__style[p];
+      });
+    }
     persistContent();
     applyContentToDOM();
+  }
+
+  // ── Estilos por-elemento (color / fuente / tamaño) ──────────────────
+  // Se guardan en contentStore.__style[path] = { color, font, size(multiplicador) }
+  const CE_SIZE_OPTS = [
+    { v: "0.8",  label: "80%" },
+    { v: "0.9",  label: "90%" },
+    { v: "1",    label: "Normal" },
+    { v: "1.15", label: "115%" },
+    { v: "1.3",  label: "130%" },
+    { v: "1.5",  label: "150%" },
+    { v: "1.75", label: "175%" },
+    { v: "2",    label: "200%" }
+  ];
+  function fontStackById(id) {
+    if (!id || id === "default") return "";
+    const f = SECTION_FONTS.find((x) => x.id === id);
+    return f && f.stack ? f.stack : "";
+  }
+  // Un campo es estilizable (color/fuente/tamaño) si es de texto y apunta a un elemento del DOM.
+  function ceIsStyleable(f) {
+    return !!f.selector && f.styleable !== false &&
+      (f.type === "text" || f.type === "textarea" || f.type === "longtext");
+  }
+  function getElStyle(path) {
+    return (contentStore.__style && contentStore.__style[path]) || null;
+  }
+  function setElStyle(path, key, value) {
+    if (!contentStore.__style) contentStore.__style = {};
+    if (!contentStore.__style[path]) contentStore.__style[path] = {};
+    if (value == null || value === "" || (key === "size" && String(value) === "1") ||
+        ((key === "font" || key === "color") && (value === "default"))) {
+      delete contentStore.__style[path][key];
+      if (Object.keys(contentStore.__style[path]).length === 0) delete contentStore.__style[path];
+    } else {
+      contentStore.__style[path][key] = value;
+    }
+    persistContent();
+  }
+  function resetElStyle(path) {
+    if (contentStore.__style) delete contentStore.__style[path];
+    persistContent();
+  }
+  function applyElStyle(els, st) {
+    els.forEach((el) => {
+      // color
+      el.style.color = (st && st.color) ? st.color : "";
+      // fuente
+      const stack = st ? fontStackById(st.font) : "";
+      el.style.fontFamily = stack || "";
+      // tamaño (multiplicador sobre el tamaño base del elemento)
+      el.style.removeProperty("font-size");
+      if (st && st.size && parseFloat(st.size) !== 1) {
+        const base = parseFloat(getComputedStyle(el).fontSize) || 16;
+        el.style.fontSize = (base * parseFloat(st.size)).toFixed(1) + "px";
+      }
+    });
   }
 
   /**
@@ -3301,6 +3448,15 @@
           if (/<[a-z]/i.test(val)) el.innerHTML = sanitizeAdminHTML(val);
           else el.textContent = val;
         });
+      });
+    });
+    // 1b. Aplicar estilos por-elemento (color / fuente / tamaño) a los campos styleable
+    Object.values(CONTENT_SCHEMA).forEach((section) => {
+      section.fields.forEach((f) => {
+        if (!ceIsStyleable(f)) return;
+        const st = getElStyle(f.path);
+        const els = document.querySelectorAll(f.selector);
+        if (els.length) applyElStyle(els, st);
       });
     });
     // 2. Aplicar marquee phrases si existen
@@ -4210,6 +4366,26 @@
     `).join("");
   }
 
+  function renderCeStyleRow(path) {
+    const st = getElStyle(path) || {};
+    const fontOpts = SECTION_FONTS.map((f) =>
+      `<option value="${f.id}" ${((st.font || "default") === f.id) ? "selected" : ""}>${f.es}</option>`
+    ).join("");
+    const sizeOpts = CE_SIZE_OPTS.map((o) =>
+      `<option value="${o.v}" ${((st.size || "1") === o.v) ? "selected" : ""}>${o.label}</option>`
+    ).join("");
+    const hasStyle = st && (st.color || (st.font && st.font !== "default") || (st.size && st.size !== "1"));
+    return `<div class="ce-style-row ${hasStyle ? "is-set" : ""}">
+      <span class="ce-style-tag">Aa</span>
+      <label class="ce-style-color" title="Color del texto">
+        <input type="color" data-ce-scolor="${path}" value="${st.color || '#2C2620'}" />
+      </label>
+      <select data-ce-sfont="${path}" class="ce-style-sel" title="Fuente">${fontOpts}</select>
+      <select data-ce-ssize="${path}" class="ce-style-sel ce-style-sel--sm" title="Tamaño">${sizeOpts}</select>
+      <button data-ce-sreset="${path}" class="ce-style-reset" type="button" title="Quitar estilo (volver al diseño original)">↺</button>
+    </div>`;
+  }
+
   function renderContentEditorPanel() {
     const panel = document.getElementById("contentPanel");
     if (!panel) return;
@@ -4242,7 +4418,8 @@
       } else {
         input = `<input data-ce-field="${f.path}" type="text" value="${safe}" />`;
       }
-      return `<div class="ce-field"><label>${f.label}</label>${input}</div>`;
+      const styleRow = ceIsStyleable(f) ? renderCeStyleRow(f.path) : "";
+      return `<div class="ce-field"><label>${f.label}</label>${input}${styleRow}</div>`;
     }).join("");
 
     panel.innerHTML = `
@@ -4279,6 +4456,25 @@
     });
 
     panel.addEventListener("change", (e) => {
+      // Controles de estilo por-elemento (color / fuente / tamaño)
+      const sColor = e.target.closest("[data-ce-scolor]");
+      const sFont  = e.target.closest("[data-ce-sfont]");
+      const sSize  = e.target.closest("[data-ce-ssize]");
+      if (sColor || sFont || sSize) {
+        const el = sColor || sFont || sSize;
+        const key = sColor ? "color" : sFont ? "font" : "size";
+        const attr = sColor ? "data-ce-scolor" : sFont ? "data-ce-sfont" : "data-ce-ssize";
+        const p = el.getAttribute(attr);
+        setElStyle(p, key, el.value);
+        const row = el.closest(".ce-style-row");
+        if (row) {
+          const st = getElStyle(p);
+          row.classList.toggle("is-set", !!(st && (st.color || (st.font && st.font !== "default") || (st.size && st.size !== "1"))));
+        }
+        applyContentToDOM();
+        showSaveStatus();
+        return;
+      }
       const field = e.target.closest("[data-ce-field]");
       if (!field) return;
       const path = field.getAttribute("data-ce-field");
@@ -4319,6 +4515,17 @@
       const hex  = panel.querySelector(`[data-ce-hex="${path}"]`);
       if (pick) pick.value = def;
       if (hex)  hex.value  = def;
+      applyContentToDOM();
+      showSaveStatus();
+    });
+
+    // Reset de estilo por-elemento
+    panel.addEventListener("click", (e) => {
+      const sReset = e.target.closest("[data-ce-sreset]");
+      if (!sReset) return;
+      const p = sReset.getAttribute("data-ce-sreset");
+      resetElStyle(p);
+      renderContentEditorPanel();
       applyContentToDOM();
       showSaveStatus();
     });
@@ -4945,6 +5152,7 @@
     bindCustomersPanel();
     updateCustomerUI();
     loadContent();
+    fetchRemoteContent();
     loadImages();
     loadReservations();
     loadPromos();
@@ -4963,6 +5171,12 @@
     renderEventGrid();
     // Aplicar contenido editable después de que el i18n inicial corra
     setTimeout(() => { applyContentToDOM(); updatePromoHeroBadge(); }, 60);
+    // Recalcular tamaños (multiplicador) al cambiar el viewport
+    let __ceResizeT = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(__ceResizeT);
+      __ceResizeT = setTimeout(applyContentToDOM, 200);
+    });
     // Wire up dashboard CMS panels
     bindContentEditor();
     bindReservations();

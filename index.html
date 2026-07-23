@@ -73,7 +73,7 @@
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,500i,600i|inter:300,400,500,600,700,800|cormorant-garamond:400,500,600,700,400i,600i|space-grotesk:400,500,600,700&display=swap" />
 
   <!-- ============ STYLES ============ -->
-  <link rel="stylesheet" href="styles.css?v=89" />
+  <link rel="stylesheet" href="styles.css?v=90" />
 
   <!-- ============ GOOGLE IDENTITY SERVICES (Sign-In) ============ -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -379,8 +379,8 @@
     <!-- Menu / Pizarra -->
     <section id="menu" class="section section--menu reveal" data-reveal>
       <div class="section__head">
-        <h2 data-i18n="menu.title">La Pizarra</h2>
-        <p data-i18n="menu.lead">Precios honestos. Producto cercano. Cambia cada semana, como en cualquier tasca que se precie.</p>
+        <h2 data-i18n="menu.title" data-content="menu.title">La Pizarra</h2>
+        <p data-i18n="menu.lead" data-content="menu.lead">Precios honestos. Producto cercano. Cambia cada semana, como en cualquier tasca que se precie.</p>
       </div>
 
       <div class="menu-tabs" role="tablist">
@@ -411,9 +411,9 @@
     <section id="promos" class="section section--promos reveal" data-reveal hidden>
       <div class="promos-pub-inner">
         <div class="section__head">
-          <span class="eyebrow" data-i18n="promos.eyebrow">Solo por tiempo limitado</span>
-          <h2 data-i18n="promos.title">Promociones especiales</h2>
-          <p class="section__sub" data-i18n="promos.sub">Nuestras ofertas de esta semana · Válidas en el local</p>
+          <span class="eyebrow" data-i18n="promos.eyebrow" data-content="promos.eyebrow">Solo por tiempo limitado</span>
+          <h2 data-i18n="promos.title" data-content="promos.title">Promociones especiales</h2>
+          <p class="section__sub" data-i18n="promos.sub" data-content="promos.sub">Nuestras ofertas de esta semana · Válidas en el local</p>
         </div>
         <div class="promos-pub-grid" id="publicPromosGrid"><!-- renderizado por JS --></div>
       </div>
@@ -692,9 +692,9 @@
     <!-- Gallery · Evento Argentina Soberana -->
     <section id="gallery" class="section section--gallery reveal" data-reveal>
       <div class="section__head">
-        <span class="eyebrow" data-i18n="gallery.eyebrow">Evento · 24 y 25 de marzo</span>
-        <h2 data-i18n="gallery.title">El día a día en la taberna</h2>
-        <p data-i18n="gallery.lead">Una selección de la noche <strong>Argentina Soberana en Capitán Beto</strong>. Fotos de <a href="https://instagram.com/maderenaudier" target="_blank" rel="noopener" class="cta-link">@maderenaudier</a>.</p>
+        <span class="eyebrow" data-i18n="gallery.eyebrow" data-content="gallery.eyebrow">Evento · 24 y 25 de marzo</span>
+        <h2 data-i18n="gallery.title" data-content="gallery.title">El día a día en la taberna</h2>
+        <p data-i18n="gallery.lead" data-content="gallery.lead">Una selección de la noche <strong>Argentina Soberana en Capitán Beto</strong>. Fotos de <a href="https://instagram.com/maderenaudier" target="_blank" rel="noopener" class="cta-link">@maderenaudier</a>.</p>
       </div>
 
       <!-- Video hero del evento · vertical 9:16 con blur side-panels -->
@@ -735,9 +735,9 @@
     <!-- MOMENTOS · mosaic de fotos atmosféricas + video del bar -->
     <section id="momentos" class="section section--momentos reveal" data-reveal>
       <div class="section__head">
-        <span class="eyebrow" data-i18n="momentos.eyebrow">Momentos</span>
-        <h2 data-i18n="momentos.title">El bar, contado en imágenes</h2>
-        <p data-i18n="momentos.lead">Cervezas tiradas con paciencia, vinos bien elegidos, el perro del barrio que ya es de la familia. Pequeñas escenas del día a día en Capitán Beto.</p>
+        <span class="eyebrow" data-i18n="momentos.eyebrow" data-content="momentos.eyebrow">Momentos</span>
+        <h2 data-i18n="momentos.title" data-content="momentos.title">El bar, contado en imágenes</h2>
+        <p data-i18n="momentos.lead" data-content="momentos.lead">Cervezas tiradas con paciencia, vinos bien elegidos, el perro del barrio que ya es de la familia. Pequeñas escenas del día a día en Capitán Beto.</p>
       </div>
 
       <div class="momentos-grid">
@@ -937,9 +937,9 @@
     <section id="reserve" class="section section--reserveCta reveal" data-reveal>
       <div class="reserve-strip">
         <div class="reserve-strip__copy">
-          <span class="eyebrow" data-i18n="reserveCta.eyebrow">Reserva tu mesa</span>
-          <h2 data-i18n="reserveCta.title">Asegura tu sitio en la pizarra</h2>
-          <p data-i18n="reserveCta.lead">Reserva en 20 segundos. Te confirmamos por WhatsApp y te añadimos al calendario.</p>
+          <span class="eyebrow" data-i18n="reserveCta.eyebrow" data-content="reserveCta.eyebrow">Reserva tu mesa</span>
+          <h2 data-i18n="reserveCta.title" data-content="reserveCta.title">Asegura tu sitio en la pizarra</h2>
+          <p data-i18n="reserveCta.lead" data-content="reserveCta.lead">Reserva en 20 segundos. Te confirmamos por WhatsApp y te añadimos al calendario.</p>
         </div>
         <div class="reserve-strip__cta">
           <button class="btn btn--primary magnetic" data-open-reserve type="button">
@@ -954,9 +954,9 @@
     <!-- Eventos -->
     <section id="eventos" class="section section--events reveal" data-reveal>
       <div class="events-inner">
-        <span class="eyebrow" data-i18n="events.eyebrow">Lo que se viene</span>
-        <h2 class="section-title" data-i18n="events.title">Eventos & Noches especiales</h2>
-        <p class="section-lead" data-i18n="events.lead">Noches de flamenco, catas de vino, tapas en colaboración con chefs invitados y mucho más. Apuntate antes que se llene.</p>
+        <span class="eyebrow" data-i18n="events.eyebrow" data-content="events.eyebrow">Lo que se viene</span>
+        <h2 class="section-title" data-i18n="events.title" data-content="events.title">Eventos & Noches especiales</h2>
+        <p class="section-lead" data-i18n="events.lead" data-content="events.lead">Noches de flamenco, catas de vino, tapas en colaboración con chefs invitados y mucho más. Apuntate antes que se llene.</p>
         <div id="eventsGrid" class="events-grid">
           <!-- populated by JS -->
           <div class="events-empty" data-i18n="events.empty">Próximos eventos muy pronto…</div>
@@ -975,7 +975,7 @@
           </svg>
           <span>@capitanbeto.bardetapas</span>
         </div>
-        <h2 class="ig-campaign__title" data-i18n="ig.title">Seguinos en Instagram</h2>
+        <h2 class="ig-campaign__title" data-i18n="ig.title" data-content="ig.title">Seguinos en Instagram</h2>
         <p class="ig-campaign__lead" data-i18n="ig.lead">Cada semana: vinos del momento, tapas del día, peludos en la barra y el caos bonito de una taberna de verdad. Etiquetanos con <strong>#BetosPic</strong> y aparecés en nuestra historia.</p>
         <div class="ig-campaign__hashtags">
           <span class="ig-tag">#BetosPic</span>
@@ -2609,6 +2609,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=102" defer></script>
+  <script src="script.js?v=104" defer></script>
 </body>
 </html>

@@ -911,15 +911,19 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .pet__cta {
+  --pet-cta-bg: linear-gradient(135deg, var(--brand-green-deep), var(--brand-green));
+  --pet-cta-fg: var(--bg-cream);
+  --pet-cta-btn-bg: var(--bg-cream);
+  --pet-cta-btn-fg: var(--brand-green-deep);
   margin-top: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
   padding: 28px 32px;
-  background: linear-gradient(135deg, var(--brand-green-deep), var(--brand-green));
+  background: var(--pet-cta-bg);
   border-radius: var(--radius-lg);
-  color: var(--bg-cream);
+  color: var(--pet-cta-fg);
   position: relative;
   overflow: hidden;
   box-shadow: 0 18px 40px rgba(31, 74, 46, 0.25);
@@ -944,20 +948,22 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
+  color: var(--pet-cta-fg);
 }
 .pet__cta-text span {
   font-size: 14px;
   opacity: 0.85;
   max-width: 540px;
+  color: var(--pet-cta-fg);
 }
 .pet__cta .btn {
   flex-shrink: 0;
   z-index: 1;
-  background: var(--bg-cream);
-  color: var(--brand-green-deep);
+  background: var(--pet-cta-btn-bg);
+  color: var(--pet-cta-btn-fg);
 }
 .pet__cta .btn:hover {
-  background: #fff;
+  filter: brightness(1.06);
   transform: translateY(-2px);
 }
 
@@ -6970,6 +6976,23 @@ section[data-sec-sub] .section__head small {
   cursor: pointer;
   flex-shrink: 0;
 }
+
+.ce-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ce-color-row input[type="color"] {
+  width: 38px;
+  height: 32px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 2px;
+  background: none;
+  flex-shrink: 0;
+}
+
 .sec-hex-text {
   width: 72px;
   font-size: 12px;

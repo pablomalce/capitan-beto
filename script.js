@@ -3133,7 +3133,11 @@
         { path: "pet.c4.d",     label: "Card 4 · Texto",  type: "textarea", selector: '[data-content="pet.c4.d"]' },
         { path: "pet.cta.t",    label: "CTA · Título",    type: "text", selector: '[data-content="pet.cta.t"]' },
         { path: "pet.cta.d",    label: "CTA · Texto",     type: "textarea", selector: '[data-content="pet.cta.d"]' },
-        { path: "pet.cta.btn",  label: "CTA · Botón",     type: "text", selector: '[data-content="pet.cta.btn"]' }
+        { path: "pet.cta.btn",  label: "CTA · Botón",     type: "text", selector: '[data-content="pet.cta.btn"]' },
+        { path: "pet.cta.bg",   label: "CTA · Color fondo",  type: "color", cssVar: "--pet-cta-bg",     varTarget: ".pet__cta", default: "#1F4A2E" },
+        { path: "pet.cta.fg",   label: "CTA · Color texto",  type: "color", cssVar: "--pet-cta-fg",     varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.btnbg",label: "CTA · Botón fondo",  type: "color", cssVar: "--pet-cta-btn-bg", varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.btnfg",label: "CTA · Botón texto",  type: "color", cssVar: "--pet-cta-btn-fg", varTarget: ".pet__cta", default: "#143620" }
       ]
     },
     bpic: {
@@ -3235,13 +3239,18 @@
   }
 
   function applyContentToDOM() {
-    // 1. Aplicar campos con selector
+    // 1. Aplicar campos con selector (texto) y variables CSS (color)
     Object.values(CONTENT_SCHEMA).forEach((section) => {
       section.fields.forEach((f) => {
-        if (!f.selector) return;
-        const els = document.querySelectorAll(f.selector);
         const val = getContent(f.path, null);
         if (val == null) return;
+        if (f.type === "color" && f.cssVar && f.varTarget) {
+          const targets = document.querySelectorAll(f.varTarget);
+          targets.forEach((el) => el.style.setProperty(f.cssVar, val));
+          return;
+        }
+        if (!f.selector) return;
+        const els = document.querySelectorAll(f.selector);
         els.forEach((el) => {
           if (/<[a-z]/i.test(val)) el.innerHTML = sanitizeAdminHTML(val);
           else el.textContent = val;
@@ -4168,11 +4177,21 @@
         val = getContent(f.path, getDefaultContent(f.path));
       }
       const safe = String(val).replace(/"/g, "&quot;");
-      const input = f.type === "longtext"
-        ? `<textarea data-ce-field="${f.path}" rows="5">${escapeHtml(val)}</textarea>`
-        : f.type === "textarea"
-          ? `<textarea data-ce-field="${f.path}" rows="2">${escapeHtml(val)}</textarea>`
-          : `<input data-ce-field="${f.path}" type="text" value="${safe}" />`;
+      let input;
+      if (f.type === "longtext") {
+        input = `<textarea data-ce-field="${f.path}" rows="5">${escapeHtml(val)}</textarea>`;
+      } else if (f.type === "textarea") {
+        input = `<textarea data-ce-field="${f.path}" rows="2">${escapeHtml(val)}</textarea>`;
+      } else if (f.type === "color") {
+        const colorVal = val || f.default || "#1a1a1a";
+        input = `<div class="ce-color-row">
+          <input data-ce-field="${f.path}" data-ce-color type="color" value="${colorVal}" />
+          <input data-ce-hex="${f.path}" type="text" maxlength="7" value="${colorVal}" class="sec-hex-text" />
+          <button data-ce-color-reset="${f.path}" data-ce-color-default="${f.default || '#1a1a1a'}" class="btn btn--ghost btn--sm" type="button">↺</button>
+        </div>`;
+      } else {
+        input = `<input data-ce-field="${f.path}" type="text" value="${safe}" />`;
+      }
       return `<div class="ce-field"><label>${f.label}</label>${input}</div>`;
     }).join("");
 
@@ -4213,7 +4232,43 @@
       const field = e.target.closest("[data-ce-field]");
       if (!field) return;
       const path = field.getAttribute("data-ce-field");
-      setContent(path, field.value);
+      const val = field.value;
+      // Sync hex text if color picker changed
+      if (field.hasAttribute("data-ce-color")) {
+        const hex = panel.querySelector(`[data-ce-hex="${path}"]`);
+        if (hex) hex.value = val;
+      }
+      setContent(path, val);
+      applyContentToDOM();
+      showSaveStatus();
+    });
+
+    // Hex text → color picker sync
+    panel.addEventListener("input", (e) => {
+      const hex = e.target.closest("[data-ce-hex]");
+      if (!hex) return;
+      const path = hex.getAttribute("data-ce-hex");
+      const val = hex.value.trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+        const pick = panel.querySelector(`[data-ce-field="${path}"][data-ce-color]`);
+        if (pick) pick.value = val;
+        setContent(path, val);
+        applyContentToDOM();
+        showSaveStatus();
+      }
+    });
+
+    // Reset individual color field
+    panel.addEventListener("click", (e) => {
+      const resetBtn = e.target.closest("[data-ce-color-reset]");
+      if (!resetBtn) return;
+      const path = resetBtn.getAttribute("data-ce-color-reset");
+      const def  = resetBtn.getAttribute("data-ce-color-default");
+      setContent(path, def);
+      const pick = panel.querySelector(`[data-ce-field="${path}"][data-ce-color]`);
+      const hex  = panel.querySelector(`[data-ce-hex="${path}"]`);
+      if (pick) pick.value = def;
+      if (hex)  hex.value  = def;
       applyContentToDOM();
       showSaveStatus();
     });

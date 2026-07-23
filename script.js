@@ -2950,6 +2950,15 @@
             setDashTab(state.dashTab || "inventory");
             setView("dashboard");
             toast(state.lang === "es" ? "¡Bienvenido, Capitán! 🫡" : "Welcome, Captain! 🫡");
+            // What's New + guía: mostrar novedades y onboarding la primera vez
+            setTimeout(() => {
+              try {
+                const wnSeen = localStorage.getItem("cb.whatsnew.20260723.seen");
+                if (!wnSeen) { showWhatsNew(); return; }
+                const guideSeen = localStorage.getItem("cb.guide.v2.seen");
+                if (!guideSeen) showGuide(false);
+              } catch (_) {}
+            }, 700);
           } else {
             toast(state.lang === "es" ? "Email no autorizado" : "Email not authorized");
           }

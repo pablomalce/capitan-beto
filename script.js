@@ -2700,6 +2700,16 @@
     }
   }
 
+
+  /**
+   * Sanea una cadena de texto de usuario: elimina espacios sobrantes
+   * y los caracteres < > que podrían usarse para inyectar HTML.
+   */
+  function sanitizeInput(str) {
+    if (typeof str !== "string") return "";
+    return str.trim().replace(/[<>]/g, "");
+  }
+
   /* =====================================================
      AUTH · Google Sign-In + email allowlist
      IMPORTANTE: este guard es CLIENTE-LATERAL (defense in

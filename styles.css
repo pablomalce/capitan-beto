@@ -912,6 +912,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .pet__cta {
   --pet-cta-bg: linear-gradient(135deg, var(--brand-green-deep), var(--brand-green));
+  --pet-cta-title-fg: var(--bg-cream);
   --pet-cta-fg: var(--bg-cream);
   --pet-cta-btn-bg: var(--bg-cream);
   --pet-cta-btn-fg: var(--brand-green-deep);
@@ -948,13 +949,13 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
-  color: var(--pet-cta-fg);
+  color: var(--pet-cta-title-fg) !important;
 }
 .pet__cta-text span {
   font-size: 14px;
   opacity: 0.85;
   max-width: 540px;
-  color: var(--pet-cta-fg);
+  color: var(--pet-cta-fg) !important;
 }
 .pet__cta .btn {
   flex-shrink: 0;

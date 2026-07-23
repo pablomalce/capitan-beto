@@ -3134,10 +3134,11 @@
         { path: "pet.cta.t",    label: "CTA · Título",    type: "text", selector: '[data-content="pet.cta.t"]' },
         { path: "pet.cta.d",    label: "CTA · Texto",     type: "textarea", selector: '[data-content="pet.cta.d"]' },
         { path: "pet.cta.btn",  label: "CTA · Botón",     type: "text", selector: '[data-content="pet.cta.btn"]' },
-        { path: "pet.cta.bg",   label: "CTA · Color fondo",  type: "color", cssVar: "--pet-cta-bg",     varTarget: ".pet__cta", default: "#1F4A2E" },
-        { path: "pet.cta.fg",   label: "CTA · Color texto",  type: "color", cssVar: "--pet-cta-fg",     varTarget: ".pet__cta", default: "#F7EFDC" },
-        { path: "pet.cta.btnbg",label: "CTA · Botón fondo",  type: "color", cssVar: "--pet-cta-btn-bg", varTarget: ".pet__cta", default: "#F7EFDC" },
-        { path: "pet.cta.btnfg",label: "CTA · Botón texto",  type: "color", cssVar: "--pet-cta-btn-fg", varTarget: ".pet__cta", default: "#143620" }
+        { path: "pet.cta.bg",      label: "CTA · Color fondo",       type: "color", cssVar: "--pet-cta-bg",       varTarget: ".pet__cta", default: "#1F4A2E" },
+        { path: "pet.cta.titlefg", label: "CTA · Color título",       type: "color", cssVar: "--pet-cta-title-fg",  varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.fg",      label: "CTA · Color subtexto",     type: "color", cssVar: "--pet-cta-fg",        varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.btnbg",   label: "CTA · Botón fondo",        type: "color", cssVar: "--pet-cta-btn-bg",    varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.btnfg",   label: "CTA · Botón texto",        type: "color", cssVar: "--pet-cta-btn-fg",    varTarget: ".pet__cta", default: "#143620" }
       ]
     },
     bpic: {
@@ -5058,7 +5059,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v85",
+        release: "capitan-beto@v86",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data

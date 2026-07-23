@@ -949,12 +949,16 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
+}
+#pet .pet__cta .pet__cta-text strong {
   color: var(--pet-cta-title-fg) !important;
 }
 .pet__cta-text span {
   font-size: 14px;
   opacity: 0.85;
   max-width: 540px;
+}
+#pet .pet__cta .pet__cta-text span {
   color: var(--pet-cta-fg) !important;
 }
 .pet__cta .btn {

@@ -465,6 +465,22 @@ button { font-family: inherit; cursor: pointer; }
   color: rgba(244,234,214,0.85);
   letter-spacing: 0.04em;
 }
+.hero__promo-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+  transition: color 0.2s;
+}
+.hero__promo-link:hover,
+.hero__promo-link:focus-visible {
+  color: var(--gold);
+  text-decoration: underline;
+  outline: none;
+}
+
 
 .hero__scroll {
   position: absolute;

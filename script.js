@@ -125,7 +125,7 @@
       "hero.subtitle": "Donde las tapas castizas abrazan el fuego de Buenos Aires. Atendidos por sus propios dueños, para que cada visita se sienta como volver a casa.",
       "hero.ctaMenu": "Ver la Pizarra",
       "hero.ctaBook": "Reservar mesa",
-      "hero.live": "Promo en directo · Empanadas (×3) + Malbec 9€",
+      "hero.live": "Promos",
       "promos.eyebrow": "Solo por tiempo limitado",
       "promos.title": "Promociones especiales",
       "promos.sub": "Nuestras ofertas de esta semana · Válidas en el local",
@@ -584,7 +584,7 @@
       "hero.subtitle": "Where castizo tapas meet the fire of Buenos Aires. Run by the owners themselves, so every visit feels like coming home.",
       "hero.ctaMenu": "View the Slate Menu",
       "hero.ctaBook": "Book a table",
-      "hero.live": "Live deal · Empanadas (×3) + Malbec glass 9€",
+      "hero.live": "Promos",
       "promos.eyebrow": "Limited time only",
       "promos.title": "Special Promotions",
       "promos.sub": "This week\'s deals · Available in the bar",
@@ -1381,32 +1381,11 @@
     safeSetItem(PROMOS_KEY, JSON.stringify(promosStore));
   }
 
-  /** Actualiza el badge del hero con la primera promo LIVE */
+  /** Muestra/oculta el link "Promos" del hero según haya promos LIVE */
   function updatePromoHeroBadge() {
     const live = promosStore.filter((p) => p.live);
     const heroMeta = document.querySelector(".hero__meta");
-    if (live.length === 0) {
-      // Ocultar el badge del hero y limpiar texto almacenado
-      if (heroMeta) heroMeta.hidden = true;
-      const badgeEl = document.querySelector('[data-content="hero.live"]');
-      if (badgeEl) badgeEl.textContent = "";
-      if (typeof setContent === "function") {
-        setContent("hero.live", "");
-        persistContent();
-      }
-      renderPublicPromos();
-      return;
-    }
-    if (heroMeta) heroMeta.hidden = false;
-    const first = live[0];
-    const lang = state.lang;
-    const title = (first.title && (first.title[lang] || first.title.es)) || "";
-    const price = first.price != null ? " · " + fmtPrice(first.price) : "";
-    const text  = title + price;
-    if (typeof setContent === "function" && text) {
-      setContent("hero.live", text);
-      applyContentToDOM();
-    }
+    if (heroMeta) heroMeta.hidden = live.length === 0;
     renderPublicPromos();
   }
 

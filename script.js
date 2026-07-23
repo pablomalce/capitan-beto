@@ -2679,6 +2679,27 @@
   const CUSTOMER_SESSION_KEY = "cb_customer_session_v1";
   let contentStore = {};
 
+
+  /**
+   * Rate-limiter simple basado en localStorage.
+   * key: identificador de la acción, max: intentos máximos, windowMs: ventana temporal.
+   * Retorna true si se permite el intento, false si se superó el límite.
+   */
+  function rateLimit(key, max, windowMs) {
+    const now = Date.now();
+    const storageKey = "cb.rl." + key;
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      const recent = stored.filter(function(t) { return now - t < windowMs; });
+      if (recent.length >= max) return false;
+      recent.push(now);
+      localStorage.setItem(storageKey, JSON.stringify(recent));
+      return true;
+    } catch (_) {
+      return true; // fail open — no bloquear si localStorage falla
+    }
+  }
+
   /* =====================================================
      AUTH · Google Sign-In + email allowlist
      IMPORTANTE: este guard es CLIENTE-LATERAL (defense in

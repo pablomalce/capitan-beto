@@ -2058,12 +2058,14 @@
       toast(state.lang === "es"
         ? `¡Hola ${currentUser.name}! Bienvenido al dashboard.`
         : `Hi ${currentUser.name}! Welcome to the dashboard.`);
-      // Guía de novedades: se muestra la primera vez
+      // What's New: novedades de hoy (una sola vez), luego guía general
       setTimeout(() => {
         try {
-          const seen = localStorage.getItem("cb.guide.v2.seen");
-          showGuide(!seen);
-        } catch (_) { showGuide(true); }
+          const wnSeen = localStorage.getItem("cb.whatsnew.20260723.seen");
+          if (!wnSeen) { showWhatsNew(); return; }
+          const guideSeen = localStorage.getItem("cb.guide.v2.seen");
+          if (!guideSeen) showGuide(false);
+        } catch (_) {}
       }, 700);
     });
   }
@@ -5066,7 +5068,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v89",
+        release: "capitan-beto@v90",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data
@@ -6717,6 +6719,174 @@
         : `${id} config saved ✓`);
     });
   }
+
+
+  // ====================================================================
+  // WHAT'S NEW · overlay premium de una sola vez (novedades de hoy)
+  // ====================================================================
+  const WN_KEY = "cb.whatsnew.20260723.seen";
+
+  const WN_FEATURES = [
+    {
+      icon: "🧩",
+      badge: "SECCIONES",
+      color: "#1F4A2E",
+      title: "4 controles de color por sección",
+      body: "Cada sección ahora tiene fondo, título, subtítulo y texto de color <strong>totalmente independientes</strong>. Además campo <code>#HEX</code> para colores exactos."
+    },
+    {
+      icon: "⬛",
+      badge: "DISEÑO",
+      color: "#3a2a1a",
+      title: "Bordes redondeados consistentes",
+      body: "Todas las secciones con fondo de color aplican el <strong>mismo radio de esquinas</strong> sin importar el tema elegido. Visualmente coherente en todos los diseños."
+    },
+    {
+      icon: "🔥",
+      badge: "PROMOCIONES",
+      color: "#5c1a00",
+      title: "Promos visibles en el sitio público",
+      body: "Las promos marcadas como <strong>LIVE</strong> aparecen en la sección pública del sitio. Un badge pulsante <em>«PROMOS»</em> en el hero lleva directo a ellas."
+    },
+    {
+      icon: "✏️",
+      badge: "CONTENIDO",
+      color: "#1a1e3a",
+      title: "Más textos editables que nunca",
+      body: "El subtítulo de <strong>Horarios</strong> es editable. La tarjeta CTA de <strong>Pet-Friendly</strong> tiene controles completos de texto <em>y</em> colores (fondo, título, subtexto, botón)."
+    },
+    {
+      icon: "🔗",
+      badge: "HERO",
+      color: "#2a1a00",
+      title: "Badge de promos → link inteligente",
+      body: "El badge del hero ya no muestra el nombre de la promo. Ahora es un <strong>enlace directo</strong> a la sección de Promociones. Se oculta solo cuando no hay promos activas."
+    }
+  ];
+
+  function showWhatsNew() {
+    try { if (localStorage.getItem(WN_KEY)) return; } catch (_) {}
+    const el = document.createElement("div");
+    el.id = "wnOverlay";
+    el.className = "wn-overlay";
+
+    el.innerHTML = `
+      <div class="wn-modal" role="dialog" aria-modal="true" aria-label="Novedades">
+
+        <!-- Header -->
+        <div class="wn-header">
+          <div class="wn-header-left">
+            <span class="wn-sparkle">✨</span>
+            <div>
+              <h2 class="wn-heading">Novedades de hoy</h2>
+              <p class="wn-subhead">Todo lo que mejoró en Capitán Beto</p>
+            </div>
+          </div>
+          <button class="wn-close" id="wnClose" aria-label="Cerrar">✕</button>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="wn-body">
+          <div class="wn-grid">
+            ${WN_FEATURES.map((f, i) => `
+              <div class="wn-card" style="--wn-accent:${f.color};animation-delay:${i * 0.07}s">
+                <div class="wn-card-top">
+                  <span class="wn-card-icon">${f.icon}</span>
+                  <span class="wn-card-badge">${f.badge}</span>
+                </div>
+                <h3 class="wn-card-title">${f.title}</h3>
+                <p class="wn-card-body">${f.body}</p>
+              </div>`).join("")}
+          </div>
+
+          <!-- Instagram card -->
+          <div class="wn-ig-card">
+            <div class="wn-ig-card-header">
+              <div class="wn-ig-icon">📸</div>
+              <div>
+                <h3 class="wn-ig-title">Conectar Instagram con behold.so</h3>
+                <p class="wn-ig-subtitle">Sigue estos pasos para activar el feed de fotos en tu sitio</p>
+              </div>
+            </div>
+
+            <div class="wn-ig-steps">
+              <div class="wn-ig-step">
+                <div class="wn-ig-num">1</div>
+                <div class="wn-ig-step-body">
+                  <strong>Abre el enlace de configuración</strong>
+                  <a class="wn-ig-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">
+                    services.behold.so/link/HSqsB →
+                  </a>
+                </div>
+              </div>
+              <div class="wn-ig-step">
+                <div class="wn-ig-num">2</div>
+                <div class="wn-ig-step-body">
+                  <strong>Inicia sesión en behold.so con estas credenciales</strong>
+                  <div class="wn-credentials">
+                    <div class="wn-cred-row">
+                      <span class="wn-cred-label">📧 Email</span>
+                      <code class="wn-cred-val">info@capitan-beto.com</code>
+                    </div>
+                    <div class="wn-cred-row">
+                      <span class="wn-cred-label">🔑 Contraseña</span>
+                      <code class="wn-cred-val">Capitanbeto2026@</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="wn-ig-step">
+                <div class="wn-ig-num">3</div>
+                <div class="wn-ig-step-body">
+                  <strong>Conecta tu cuenta de Instagram</strong>
+                  <span>Haz clic en el botón azul <em>"Connect Instagram"</em> y sigue las instrucciones de autorización de Meta/Instagram.</span>
+                </div>
+              </div>
+              <div class="wn-ig-step">
+                <div class="wn-ig-num">4</div>
+                <div class="wn-ig-step-body">
+                  <strong>Copia el Feed ID</strong>
+                  <span>Tras conectar, behold.so mostrará tu <em>Feed ID</em> en el panel. Cópialo (es un código alfanumérico).</span>
+                </div>
+              </div>
+              <div class="wn-ig-step wn-ig-step--final">
+                <div class="wn-ig-num">5</div>
+                <div class="wn-ig-step-body">
+                  <strong>Pégalo en el dashboard</strong>
+                  <span>Ve a <strong>📡 Canales</strong> → campo <em>«Behold Feed ID»</em> → pega el ID y guarda. Tu feed de Instagram se activará al instante en el sitio.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="wn-footer">
+          <button class="wn-btn wn-btn--ghost" id="wnTour">Ver tour completo →</button>
+          <button class="wn-btn wn-btn--primary" id="wnDone">¡Entendido, a gestionar! 🚀</button>
+        </div>
+
+      </div>`;
+
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("is-visible"));
+
+    const close = (tour) => {
+      el.classList.remove("is-visible");
+      el.classList.add("is-hiding");
+      try { localStorage.setItem(WN_KEY, "1"); } catch (_) {}
+      setTimeout(() => {
+        el.remove();
+        if (tour) showGuide(true);
+      }, 380);
+    };
+
+    el.querySelector("#wnClose").addEventListener("click",  () => close(false));
+    el.querySelector("#wnDone").addEventListener("click",   () => close(false));
+    el.querySelector("#wnTour").addEventListener("click",   () => close(true));
+    el.addEventListener("click", e => { if (e.target === el) close(false); });
+  }
+
 
   // ====================================================================
   // ============== GUÍA DE NOVEDADES — reemplaza tour + onboarding =====

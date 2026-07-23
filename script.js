@@ -2058,12 +2058,13 @@
       toast(state.lang === "es"
         ? `¡Hola ${currentUser.name}! Bienvenido al dashboard.`
         : `Hi ${currentUser.name}! Welcome to the dashboard.`);
-      // Onboarding cards: solo la primera vez
+      // Guía de novedades: se muestra la primera vez
       setTimeout(() => {
-        const seen = localStorage.getItem("cb.onboard.seen");
-        if (!seen) showOnboardingModal();
-        else maybeShowSectionsCoach();
-      }, 600);
+        try {
+          const seen = localStorage.getItem("cb.guide.v2.seen");
+          showGuide(!seen);
+        } catch (_) { showGuide(true); }
+      }, 700);
     });
   }
 
@@ -5065,7 +5066,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v88",
+        release: "capitan-beto@v89",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data
@@ -6718,280 +6719,328 @@
   }
 
   // ====================================================================
-  // ============== DASHBOARD ONBOARDING TOUR ===========================
+  // ============== GUÍA DE NOVEDADES — reemplaza tour + onboarding =====
   // ====================================================================
-  const TOUR_SLIDES = [
+  const GUIDE_KEY     = "cb.guide.v2.seen";
+  const GUIDE_STEPS = [
     {
-      icon: "👋", title: { es: "Bienvenido al backoffice", en: "Welcome to the backoffice" },
-      body: { es: "Acá controlás <strong>todo</strong> de Capitán Beto: menú, fotos, reservas, clientes, diseño y pagos. Te muestro cada panel en 60 segundos.", en: "Here you control <strong>everything</strong> about Capitán Beto: menu, photos, reservations, customers, design and payments. Let me show you each panel in 60 seconds." },
-      target: ".sidebar__brand"
+      id: "welcome",
+      emoji: "🎉",
+      tag: null,
+      title: { es: "¡Bienvenido de nuevo, Capitán!", en: "Welcome back, Captain!" },
+      body: {
+        es: `Tu backoffice acaba de recibir <strong>un montón de novedades</strong>. En los próximos pasos te explico todo lo que puedes hacer ahora: secciones con colores personalizados, promociones públicas en el sitio, textos editables y cómo conectar Instagram. ¡Vamos allá! 🚀`,
+        en: `Your backoffice just got a <strong>load of new features</strong>. In the next steps I'll walk you through everything: custom-colored sections, public promotions on the site, editable texts, and how to connect Instagram. Let's go! 🚀`
+      },
+      visual: "celebrate",
+      target: null
     },
     {
-      icon: "📋", title: { es: "Inventario · 96 platos reales", en: "Inventory · 96 real dishes" },
-      body: { es: "Editás precios, marcás stock, agregás nuevos. Cada cambio se aplica al instante en el sitio público.", en: "Edit prices, toggle stock, add new dishes. Every change applies instantly to the public site." },
-      target: '[data-dash-tab="inventory"]'
+      id: "sections",
+      emoji: "🧩",
+      tag: { es: "NUEVO", en: "NEW" },
+      title: { es: "Secciones — Diseño total en tus manos", en: "Sections — Total design in your hands" },
+      body: {
+        es: `Ve a <strong>📡 Secciones</strong> en el menú. Ahora cada sección tiene <strong>4 controles de color independientes</strong>:<br><br>
+             🎨 <strong>Color de fondo</strong> — elige entre 8 paletas o escoge libre<br>
+             ✍️ <strong>Color del título</strong> — para el H2 de cada sección<br>
+             📝 <strong>Color del subtítulo</strong> — el texto descriptivo debajo<br>
+             🔤 <strong>Color del texto</strong> — el cuerpo de la sección<br><br>
+             Cada picker tiene un campo <code>#RRGGBB</code> para pegar colores exactos.`,
+        en: `Go to <strong>📡 Sections</strong> in the menu. Every section now has <strong>4 independent color controls</strong>:<br><br>
+             🎨 <strong>Background color</strong> — choose from 8 palettes or go free<br>
+             ✍️ <strong>Title color</strong> — the H2 of each section<br>
+             📝 <strong>Subtitle color</strong> — the descriptive text below<br>
+             🔤 <strong>Body text color</strong> — the section body<br><br>
+             Each picker has a <code>#RRGGBB</code> field for exact colors.`
+      },
+      visual: "sections",
+      target: '[data-dash-tab="sections"]',
+      dashTab: "sections"
     },
     {
-      icon: "✏️", title: { es: "Contenido editable", en: "Editable content" },
-      body: { es: "Cambiás cualquier texto del sitio sin tocar código: hero, crew, footer. Hasta el menú lo editás con click directo en cada plato.", en: "Change any text on the site without touching code: hero, crew, footer. Even edit dishes with one click." },
-      target: '[data-dash-tab="content"]'
+      id: "sections-radius",
+      emoji: "⬛",
+      tag: { es: "NUEVO", en: "NEW" },
+      title: { es: "Bordes redondeados en todas las secciones", en: "Rounded corners on all sections" },
+      body: {
+        es: `Todas las secciones con fondo de color ahora muestran <strong>esquinas redondeadas</strong> de forma consistente, sin importar qué tema elijas.<br><br>
+             Cambia el orden de las secciones arrastrando o con las flechas <strong>↑ ↓</strong>. Ocúltalas con el interruptor 👁️. Todo se guarda automáticamente y se aplica en el sitio público al instante.`,
+        en: `All colored sections now display <strong>consistent rounded corners</strong>, no matter which theme you pick.<br><br>
+             Reorder sections by dragging or using the <strong>↑ ↓</strong> arrows. Hide them with the 👁️ toggle. Everything saves automatically and applies to the public site instantly.`
+      },
+      visual: "radius",
+      target: '[data-dash-tab="sections"]',
+      dashTab: "sections"
     },
     {
-      icon: "🖼️", title: { es: "Manager de imágenes", en: "Image manager" },
-      body: { es: "Drag-and-drop para reemplazar fotos del crew, momentos del bar, hero. Acepta JPG, PNG, HEIC del iPhone, WebP. Auto-compresión a 1400px.", en: "Drag-and-drop to replace crew photos, bar moments, hero. Accepts JPG, PNG, HEIC from iPhone, WebP. Auto-compressed to 1400px." },
-      target: '[data-dash-tab="images"]'
+      id: "promos",
+      emoji: "🔥",
+      tag: { es: "NUEVO", en: "NEW" },
+      title: { es: "Promociones — Ahora visibles en el sitio público", en: "Promotions — Now visible on the public site" },
+      body: {
+        es: `Cuando activas una promo como <strong>LIVE</strong>, ocurren dos cosas:<br><br>
+             🏷️ Aparece un badge <strong>"PROMOS"</strong> pulsante en el hero. Al hacer click baja directo a la sección de promos.<br><br>
+             📌 La sección <strong>"Promociones especiales"</strong> se muestra en el sitio con tarjetas para cada oferta activa — con imagen, precio y fecha de expiración.<br><br>
+             Gestiona todo desde <strong>🔥 Promos</strong> en el menú.`,
+        en: `When you mark a promo as <strong>LIVE</strong>, two things happen:<br><br>
+             🏷️ A pulsing <strong>"PROMOS"</strong> badge appears in the hero. Clicking it scrolls to the promos section.<br><br>
+             📌 The <strong>"Special Promotions"</strong> section shows on the site with cards for each active offer — with image, price and expiry date.<br><br>
+             Manage everything from <strong>🔥 Promos</strong> in the menu.`
+      },
+      visual: "promos",
+      target: '[data-dash-tab="promos"]',
+      dashTab: "promos"
     },
     {
-      icon: "🗓️", title: { es: "Reservas en vivo", en: "Live reservations" },
-      body: { es: "Las reservas que hacen los clientes desde el sitio aparecen acá <strong>al instante</strong>, sincronizadas con Supabase. Cancelás o marcás cumplidas con un click.", en: "Customer reservations appear here <strong>instantly</strong>, synced with Supabase. Cancel or mark as completed with one click." },
-      target: '[data-dash-tab="reservations"]'
+      id: "content",
+      emoji: "✏️",
+      tag: { es: "MEJORADO", en: "IMPROVED" },
+      title: { es: "Contenido — Más cosas editables que nunca", en: "Content — More editable than ever" },
+      body: {
+        es: `Ve a <strong>✏️ Contenido</strong> en el menú. Ahora puedes editar:<br><br>
+             🐾 <strong>Pet-Friendly → Tarjeta CTA</strong>: título, subtexto, botón y <em>todos sus colores</em> de forma independiente.<br><br>
+             🕒 <strong>Horarios → Subtítulo</strong>: el texto "Martes cerrado · Turno seguido…" ahora es editable — ponle lo que quieras.<br><br>
+             Todos los campos de color tienen picker + campo hex y botón ↺ para volver al default.`,
+        en: `Go to <strong>✏️ Content</strong> in the menu. You can now edit:<br><br>
+             🐾 <strong>Pet-Friendly → CTA Card</strong>: title, subtext, button and <em>all their colors</em> independently.<br><br>
+             🕒 <strong>Hours → Subtitle</strong>: the "Tuesday closed · Open from 14:00…" text is now editable — put whatever you want.<br><br>
+             All color fields have a picker + hex field and ↺ button to reset to default.`
+      },
+      visual: "content",
+      target: '[data-dash-tab="content"]',
+      dashTab: "content"
     },
     {
-      icon: "👤", title: { es: "Base de clientes (CRM)", en: "Customer base (CRM)" },
-      body: { es: "Cada lead se guarda en Supabase. Mandás email/WhatsApp masivo a los que opt-in. Es tu newsletter gratuita.", en: "Every lead is saved in Supabase. Send mass email/WhatsApp to opt-in customers. Your free newsletter." },
-      target: '[data-dash-tab="customers"]'
+      id: "instagram",
+      emoji: "📸",
+      tag: { es: "PENDIENTE", en: "TODO" },
+      title: { es: "Instagram — Conecta tu feed con behold.so", en: "Instagram — Connect your feed with behold.so" },
+      body: {
+        es: `Tu sección de Instagram está lista. Solo necesitas conectar tu cuenta. Son <strong>4 pasos</strong>:<br><br>
+             <div class="guide-steps-list">
+               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Abre el enlace: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
+               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Conecta tu cuenta de Instagram (botón azul en la web)</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copia el <strong>Feed ID</strong> que aparece en tu panel de behold.so</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Ve a <strong>📡 Canales</strong> en el dashboard → campo <em>Behold Feed ID</em> → pega y guarda</span></div>
+             </div>`,
+        en: `Your Instagram section is ready. You just need to connect your account. It's <strong>4 steps</strong>:<br><br>
+             <div class="guide-steps-list">
+               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Open the link: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
+               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Connect your Instagram account (blue button on their site)</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copy the <strong>Feed ID</strong> from your behold.so dashboard</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Go to <strong>📡 Channels</strong> in the dashboard → <em>Behold Feed ID</em> field → paste and save</span></div>
+             </div>`
+      },
+      visual: "instagram",
+      target: '[data-dash-tab="channels"]',
+      dashTab: "channels"
     },
     {
-      icon: "🐾", title: { es: "Peludos del Capitán", en: "Captain's furry friends" },
-      body: { es: "Las fotos de mascotas que suben tus clientes aparecen acá. Borrás las inapropiadas con un click. El resto se ve en la galería pública con su nota de agradecimiento.", en: "Pet photos uploaded by customers appear here. Delete inappropriate ones with one click. The rest show in the public gallery with their thank-you note." },
-      target: '[data-dash-tab="pets"]'
-    },
-    {
-      icon: "📸", title: { es: "Muro #BetosPic", en: "#BetosPic Wall" },
-      body: { es: "Comunidad de fotos del bar. Mismo flow de moderación que peludos.", en: "Bar photo community. Same moderation flow as pets." },
-      target: '[data-dash-tab="wall"]'
-    },
-    {
-      icon: "🔥", title: { es: "Promociones LIVE", en: "LIVE Promotions" },
-      body: { es: "Activás ofertas en tiempo real (happy hour, 2x1, etc.). Aparecen con un dot pulsante en la sección \"Pizarra del día\" del sitio.", en: "Activate real-time deals (happy hour, 2-for-1, etc.). They appear with a pulsing dot in the site's \"Today's slate\" section." },
-      target: '[data-dash-tab="promos"]'
-    },
-    {
-      icon: "🕒", title: { es: "Horarios y turnos", en: "Hours & shifts" },
-      body: { es: "Doble turno madrileño: comidas + cenas. Cerrás un día, cambiás horarios, todo se refleja en el footer del sitio.", en: "Madrid double shift: lunch + dinner. Close a day, change hours, all reflects on the site footer." },
-      target: '[data-dash-tab="hours"]'
-    },
-    {
-      icon: "📡", title: { es: "Canales de contacto", en: "Contact channels" },
-      body: { es: "Conectás WhatsApp, Instagram, Google Reseñas. Las reservas también se mandan por email vía FormSubmit + Google Calendar.", en: "Connect WhatsApp, Instagram, Google Reviews. Reservations are also sent via email through FormSubmit + Google Calendar." },
-      target: '[data-dash-tab="channels"]'
-    },
-    {
-      icon: "🐾", title: { es: "🎨 Diseño en vivo", en: "🎨 Live design" },
-      body: { es: "Cambiás colores de marca, tipografía, tamaño de tarjetas. La paleta se actualiza al instante mientras arrastrás los color pickers.", en: "Change brand colors, typography, card sizes. Palette updates instantly while you drag the color pickers." },
-      target: '[data-dash-tab="design"]'
-    },
-    {
-      icon: "💳", title: { es: "Pagos & Integraciones", en: "Payments & Integrations" },
-      body: { es: "Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork, Mailchimp y Google Analytics. Activás los que querés, pegás las claves, listo.", en: "Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork, Mailchimp and Google Analytics. Enable the ones you need, paste the keys, done." },
-      target: '[data-dash-tab="payments"]'
-    },
-    {
-      icon: "💾", title: { es: "Backup CMS", en: "CMS Backup" },
-      body: { es: "Exportás TODO el contenido editado como JSON (textos, imágenes, configs). Restaurás en otro navegador o tras reset. Es tu seguro.", en: "Export ALL edited content as JSON (texts, images, configs). Restore in another browser or after reset. Your safety net." },
-      target: '[data-dash-tab="backup"]'
-    },
-    {
-      icon: "🎉", title: { es: "¡Listo!", en: "All set!" },
-      body: { es: "Ya conocés todo. Tu sitio está en <strong>https://capitan-beto.com</strong> con backend Supabase real, SSL automático y deploy continuo desde GitHub. Cualquier duda, contactanos.", en: "You know it all now. Your site is at <strong>https://capitan-beto.com</strong> with real Supabase backend, automatic SSL and continuous deploy from GitHub. Reach out anytime." },
-      target: ".sidebar__brand",
-      isFinal: true
+      id: "final",
+      emoji: "🚀",
+      tag: null,
+      title: { es: "¡Todo listo, Capitán!", en: "All set, Captain!" },
+      body: {
+        es: `Tu sitio está funcionando en <strong>capitan-beto.com</strong> con backend Supabase real, SSL automático y deploy continuo desde GitHub.<br><br>
+             Puedes volver a este tour cuando quieras haciendo clic en el botón <strong>❓ Tour</strong> en la esquina del dashboard.<br><br>
+             ¡Mucho éxito con Capitán Beto! ⚓`,
+        en: `Your site is live at <strong>capitan-beto.com</strong> with a real Supabase backend, automatic SSL and continuous deploy from GitHub.<br><br>
+             You can reopen this tour anytime by clicking the <strong>❓ Tour</strong> button in the dashboard corner.<br><br>
+             All the best with Capitán Beto! ⚓`
+      },
+      visual: "celebrate",
+      isFinal: true,
+      target: null
     }
   ];
 
+  const GUIDE_VISUALS = {
+    celebrate: `<div class="guide-visual guide-visual--celebrate">
+      <div class="gv-emoji">🎉</div>
+      <div class="gv-confetti">
+        ${Array.from({length:12},(_,i)=>`<span style="--d:${i*30}deg;--c:${['#C29B63','#1F4A2E','#F7EFDC','#C9612F'][i%4]};--del:${(i*0.08).toFixed(2)}s"></span>`).join('')}
+      </div>
+    </div>`,
+    sections: `<div class="guide-visual guide-visual--sections">
+      <div class="gv-section-bar" style="--bc:#1F4A2E;--fc:#F7EFDC">🍷 Menú</div>
+      <div class="gv-section-bar" style="--bc:#C29B63;--fc:#2C2620">🐾 Pet-Friendly</div>
+      <div class="gv-section-bar" style="--bc:#2C2620;--fc:#F7EFDC">🕒 Horarios</div>
+      <div class="gv-color-dots">
+        <span style="background:#1F4A2E"></span>
+        <span style="background:#C29B63"></span>
+        <span style="background:#C9612F"></span>
+        <span style="background:#F7EFDC;border:1px solid #ccc"></span>
+      </div>
+    </div>`,
+    radius: `<div class="guide-visual guide-visual--radius">
+      <div class="gv-radius-box">
+        <div class="gv-radius-inner">Sección A</div>
+      </div>
+      <div class="gv-radius-box" style="opacity:.7">
+        <div class="gv-radius-inner">Sección B</div>
+      </div>
+    </div>`,
+    promos: `<div class="guide-visual guide-visual--promos">
+      <div class="gv-hero-badge"><span class="gv-pulse"></span>PROMOS</div>
+      <div class="gv-promo-card">
+        <div class="gv-promo-badge">⚡ OFERTA ACTIVA</div>
+        <div class="gv-promo-title">Happy Hour</div>
+        <div class="gv-promo-price">9 €</div>
+      </div>
+    </div>`,
+    content: `<div class="guide-visual guide-visual--content">
+      <div class="gv-field"><label>Subtítulo</label><div class="gv-input">Martes cerrado · Turno seguido…</div></div>
+      <div class="gv-field"><label>Color título</label><div class="gv-color-row"><div class="gv-swatch" style="background:#F7EFDC"></div><div class="gv-hex">#F7EFDC</div></div></div>
+    </div>`,
+    instagram: `<div class="guide-visual guide-visual--instagram">
+      <div class="gv-ig-logo">📷</div>
+      <div class="gv-ig-arrow">→</div>
+      <div class="gv-ig-logo" style="font-size:2rem">🔗</div>
+      <div class="gv-ig-arrow">→</div>
+      <div class="gv-ig-logo" style="font-size:1.6rem">📡</div>
+    </div>`
+  };
 
-  // =====================================================
-  // SEGURIDAD · Rate limiter + anti-bot
-  // =====================================================
-  const _rateLimits = {};
-  function rateLimit(key, maxCalls, windowMs) {
-    const now = Date.now();
-    if (!_rateLimits[key]) _rateLimits[key] = [];
-    _rateLimits[key] = _rateLimits[key].filter(t => now - t < windowMs);
-    if (_rateLimits[key].length >= maxCalls) return false;
-    _rateLimits[key].push(now);
-    return true;
-  }
+  /* ─── State ─── */
+  let _guideState = { idx: 0, el: null };
 
-  // Honeypot field check (spam bots rellenan campos ocultos)
-  function honeypotPassed(form) {
-    const hp = form.querySelector('[name="website"]') || form.querySelector('[name="_hp"]');
-    return !hp || hp.value === "";
-  }
+  function showGuide(forceShow) {
+    if (!forceShow) {
+      try { if (localStorage.getItem(GUIDE_KEY)) return; } catch (_) {}
+    }
+    if (_guideState.el) _guideState.el.remove();
+    _guideState.idx = 0;
 
-  // Sanitización estricta de inputs de usuario (NO admin HTML)
-  function sanitizeInput(str) {
-    if (typeof str !== "string") return "";
-    return str
-      .replace(/[<>]/g, "")          // sin tags HTML
-      .replace(/javascript:/gi, "")  // sin JS URIs
-      .replace(/on\w+\s*=/gi, "")    // sin event handlers
-      .trim()
-      .slice(0, 500);                 // max 500 chars
-  }
-
-  // =====================================================
-  // ONBOARDING MODAL · Cards de bienvenida (primer login)
-  // =====================================================
-  const ONBOARD_CARDS = [
-    { icon: "📋", titleEs: "Inventario", titleEn: "Inventory",
-      descEs: "Editá precios, stock y descripción de todos los platos. Cambios en tiempo real.", descEn: "Edit prices, stock and dish descriptions. Real-time changes." },
-    { icon: "✏️", titleEs: "Contenido", titleEn: "Content",
-      descEs: "Cambiá cualquier texto del sitio sin tocar código — hero, crew, footer.", descEn: "Change any text on the site without code — hero, crew, footer." },
-    { icon: "🖼️", titleEs: "Imágenes", titleEn: "Images",
-      descEs: "Drag & drop para reemplazar fotos. Acepta HEIC del iPhone. Auto-compresión.", descEn: "Drag & drop to replace photos. Accepts iPhone HEIC. Auto-compressed." },
-    { icon: "🗓️", titleEs: "Reservas", titleEn: "Reservations",
-      descEs: "Las reservas del sitio llegan aquí al instante. Confirmá o cancelá con un click.", descEn: "Site reservations arrive here instantly. Confirm or cancel with one click." },
-    { icon: "👤", titleEs: "Clientes", titleEn: "Customers",
-      descEs: "CRM integrado. Enviá mensajes a todos los clientes con opt-in.", descEn: "Built-in CRM. Send messages to all opted-in customers." },
-    { icon: "🔥", titleEs: "Promociones", titleEn: "Promotions",
-      descEs: "Activá happy hours y 2x1 en vivo. Aparecen con pulso en el sitio.", descEn: "Activate happy hours and 2-for-1 live. They pulse on the site." },
-    { icon: "🕒", titleEs: "Horarios", titleEn: "Hours",
-      descEs: "Doble turno madrileño: comidas y cenas. Marcá cierres y cambios de horario.", descEn: "Madrid double shift: lunch & dinner. Mark closures and schedule changes." },
-    { icon: "📡", titleEs: "Canales", titleEn: "Channels",
-      descEs: "Conectá WhatsApp, Instagram y Google Reseñas desde un solo lugar.", descEn: "Connect WhatsApp, Instagram and Google Reviews from one place." },
-    { icon: "💳", titleEs: "Pagos", titleEn: "Payments",
-      descEs: "Stripe, Bizum, Redsys, TheFork, Mailchimp. Pegás las claves y listo.", descEn: "Stripe, Bizum, Redsys, TheFork, Mailchimp. Paste the keys and go." },
-  ];
-
-  function showOnboardingModal() {
-    const el = document.createElement("div");
-    el.className = "onboarding-overlay";
-    el.id = "onboardingOverlay";
     const lang = state.lang || "es";
-    el.innerHTML = `
-      <div class="onboarding-modal" role="dialog" aria-modal="true" aria-label="${lang === "es" ? "Bienvenida al dashboard" : "Dashboard welcome"}">
-        <div class="onboarding-header">
-          <img class="onboarding-header__logo" src="logo.png" alt="Capitán Beto"
-            onerror="this.src='logo.svg'" />
-          <h2 class="onboarding-header__title">
-            ${lang === "es" ? "Bienvenido al <span>Backoffice</span>" : "Welcome to the <span>Backoffice</span>"}
-          </h2>
-          <p class="onboarding-header__sub">
-            ${lang === "es"
-              ? "Desde aquí controlás todo Capitán Beto. Estos son los paneles disponibles:"
-              : "From here you control all of Capitán Beto. Here are your available panels:"}
-          </p>
-        </div>
-        <div class="onboarding-grid">
-          ${ONBOARD_CARDS.map(c => `
-            <div class="onboarding-card">
-              <div class="onboarding-card__icon">${c.icon}</div>
-              <h3 class="onboarding-card__title">${lang === "es" ? c.titleEs : c.titleEn}</h3>
-              <p class="onboarding-card__desc">${lang === "es" ? c.descEs : c.descEn}</p>
-            </div>`).join("")}
-        </div>
-        <div class="onboarding-divider"></div>
-        <div class="onboarding-footer">
-          <label class="onboarding-footer__hint">
-            <input type="checkbox" id="onboardNoShow" />
-            ${lang === "es" ? "No volver a mostrar" : "Don't show again"}
-          </label>
-          <button class="onboarding-btn" id="onboardingStart">
-            ${lang === "es" ? "Empezar a gestionar 🚀" : "Start managing 🚀"}
-          </button>
-        </div>
-      </div>`;
-    document.body.appendChild(el);
-    el.querySelector("#onboardingStart").addEventListener("click", () => {
-      if (el.querySelector("#onboardNoShow").checked) {
-        try { localStorage.setItem("cb.onboard.seen", "1"); } catch(_) {}
-      }
-      el.style.animation = "none";
-      el.style.opacity = "0";
-      el.style.transition = "opacity 0.3s";
-      setTimeout(() => el.remove(), 300);
-    });
-    // Click fuera cierra
-    el.addEventListener("click", (e) => {
-      if (e.target === el) el.querySelector("#onboardingStart").click();
-    });
-  }
+    const total = GUIDE_STEPS.length;
 
-  let tourState = { idx: 0, overlay: null };
+    const wrap = document.createElement("div");
+    wrap.id  = "guideOverlay";
+    wrap.className = "guide-overlay";
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
 
-  function startDashboardTour() {
-    if (state.view !== "dashboard") setView("dashboard");
-    if (tourState.overlay) tourState.overlay.remove();
-    tourState.idx = 0;
-    const ov = document.createElement("div");
-    ov.className = "tour-overlay";
-    ov.innerHTML = `
-      <div class="tour-spot" id="tourSpot"></div>
-      <div class="tour-card" id="tourCard">
-        <button class="tour-close" id="tourSkip" aria-label="Skip">×</button>
-        <div class="tour-icon" id="tourIcon"></div>
-        <h3 class="tour-title" id="tourTitle"></h3>
-        <div class="tour-body" id="tourBody"></div>
-        <div class="tour-foot">
-          <div class="tour-dots" id="tourDots"></div>
-          <div class="tour-actions">
-            <button class="btn btn--ghost btn--sm" id="tourPrev">${state.lang === "es" ? "← Anterior" : "← Back"}</button>
-            <button class="btn btn--primary btn--sm" id="tourNext">${state.lang === "es" ? "Siguiente →" : "Next →"}</button>
+    wrap.innerHTML = `
+      <div class="guide-modal">
+        <button class="guide-close" id="guideClose" aria-label="Cerrar">✕</button>
+        <div class="guide-progress-bar"><div class="guide-progress-fill" id="guideFill"></div></div>
+
+        <div class="guide-slides" id="guideSlides">
+          ${GUIDE_STEPS.map((s, i) => `
+            <div class="guide-slide ${i===0?'is-active':''}" data-guide-idx="${i}">
+              <div class="guide-slide-inner">
+                <div class="guide-slide-left">
+                  ${GUIDE_VISUALS[s.visual] || `<div class="guide-visual"><div class="gv-emoji">${s.emoji}</div></div>`}
+                </div>
+                <div class="guide-slide-right">
+                  <div class="guide-slide-header">
+                    ${s.tag ? `<span class="guide-tag">${lang==="es"?s.tag.es:s.tag.en}</span>` : ''}
+                    <span class="guide-emoji">${s.emoji}</span>
+                  </div>
+                  <h2 class="guide-title">${lang==="es"?s.title.es:s.title.en}</h2>
+                  <div class="guide-body">${lang==="es"?s.body.es:s.body.en}</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="guide-footer">
+          <div class="guide-dots" id="guideDots">
+            ${GUIDE_STEPS.map((_,i)=>`<button class="guide-dot${i===0?' is-active':''}" data-gdot="${i}" aria-label="Paso ${i+1}"></button>`).join('')}
+          </div>
+          <div class="guide-nav">
+            <button class="guide-btn guide-btn--prev" id="guidePrev">← Anterior</button>
+            <button class="guide-btn guide-btn--next is-primary" id="guideNext">Siguiente →</button>
           </div>
         </div>
       </div>`;
-    document.body.appendChild(ov);
-    tourState.overlay = ov;
-    ov.querySelector("#tourSkip").addEventListener("click", endDashboardTour);
-    ov.querySelector("#tourPrev").addEventListener("click", () => goTourSlide(tourState.idx - 1));
-    ov.querySelector("#tourNext").addEventListener("click", () => {
-      const slide = TOUR_SLIDES[tourState.idx];
-      if (slide && slide.isFinal) endDashboardTour();
-      else goTourSlide(tourState.idx + 1);
+
+    document.body.appendChild(wrap);
+    _guideState.el = wrap;
+
+    /* bind */
+    wrap.querySelector("#guideClose").addEventListener("click", closeGuide);
+    wrap.querySelector("#guidePrev").addEventListener("click", () => goGuide(_guideState.idx - 1));
+    wrap.querySelector("#guideNext").addEventListener("click", () => {
+      const s = GUIDE_STEPS[_guideState.idx];
+      if (s && s.isFinal) closeGuide(true);
+      else goGuide(_guideState.idx + 1);
     });
-    goTourSlide(0);
+    wrap.querySelector("#guideDots").addEventListener("click", e => {
+      const dot = e.target.closest("[data-gdot]");
+      if (dot) goGuide(parseInt(dot.dataset.gdot, 10));
+    });
+    wrap.addEventListener("click", e => { if (e.target === wrap) closeGuide(); });
+
+    goGuide(0, true);
   }
-  function goTourSlide(idx) {
+
+  function goGuide(idx, skipAnim) {
+    const total = GUIDE_STEPS.length;
     if (idx < 0) idx = 0;
-    if (idx >= TOUR_SLIDES.length) idx = TOUR_SLIDES.length - 1;
-    tourState.idx = idx;
-    const s = TOUR_SLIDES[idx];
-    const ov = tourState.overlay;
-    if (!ov || !s) return;
-    ov.querySelector("#tourIcon").textContent = s.icon || "✨";
-    ov.querySelector("#tourTitle").textContent = s.title[state.lang] || s.title.es;
-    ov.querySelector("#tourBody").innerHTML = s.body[state.lang] || s.body.es;
-    // Dots
-    const dots = ov.querySelector("#tourDots");
-    dots.innerHTML = TOUR_SLIDES.map((_, i) =>
-      `<button class="tour-dot ${i === idx ? "is-active" : ""}" data-tour-go="${i}" aria-label="Slide ${i+1}"></button>`
-    ).join("");
-    dots.querySelectorAll("[data-tour-go]").forEach((d) =>
-      d.addEventListener("click", () => goTourSlide(parseInt(d.dataset.tourGo, 10)))
-    );
-    // Prev/Next labels
-    const prev = ov.querySelector("#tourPrev");
-    const next = ov.querySelector("#tourNext");
-    prev.style.visibility = idx === 0 ? "hidden" : "visible";
-    if (s.isFinal) {
-      next.textContent = state.lang === "es" ? "Empezar a usar 🚀" : "Start using 🚀";
-    } else {
-      next.textContent = state.lang === "es" ? "Siguiente →" : "Next →";
+    if (idx >= total) idx = total - 1;
+    const prev = _guideState.idx;
+    _guideState.idx = idx;
+
+    const wrap = _guideState.el;
+    if (!wrap) return;
+    const lang = state.lang || "es";
+
+    /* slide transition */
+    const slides = wrap.querySelectorAll(".guide-slide");
+    slides.forEach((s, i) => {
+      s.classList.remove("is-active", "is-prev", "is-next");
+      if (i === idx) s.classList.add("is-active");
+      else if (i < idx) s.classList.add("is-prev");
+      else s.classList.add("is-next");
+    });
+
+    /* progress */
+    const fill = wrap.querySelector("#guideFill");
+    if (fill) fill.style.width = ((idx + 1) / total * 100) + "%";
+
+    /* dots */
+    wrap.querySelectorAll("[data-gdot]").forEach((d, i) =>
+      d.classList.toggle("is-active", i === idx));
+
+    /* buttons */
+    const prev$ = wrap.querySelector("#guidePrev");
+    const next$ = wrap.querySelector("#guideNext");
+    if (prev$) prev$.style.visibility = idx === 0 ? "hidden" : "visible";
+    const s = GUIDE_STEPS[idx];
+    if (next$) {
+      next$.textContent = s.isFinal
+        ? (lang === "es" ? "¡Empezar! 🚀" : "Let's go! 🚀")
+        : (lang === "es" ? "Siguiente →" : "Next →");
+      next$.classList.toggle("is-final", !!s.isFinal);
     }
-    // Highlight target element
-    const spot = ov.querySelector("#tourSpot");
-    const target = s.target ? document.querySelector(s.target) : null;
-    if (target) {
-      const r = target.getBoundingClientRect();
-      const pad = 6;
-      spot.style.display = "block";
-      spot.style.top = (r.top + window.scrollY - pad) + "px";
-      spot.style.left = (r.left + window.scrollX - pad) + "px";
-      spot.style.width = (r.width + pad*2) + "px";
-      spot.style.height = (r.height + pad*2) + "px";
-      // scroll into view
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      spot.style.display = "none";
+
+    /* navigate dashboard tab if specified */
+    if (s.dashTab && state.view === "dashboard") {
+      const tabBtn = document.querySelector(`[data-dash-tab="${s.dashTab}"]`);
+      if (tabBtn && typeof setDashTab === "function") setDashTab(s.dashTab);
     }
   }
-  function endDashboardTour() {
-    if (tourState.overlay) { tourState.overlay.remove(); tourState.overlay = null; }
-    try { localStorage.setItem("cb.tour.seen", "1"); } catch (_) {}
+
+  function closeGuide(markSeen) {
+    if (_guideState.el) {
+      _guideState.el.classList.add("is-closing");
+      setTimeout(() => { if (_guideState.el) { _guideState.el.remove(); _guideState.el = null; } }, 350);
+    }
+    if (markSeen) {
+      try { localStorage.setItem(GUIDE_KEY, "1"); } catch (_) {}
+    }
   }
-  // Botón flotante "Tour" en el dashboard para reabrirlo
-  window.cbStartTour = startDashboardTour;
+
+  /* Legacy compat: keep showOnboardingModal pointing to new guide */
+  function showOnboardingModal() { showGuide(true); }
+
+  /* Global re-open hook */
+  window.cbStartTour = () => showGuide(true);
+  window.cbShowGuide = showGuide;
+
 
   // ====================================================================
   // ============== COACH MARK · feature "Secciones" ====================

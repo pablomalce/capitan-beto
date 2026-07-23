@@ -3131,14 +3131,14 @@
         { path: "pet.c3.d",     label: "Card 3 · Texto",  type: "textarea", selector: '[data-content="pet.c3.d"]' },
         { path: "pet.c4.t",     label: "Card 4 · Título", type: "text", selector: '[data-content="pet.c4.t"]' },
         { path: "pet.c4.d",     label: "Card 4 · Texto",  type: "textarea", selector: '[data-content="pet.c4.d"]' },
-        { path: "_div_cta_txt",  label: "— Tarjeta CTA · Textos —",  type: "divider" },
+        { path: "_div_cta_txt",  label: "— Tarjeta CTA —",  type: "divider" },
         { path: "pet.cta.t",    label: "Título",          type: "text",     selector: '[data-content="pet.cta.t"]' },
-        { path: "pet.cta.d",    label: "Subtexto",        type: "textarea", selector: '[data-content="pet.cta.d"]' },
-        { path: "pet.cta.btn",  label: "Botón",           type: "text",     selector: '[data-content="pet.cta.btn"]' },
-        { path: "_div_cta_col", label: "— Tarjeta CTA · Colores —",  type: "divider" },
-        { path: "pet.cta.bg",      label: "Fondo",        type: "color", cssVar: "--pet-cta-bg",       varTarget: ".pet__cta", default: "#1F4A2E" },
         { path: "pet.cta.titlefg", label: "Color título", type: "color", cssVar: "--pet-cta-title-fg", varTarget: ".pet__cta", default: "#F7EFDC" },
-        { path: "pet.cta.fg",      label: "Color subtexto", type: "color", cssVar: "--pet-cta-fg",     varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.d",    label: "Subtexto",        type: "textarea", selector: '[data-content="pet.cta.d"]' },
+        { path: "pet.cta.fg",   label: "Color subtexto",  type: "color", cssVar: "--pet-cta-fg",       varTarget: ".pet__cta", default: "#F7EFDC" },
+        { path: "pet.cta.btn",  label: "Botón",           type: "text",     selector: '[data-content="pet.cta.btn"]' },
+        { path: "_div_cta_col", label: "— Colores de fondo y botón —", type: "divider" },
+        { path: "pet.cta.bg",      label: "Fondo card",   type: "color", cssVar: "--pet-cta-bg",       varTarget: ".pet__cta", default: "#1F4A2E" },
         { path: "pet.cta.btnbg",   label: "Botón fondo",  type: "color", cssVar: "--pet-cta-btn-bg",   varTarget: ".pet__cta", default: "#F7EFDC" },
         { path: "pet.cta.btnfg",   label: "Botón texto",  type: "color", cssVar: "--pet-cta-btn-fg",   varTarget: ".pet__cta", default: "#143620" }
       ]
@@ -5065,7 +5065,7 @@
       if (!window.Sentry) return;
       window.Sentry.init({
         dsn,
-        release: "capitan-beto@v87",
+        release: "capitan-beto@v88",
         environment: location.hostname === "capitan-beto.com" ? "production" : "development",
         tracesSampleRate: 0.05,   // 5% of sessions — low footprint
         sendDefaultPii: false,    // no personal data

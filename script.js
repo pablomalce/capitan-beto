@@ -6978,9 +6978,30 @@
   // ====================================================================
   // WHAT'S NEW · overlay premium de una sola vez (novedades de hoy)
   // ====================================================================
-  const WN_KEY = "cb.whatsnew.20260723b.seen";
+  const WN_KEY = "cb.whatsnew.20260723c.seen";
 
   const WN_FEATURES = [
+    {
+      icon: "🎨",
+      badge: "NUEVO · CONTENIDO",
+      color: "#3a1a3a",
+      title: "Texto a tu medida: color, fuente y tamaño",
+      intro: "Cada texto del sitio —títulos, subtítulos y textos de cards— con su propio color, fuente y tamaño, en todas las secciones.",
+      steps: [
+        "Abre <strong>✏️ Contenido</strong> en el menú lateral",
+        "Elige la sección y edita el texto que quieras",
+        "Usa la barra <strong>«Aa»</strong> debajo: color, fuente y tamaño",
+        "El botón <strong>↺</strong> devuelve el texto al diseño original"
+      ]
+    },
+    {
+      icon: "🌐",
+      badge: "NUEVO · PUBLICACIÓN",
+      color: "#0e3a2a",
+      title: "Ahora tus ediciones se publican de verdad",
+      intro: "Los cambios de contenido se guardan en la nube y se ven en el sitio para todos los visitantes.",
+      auto: "Antes las ediciones quedaban solo en tu navegador. Ahora se <strong>sincronizan automáticamente</strong> y las ve cualquiera que entre a la web — sin que hagas nada extra."
+    },
     {
       icon: "🧩",
       badge: "SECCIONES",
@@ -7005,19 +7026,6 @@
         "Crea o edita una promoción",
         "Actívala como <strong>LIVE</strong> y guarda",
         "Aparece en la web + badge <em>«PROMOS»</em> en el hero"
-      ]
-    },
-    {
-      icon: "✏️",
-      badge: "CONTENIDO",
-      color: "#1a1e3a",
-      title: "Edita más textos que nunca",
-      intro: "Ahora el subtítulo de Horarios y toda la tarjeta Pet-Friendly son editables.",
-      steps: [
-        "Abre <strong>📡 Contenido</strong> en el menú lateral",
-        "Edita el subtítulo de <strong>Horarios</strong>",
-        "En <strong>Pet-Friendly</strong> cambia textos y colores del botón",
-        "Pulsa <strong>Guardar</strong>"
       ]
     },
     {
@@ -7179,72 +7187,53 @@
   // ====================================================================
   // ============== GUÍA DE NOVEDADES — reemplaza tour + onboarding =====
   // ====================================================================
-  const GUIDE_KEY     = "cb.guide.v2.seen";
+  const GUIDE_KEY     = "cb.guide.v3.seen";
   const GUIDE_STEPS = [
     {
       id: "welcome",
-      emoji: "🎉",
-      tag: null,
-      title: { es: "¡Bienvenido de nuevo, Capitán!", en: "Welcome back, Captain!" },
+      emoji: "🧭",
+      tag: { es: "GUÍA COMPLETA", en: "FULL GUIDE" },
+      title: { es: "Guía completa de tu backoffice", en: "Your full backoffice guide" },
       body: {
-        es: `Tu backoffice acaba de recibir <strong>un montón de novedades</strong>. En los próximos pasos te explico todo lo que puedes hacer ahora: secciones con colores personalizados, promociones públicas en el sitio, textos editables y cómo conectar Instagram. ¡Vamos allá! 🚀`,
-        en: `Your backoffice just got a <strong>load of new features</strong>. In the next steps I'll walk you through everything: custom-colored sections, public promotions on the site, editable texts, and how to connect Instagram. Let's go! 🚀`
+        es: `Este es el <strong>tour completo</strong> de tu panel de gestión: te muestro <strong>todas</strong> las secciones y para qué sirve cada una, no solo las novedades.<br><br>
+             Usá <strong>Siguiente →</strong> o los puntitos de abajo para moverte. Puedes reabrir este tour cuando quieras desde el botón <strong>✨ Tour del dashboard</strong>. ¡Vamos! ⚓`,
+        en: `This is the <strong>full tour</strong> of your management panel: I'll show you <strong>every</strong> section and what it's for, not just the new stuff.<br><br>
+             Use <strong>Next →</strong> or the dots below to move. You can reopen this tour anytime from the <strong>✨ Dashboard tour</strong> button. Let's go! ⚓`
       },
       visual: "celebrate",
       target: null
     },
     {
-      id: "sections",
-      emoji: "🧩",
-      tag: { es: "NUEVO", en: "NEW" },
-      title: { es: "Secciones — Diseño total en tus manos", en: "Sections — Total design in your hands" },
+      id: "inventory",
+      emoji: "📋",
+      tag: null,
+      title: { es: "Inventario de Cocina", en: "Kitchen Inventory" },
       body: {
-        es: `Ve a <strong>📡 Secciones</strong> en el menú. Ahora cada sección tiene <strong>4 controles de color independientes</strong>:<br><br>
-             🎨 <strong>Color de fondo</strong> — elige entre 8 paletas o escoge libre<br>
-             ✍️ <strong>Color del título</strong> — para el H2 de cada sección<br>
-             📝 <strong>Color del subtítulo</strong> — el texto descriptivo debajo<br>
-             🔤 <strong>Color del texto</strong> — el cuerpo de la sección<br><br>
-             Cada picker tiene un campo <code>#RRGGBB</code> para pegar colores exactos.`,
-        en: `Go to <strong>📡 Sections</strong> in the menu. Every section now has <strong>4 independent color controls</strong>:<br><br>
-             🎨 <strong>Background color</strong> — choose from 8 palettes or go free<br>
-             ✍️ <strong>Title color</strong> — the H2 of each section<br>
-             📝 <strong>Subtitle color</strong> — the descriptive text below<br>
-             🔤 <strong>Body text color</strong> — the section body<br><br>
-             Each picker has a <code>#RRGGBB</code> field for exact colors.`
+        es: `El corazón de la carta. En <strong>📋 Inventario</strong> gestionás todos los platos:<br><br>
+             🍽️ <strong>Título, categoría y precio</strong> de cada plato<br>
+             📦 <strong>Stock</strong> — marcá lo que se agotó y desaparece de la pizarra<br>
+             ⚠️ <strong>Alérgenos</strong> por plato<br>
+             ➕ Botón <strong>Nuevo plato</strong> y buscador arriba a la derecha.`,
+        en: `The heart of the menu. In <strong>📋 Inventory</strong> you manage every dish:<br><br>
+             🍽️ <strong>Title, category and price</strong> of each dish<br>
+             📦 <strong>Stock</strong> — mark what's sold out and it drops off the slate<br>
+             ⚠️ <strong>Allergens</strong> per dish<br>
+             ➕ <strong>New dish</strong> button and search top-right.`
       },
       visual: "sections",
-      target: '[data-dash-tab="sections"]',
-      dashTab: "sections"
-    },
-    {
-      id: "sections-radius",
-      emoji: "⬛",
-      tag: { es: "NUEVO", en: "NEW" },
-      title: { es: "Bordes redondeados en todas las secciones", en: "Rounded corners on all sections" },
-      body: {
-        es: `Todas las secciones con fondo de color ahora muestran <strong>esquinas redondeadas</strong> de forma consistente, sin importar qué tema elijas.<br><br>
-             Cambia el orden de las secciones arrastrando o con las flechas <strong>↑ ↓</strong>. Ocúltalas con el interruptor 👁️. Todo se guarda automáticamente y se aplica en el sitio público al instante.`,
-        en: `All colored sections now display <strong>consistent rounded corners</strong>, no matter which theme you pick.<br><br>
-             Reorder sections by dragging or using the <strong>↑ ↓</strong> arrows. Hide them with the 👁️ toggle. Everything saves automatically and applies to the public site instantly.`
-      },
-      visual: "radius",
-      target: '[data-dash-tab="sections"]',
-      dashTab: "sections"
+      target: '[data-dash-tab="inventory"]',
+      dashTab: "inventory"
     },
     {
       id: "promos",
       emoji: "🔥",
-      tag: { es: "NUEVO", en: "NEW" },
-      title: { es: "Promociones — Ahora visibles en el sitio público", en: "Promotions — Now visible on the public site" },
+      tag: null,
+      title: { es: "Promociones en directo", en: "Live promotions" },
       body: {
-        es: `Cuando activas una promo como <strong>LIVE</strong>, ocurren dos cosas:<br><br>
-             🏷️ Aparece un badge <strong>"PROMOS"</strong> pulsante en el hero. Al hacer click baja directo a la sección de promos.<br><br>
-             📌 La sección <strong>"Promociones especiales"</strong> se muestra en el sitio con tarjetas para cada oferta activa — con imagen, precio y fecha de expiración.<br><br>
-             Gestiona todo desde <strong>🔥 Promos</strong> en el menú.`,
-        en: `When you mark a promo as <strong>LIVE</strong>, two things happen:<br><br>
-             🏷️ A pulsing <strong>"PROMOS"</strong> badge appears in the hero. Clicking it scrolls to the promos section.<br><br>
-             📌 The <strong>"Special Promotions"</strong> section shows on the site with cards for each active offer — with image, price and expiry date.<br><br>
-             Manage everything from <strong>🔥 Promos</strong> in the menu.`
+        es: `En <strong>🔥 Promos</strong> creás ofertas con imagen, precio y fecha de expiración.<br><br>
+             Al activar una como <strong>LIVE</strong>: aparece la sección <em>"Promociones especiales"</em> en el sitio <em>y</em> un badge pulsante <strong>PROMOS</strong> en el hero que baja directo a ellas.`,
+        en: `In <strong>🔥 Promos</strong> you create offers with image, price and expiry date.<br><br>
+             When you set one <strong>LIVE</strong>: the <em>"Special Promotions"</em> section shows on the site <em>and</em> a pulsing <strong>PROMOS</strong> badge in the hero scrolls right to them.`
       },
       visual: "promos",
       target: '[data-dash-tab="promos"]',
@@ -7254,58 +7243,219 @@
       id: "content",
       emoji: "✏️",
       tag: { es: "MEJORADO", en: "IMPROVED" },
-      title: { es: "Contenido — Más cosas editables que nunca", en: "Content — More editable than ever" },
+      title: { es: "Contenido — texto con color, fuente y tamaño", en: "Content — text with color, font & size" },
       body: {
-        es: `Ve a <strong>✏️ Contenido</strong> en el menú. Ahora puedes editar:<br><br>
-             🐾 <strong>Pet-Friendly → Tarjeta CTA</strong>: título, subtexto, botón y <em>todos sus colores</em> de forma independiente.<br><br>
-             🕒 <strong>Horarios → Subtítulo</strong>: el texto "Martes cerrado · Turno seguido…" ahora es editable — ponle lo que quieras.<br><br>
-             Todos los campos de color tienen picker + campo hex y botón ↺ para volver al default.`,
-        en: `Go to <strong>✏️ Content</strong> in the menu. You can now edit:<br><br>
-             🐾 <strong>Pet-Friendly → CTA Card</strong>: title, subtext, button and <em>all their colors</em> independently.<br><br>
-             🕒 <strong>Hours → Subtitle</strong>: the "Tuesday closed · Open from 14:00…" text is now editable — put whatever you want.<br><br>
-             All color fields have a picker + hex field and ↺ button to reset to default.`
+        es: `En <strong>✏️ Contenido</strong> editás <strong>todos los textos</strong> del sitio, sección por sección (títulos, subtítulos, textos de cards).<br><br>
+             ✨ <strong>Nuevo:</strong> debajo de cada texto tenés la barra <strong>«Aa»</strong> para elegir <strong>color</strong>, <strong>fuente</strong> y <strong>tamaño</strong> de ese elemento. El botón ↺ vuelve al diseño original.<br><br>
+             Todo se guarda solo y se <strong>publica en el sitio</strong> para todos.`,
+        en: `In <strong>✏️ Content</strong> you edit <strong>every text</strong> on the site, section by section (titles, subtitles, card texts).<br><br>
+             ✨ <strong>New:</strong> under each text there's the <strong>"Aa"</strong> bar to pick that element's <strong>color</strong>, <strong>font</strong> and <strong>size</strong>. The ↺ button restores the original design.<br><br>
+             Everything autosaves and <strong>publishes to the live site</strong> for everyone.`
       },
       visual: "content",
       target: '[data-dash-tab="content"]',
       dashTab: "content"
     },
     {
-      id: "instagram",
-      emoji: "📸",
-      tag: { es: "PENDIENTE", en: "TODO" },
-      title: { es: "Instagram — Conecta tu feed con behold.so", en: "Instagram — Connect your feed with behold.so" },
+      id: "sections",
+      emoji: "🧩",
+      tag: null,
+      title: { es: "Secciones — orden, colores y fuente", en: "Sections — order, colors & font" },
       body: {
-        es: `Tu sección de Instagram está lista. Solo necesitas conectar tu cuenta. Son <strong>4 pasos</strong>:<br><br>
-             <div class="guide-steps-list">
-               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Abre el enlace: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
-               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Conecta tu cuenta de Instagram (botón azul en la web)</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copia el <strong>Feed ID</strong> que aparece en tu panel de behold.so</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Ve a <strong>📡 Canales</strong> en el dashboard → campo <em>Behold Feed ID</em> → pega y guarda</span></div>
-             </div>`,
-        en: `Your Instagram section is ready. You just need to connect your account. It's <strong>4 steps</strong>:<br><br>
-             <div class="guide-steps-list">
-               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Open the link: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
-               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Connect your Instagram account (blue button on their site)</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copy the <strong>Feed ID</strong> from your behold.so dashboard</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Go to <strong>📡 Channels</strong> in the dashboard → <em>Behold Feed ID</em> field → paste and save</span></div>
-             </div>`
+        es: `En <strong>🧩 Secciones</strong> controlás el <strong>layout</strong> del sitio:<br><br>
+             ↕️ <strong>Reordená</strong> arrastrando o con las flechas ↑ ↓<br>
+             👁️ <strong>Ocultá / mostrá</strong> secciones con el interruptor<br>
+             🎨 <strong>Color</strong> de fondo, título, subtítulo y texto por sección + <strong>fuente</strong> a elegir.<br><br>
+             Se aplica al instante en el sitio público.`,
+        en: `In <strong>🧩 Sections</strong> you control the site <strong>layout</strong>:<br><br>
+             ↕️ <strong>Reorder</strong> by dragging or with the ↑ ↓ arrows<br>
+             👁️ <strong>Hide / show</strong> sections with the toggle<br>
+             🎨 <strong>Color</strong> of background, title, subtitle and text per section + choosable <strong>font</strong>.<br><br>
+             Applies instantly on the public site.`
+      },
+      visual: "sections",
+      target: '[data-dash-tab="sections"]',
+      dashTab: "sections"
+    },
+    {
+      id: "design-images",
+      emoji: "🎨",
+      tag: null,
+      title: { es: "Diseño & Imágenes", en: "Design & Images" },
+      body: {
+        es: `<strong>🎨 Diseño</strong> — cambiá la <strong>paleta de marca</strong> del sitio en vivo (verde, dorado, acentos). Se aplica a todos los componentes.<br><br>
+             <strong>🖼️ Imágenes</strong> — reemplazá las <strong>fotos del sitio</strong> (hero, secciones, galería) subiendo las tuyas.`,
+        en: `<strong>🎨 Design</strong> — change the site's <strong>brand palette</strong> live (green, gold, accents). It applies to every component.<br><br>
+             <strong>🖼️ Images</strong> — swap the <strong>site photos</strong> (hero, sections, gallery) by uploading your own.`
+      },
+      visual: "content",
+      target: '[data-dash-tab="design"]',
+      dashTab: "design"
+    },
+    {
+      id: "hours",
+      emoji: "🕒",
+      tag: null,
+      title: { es: "Horarios y turnos", en: "Hours & shifts" },
+      body: {
+        es: `En <strong>🕒 Horarios</strong> configurás los <strong>días y turnos</strong> de apertura y el <strong>subtítulo</strong> visible (ej: "Martes cerrado · Turno seguido…").<br><br>
+             Es lo que ven los clientes en la sección de horarios y lo que usa el chat para responder.`,
+        en: `In <strong>🕒 Hours</strong> you set the opening <strong>days and shifts</strong> and the visible <strong>subtitle</strong> (e.g. "Tuesday closed · Continuous service…").<br><br>
+             It's what customers see in the hours section and what the chat uses to answer.`
+      },
+      visual: "content",
+      target: '[data-dash-tab="hours"]',
+      dashTab: "hours"
+    },
+    {
+      id: "operation",
+      emoji: "📅",
+      tag: null,
+      title: { es: "Reservas & Operación", en: "Reservations & Operations" },
+      body: {
+        es: `El día a día del local:<br><br>
+             📅 <strong>Reservas</strong> — todas las reservas web que entran, con datos del cliente.<br>
+             🧾 <strong>Consumos</strong> — registrá las ventas para alimentar las métricas.<br>
+             📊 <strong>Estadísticas</strong> — números en tiempo real y proyecciones del negocio.`,
+        en: `The venue's day-to-day:<br><br>
+             📅 <strong>Reservations</strong> — all incoming web bookings, with customer details.<br>
+             🧾 <strong>Sales log</strong> — record sales to feed the metrics.<br>
+             📊 <strong>Stats</strong> — real-time numbers and business forecasts.`
+      },
+      visual: "promos",
+      target: '[data-dash-tab="reservations"]',
+      dashTab: "reservations"
+    },
+    {
+      id: "community",
+      emoji: "👥",
+      tag: null,
+      title: { es: "Comunidad & Clientes", en: "Community & Customers" },
+      body: {
+        es: `Todo lo que construye comunidad:<br><br>
+             👥 <strong>Clientes</strong> — base de clientes registrados (cumpleaños, gustos, consentimiento).<br>
+             📸 <strong>Muro #BetosPic</strong> — fotos que sube la gente en el bar.<br>
+             🐾 <strong>Peludos</strong> — galería de las mascotas del Capitán.<br>
+             ⭐ <strong>Fidelización</strong> — sellos por cliente, buscando por teléfono.`,
+        en: `Everything that builds community:<br><br>
+             👥 <strong>Customers</strong> — registered customer base (birthdays, tastes, consent).<br>
+             📸 <strong>#BetosPic Wall</strong> — photos people upload at the bar.<br>
+             🐾 <strong>Furry friends</strong> — the Captain's pet gallery.<br>
+             ⭐ <strong>Loyalty</strong> — stamps per customer, searchable by phone.`
+      },
+      visual: "celebrate",
+      target: '[data-dash-tab="customers"]',
+      dashTab: "customers"
+    },
+    {
+      id: "eventos",
+      emoji: "🎉",
+      tag: null,
+      title: { es: "Eventos", en: "Events" },
+      body: {
+        es: `En <strong>🎉 Eventos</strong> creás y gestionás las <strong>noches especiales</strong> (flamenco, catas, colaboraciones…) que se muestran en la sección de eventos del sitio.`,
+        en: `In <strong>🎉 Events</strong> you create and manage the <strong>special nights</strong> (flamenco, tastings, collabs…) shown in the events section of the site.`
+      },
+      visual: "promos",
+      target: '[data-dash-tab="eventos"]',
+      dashTab: "eventos"
+    },
+    {
+      id: "channels",
+      emoji: "📡",
+      tag: null,
+      title: { es: "Canales de comunicación", en: "Communication channels" },
+      body: {
+        es: `En <strong>📡 Canales</strong> conectás cómo te contacta la gente:<br><br>
+             💬 <strong>WhatsApp Business</strong> — número + saludo automático<br>
+             📷 <strong>Instagram</strong> — perfil y enlace público<br>
+             ⭐ <strong>Google Reseñas</strong> — URL "Dejá tu reseña"<br>
+             ✉️ <strong>Email + Google Calendar</strong> — buzón de reservas e invitaciones.`,
+        en: `In <strong>📡 Channels</strong> you connect how people reach you:<br><br>
+             💬 <strong>WhatsApp Business</strong> — number + auto greeting<br>
+             📷 <strong>Instagram</strong> — profile and public link<br>
+             ⭐ <strong>Google Reviews</strong> — "Leave a review" URL<br>
+             ✉️ <strong>Email + Google Calendar</strong> — booking inbox and invites.`
       },
       visual: "instagram",
       target: '[data-dash-tab="channels"]',
       dashTab: "channels"
     },
     {
+      id: "payments",
+      emoji: "💳",
+      tag: null,
+      title: { es: "Pagos & Integraciones", en: "Payments & Integrations" },
+      body: {
+        es: `En <strong>💳 Pagos & Integraciones</strong> están las conexiones externas:<br><br>
+             💳 <strong>Pagos:</strong> Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork<br>
+             📸 <strong>behold</strong> — feed de Instagram en el sitio<br>
+             ✉️ <strong>Mailchimp</strong> — campañas de email marketing<br>
+             📊 <strong>Analytics (GA4)</strong> — medición de Google · 🐛 <strong>Sentry</strong> — errores.`,
+        en: `<strong>💳 Payments & Integrations</strong> holds the external connections:<br><br>
+             💳 <strong>Payments:</strong> Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork<br>
+             📸 <strong>behold</strong> — Instagram feed on the site<br>
+             ✉️ <strong>Mailchimp</strong> — email marketing campaigns<br>
+             📊 <strong>Analytics (GA4)</strong> — Google measurement · 🐛 <strong>Sentry</strong> — errors.`
+      },
+      visual: "content",
+      target: '[data-dash-tab="payments"]',
+      dashTab: "payments"
+    },
+    {
+      id: "instagram",
+      emoji: "📸",
+      tag: { es: "PENDIENTE", en: "TODO" },
+      title: { es: "Conectá tu Instagram (behold.so)", en: "Connect your Instagram (behold.so)" },
+      body: {
+        es: `Para mostrar tu feed de Instagram en el sitio, conectá <strong>behold.so</strong>. <em>Requisito: cuenta de Instagram Profesional o de Empresa.</em><br><br>
+             <div class="guide-steps-list">
+               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Abre el enlace: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
+               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Conecta tu cuenta de Instagram (botón azul en su web)</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copia el <strong>Feed ID</strong> que aparece en tu panel de behold.so</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Ve a <strong>💳 Pagos & Integraciones</strong> → tarjeta <em>Instagram Feed · behold</em> → pega el Feed ID y guarda</span></div>
+             </div>`,
+        en: `To show your Instagram feed on the site, connect <strong>behold.so</strong>. <em>Requirement: a Professional or Business Instagram account.</em><br><br>
+             <div class="guide-steps-list">
+               <div class="guide-step-item"><span class="guide-step-num">1</span><span>Open the link: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
+               <div class="guide-step-item"><span class="guide-step-num">2</span><span>Connect your Instagram account (blue button on their site)</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copy the <strong>Feed ID</strong> from your behold.so dashboard</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Go to <strong>💳 Payments & Integrations</strong> → <em>Instagram Feed · behold</em> card → paste the Feed ID and save</span></div>
+             </div>`
+      },
+      visual: "instagram",
+      target: '[data-dash-tab="payments"]',
+      dashTab: "payments"
+    },
+    {
+      id: "tools",
+      emoji: "🧰",
+      tag: null,
+      title: { es: "Herramientas", en: "Tools" },
+      body: {
+        es: `Utilidades del panel:<br><br>
+             📱 <strong>QR del Menú</strong> — generá un QR para las mesas; al escanearlo ven la pizarra digital.<br>
+             💾 <strong>Backup CMS</strong> — exportá / importá todo el contenido como copia de seguridad.<br>
+             👤 <strong>Mi cuenta</strong> — cambiá tu contraseña de acceso.`,
+        en: `Panel utilities:<br><br>
+             📱 <strong>Menu QR</strong> — generate a QR for tables; scanning shows the digital slate.<br>
+             💾 <strong>CMS Backup</strong> — export / import all content as a safety copy.<br>
+             👤 <strong>My account</strong> — change your access password.`
+      },
+      visual: "sections",
+      target: '[data-dash-tab="qr"]',
+      dashTab: "qr"
+    },
+    {
       id: "final",
       emoji: "🚀",
       tag: null,
-      title: { es: "¡Todo listo, Capitán!", en: "All set, Captain!" },
+      title: { es: "¡Ya conocés todo el panel, Capitán!", en: "You now know the whole panel, Captain!" },
       body: {
-        es: `Tu sitio está funcionando en <strong>capitan-beto.com</strong> con backend Supabase real, SSL automático y deploy continuo desde GitHub.<br><br>
-             Puedes volver a este tour cuando quieras haciendo clic en el botón <strong>❓ Tour</strong> en la esquina del dashboard.<br><br>
-             ¡Mucho éxito con Capitán Beto! ⚓`,
-        en: `Your site is live at <strong>capitan-beto.com</strong> with a real Supabase backend, automatic SSL and continuous deploy from GitHub.<br><br>
-             You can reopen this tour anytime by clicking the <strong>❓ Tour</strong> button in the dashboard corner.<br><br>
-             All the best with Capitán Beto! ⚓`
+        es: `Eso es <strong>todo tu backoffice</strong>. Tu sitio corre en <strong>capitan-beto.com</strong> con backend Supabase real, SSL y deploy continuo.<br><br>
+             Reabrí este tour cuando quieras con el botón <strong>✨ Tour del dashboard</strong>, y mirá las últimas mejoras en <strong>✨ Novedades de hoy</strong>. ¡Éxitos! ⚓`,
+        en: `That's <strong>your entire backoffice</strong>. Your site runs on <strong>capitan-beto.com</strong> with a real Supabase backend, SSL and continuous deploy.<br><br>
+             Reopen this tour anytime with the <strong>✨ Dashboard tour</strong> button, and check the latest improvements in <strong>✨ What's new today</strong>. Cheers! ⚓`
       },
       visual: "celebrate",
       isFinal: true,

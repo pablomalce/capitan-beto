@@ -7428,6 +7428,10 @@ section[data-sec-sub] .section__head small {
   display: flex;
   gap: 7px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 7px;
+  max-width: 60%;
 }
 .guide-dot {
   width: 8px;

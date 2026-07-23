@@ -2,9 +2,10 @@
 
 > **Framework de Auditoría, Corrección y Modernización — Nivel Enterprise**
 > Proyecto: **Capitán Beto · Gastro Taberna** (sitio oficial)
-> Versión del framework: **1.0**
+> Versión del framework: **1.1**
 > Este documento es el **sistema operativo** de Claude para este proyecto.
 > Léelo completo **antes de tocar una sola línea de código**.
+> Cambios de v1.1 → ver `CHANGELOG.md`: scoring por categoría, CHANGELOG obligatorio, marcos WCAG/OWASP citados, Schema.org + canonical en SEO, y sección única de Definición de Done.
 
 ---
 
@@ -81,7 +82,7 @@ Esto es lo **primero** que ejecutas cuando el usuario pide iniciar. Es **automá
 1. **Leer el repositorio completo.** Recorre todos los archivos relevantes (`index.html`, `script.js`, `styles.css`, `sw.js`, `vercel.json`, `manifest.webmanifest`, `README.md`, `SECURITY.md`, `DEPLOY.md`, y las carpetas de assets). No asumas: lee.
 2. **Identificar documentación existente.** Registra qué docs ya hay y qué información aportan.
 3. **Crear la carpeta `/docs`** si no existe.
-4. **Crear los archivos de trabajo** si no existen (ver 3.2). Si ya existen, **no los sobrescribas**: léelos y continúa desde su estado.
+4. **Crear los archivos de trabajo** si no existen (ver 3.2). Si ya existen, **no los sobrescribas**: léelos y continua desde su estado.
 5. **Rellenar `PROJECT_CONTEXT.md`** con la información real obtenida del repo (no plantilla vacía: datos concretos).
 6. **Rellenar `AUDIT_PROGRESS.md`** con el estado inicial (fecha, alcance, "auditoría no iniciada").
 7. **Crear `CLAUDE.md` en la raíz** como punto de entrada del repo (ver 3.3).
@@ -98,7 +99,8 @@ Esto es lo **primero** que ejecutas cuando el usuario pide iniciar. Es **automá
 ├── AUDIT_PROGRESS.md            ← estado vivo de la auditoría (lo actualizas siempre)
 ├── AUDIT_REPORT.md              ← informe final (solo se escribe al final)
 ├── ARCHITECTURE_NOTES.md        ← notas de arquitectura (opcional, según hallazgos)
-└── IMPROVEMENTS.md              ← roadmap de mejoras futuras (no se implementan solas)
+├── IMPROVEMENTS.md              ← roadmap de mejoras futuras (no se implementan solas)
+└── CHANGELOG.md                 ← registro cronológico de cambios (se actualiza en cada corrección)
 
 /CLAUDE.md                       ← punto de entrada en la raíz del repo
 ```
@@ -201,6 +203,26 @@ Reglas:
 
 **`AUDIT_REPORT.md`** y **`IMPROVEMENTS.md`**: se crean vacíos con su encabezado; solo se rellenan al final (ver secciones 9 y 10).
 
+**`CHANGELOG.md`** (registro cronológico — se actualiza en cada corrección aplicada, formato *Keep a Changelog*):
+
+```markdown
+# CHANGELOG — Capitán Beto
+
+Formato basado en Keep a Changelog. Fechas en AAAA-MM-DD.
+
+## [No publicado]
+### Added
+### Changed
+### Fixed
+### Security
+
+## [AAAA-MM-DD] — Auditoría v1 (Bloque N)
+### Fixed
+- [PROMO-001] Descripción breve del arreglo (archivo:línea).
+### Security
+- [SEC-001] Descripción breve.
+```
+
 ---
 
 ## 4. FLUJO DE TRABAJO GENERAL
@@ -262,7 +284,7 @@ Objetivo: encontrar **todos** los problemas y clasificarlos. No corriges nada a�
 - [ ] Estados vacíos (sin promociones, sin reservas, sin fotos).
 - [ ] Fallos de red en integraciones externas.
 
-**C. Seguridad**
+**C. Seguridad** — marco de referencia: **OWASP Top 10 (2021)** y, como guía de profundidad, **OWASP ASVS**. Aplícalos de forma proporcional al proyecto (sitio estático), pero nómbralos en el informe.
 - [ ] Validación real del allowlist de admins (no solo ocultar UI).
 - [ ] XSS: contenido editable inyectado en el DOM sin sanitizar (`innerHTML`).
 - [ ] Exposición de secretos/keys en el cliente (Client IDs, tokens).
@@ -275,14 +297,16 @@ Objetivo: encontrar **todos** los problemas y clasificarlos. No corriges nada a�
 - [ ] Tamaño y parseo de `script.js`; trabajo bloqueante en el hilo principal.
 - [ ] Estrategia de caché del SW; Core Web Vitals aproximados.
 
-**E. Accesibilidad (a11y)**
-- [ ] Contraste, foco, navegación por teclado, `alt`, roles ARIA, labels de formularios.
+**E. Accesibilidad (a11y)** — estándar objetivo: **WCAG 2.2 nivel AA**. Reporta el nivel alcanzado por criterio.
+- [ ] Contraste (WCAG 1.4.3), foco visible (2.4.7), navegación por teclado (2.1.1), `alt` (1.1.1), roles ARIA, labels de formularios (1.3.1/4.1.2).
 
 **F. i18n**
 - [ ] Todas las claves ES/EN presentes; sin texto hardcodeado; cambio de idioma sin romper estado.
 
 **G. SEO / PWA / GDPR**
 - [ ] `sitemap.xml`, `robots.txt`, metatags, OG. Manifest válido, instalabilidad, offline.
+- [ ] **Datos estructurados Schema.org**: `Restaurant` / `LocalBusiness` (nombre, dirección, horario, teléfono, geo, rango de precios, `aggregateRating`), `Menu`/`MenuItem` si aplica, y `BreadcrumbList`. Validar con Rich Results Test.
+- [ ] **URL canónica** (`<link rel="canonical">`) correcta y única por página; sin duplicados http/https ni con/sin `www`.
 - [ ] Consent Mode v2 correcto; que no se carguen scripts antes del consentimiento.
 
 **H. Calidad de código**
@@ -312,6 +336,34 @@ Cada problema encontrado se registra así:
 - **Alta:** funcionalidad importante degradada o riesgo relevante.
 - **Media:** molesto pero con workaround; afecta calidad.
 - **Baja:** cosmético, mejora menor, deuda técnica leve.
+
+### 6.4 Scoring por categoría y score general
+
+Cada dimensión auditada (A–H de §6.1, más SEO, a11y, seguridad, rendimiento) recibe una **puntuación 0–100** y una **nota A–F**, para dar una foto objetiva y comparable entre auditorías.
+
+**Cómo puntuar cada categoría (empezar en 100 y restar por hallazgo abierto):**
+
+- Crítica abierta: −40 · Alta: −20 · Media: −8 · Baja: −3 (mínimo 0).
+- Un hallazgo **corregido y verificado** no resta.
+
+**Escala de nota:** A = 90–100 · B = 75–89 · C = 60–74 · D = 40–59 · F = 0–39.
+
+**Score general** = media ponderada de las categorías; peso doble a **Funcionalidad** y **Seguridad** (son las que más afectan a producción). Documenta la fórmula usada.
+
+**Tabla de scorecard** (va en `AUDIT_REPORT.md`):
+
+```markdown
+| Categoría        | Score | Nota | Hallazgos abiertos | Tendencia vs. anterior |
+|------------------|-------|------|--------------------|------------------------|
+| Funcionalidad    | 100   | A    | 0                  | ▲ +15                  |
+| Seguridad        |  92   | A    | 0                  | ▲                      |
+| Rendimiento      |  78   | B    | 1 media            | =                      |
+| Accesibilidad    |  70   | C    | ...                | ...                    |
+| SEO              |  ...  | ...  | ...                | ...                    |
+| i18n             |  ...  | ...  | ...                | ...                    |
+| Calidad código   |  ...  | ...  | ...                | ...                    |
+| **GENERAL**      | **…** | **…**| —                  | —                      |
+```
 
 ---
 
@@ -414,7 +466,8 @@ No se toca durante la auditoría; se redacta al final. Debe incluir:
 5. **Correcciones aplicadas** (tabla: ID, módulo, severidad, resultado).
 6. **Riesgos residuales y limitaciones** (p. ej. la ausencia de backend).
 7. **Recomendaciones** (enlazan con `IMPROVEMENTS.md`).
-8. **Métricas antes/después** cuando existan (errores en consola, peso, etc.).
+8. **Scorecard** (§6.4): tabla de score por categoría + score general, con nota A–F y tendencia vs. auditoría anterior.
+9. **Métricas antes/después** cuando existan (errores en consola, peso, Lighthouse/Core Web Vitals, etc.).
 
 ### 10.2 `IMPROVEMENTS.md` (roadmap futuro)
 
@@ -443,7 +496,7 @@ Todas las mejoras recomendadas para futuras versiones. **No se implementan autom
 - Introduzcas dependencias/frameworks/build sin aprobación explícita.
 - Insertes contenido editable en el DOM sin sanitizar.
 - Des una corrección por terminada sin QA.
-- Sobrescribas `PROJECT_CONTEXT.md` / `AUDIT_PROGRESS.md` existentes: léelos y continúa.
+- Sobrescribas `PROJECT_CONTEXT.md` / `AUDIT_PROGRESS.md` existentes: léelos y continua.
 - Expongas o inventes secretos, tokens o Client IDs.
 - Hagas cambios grandes en un solo diff cuando puedes dividirlos.
 
@@ -494,14 +547,14 @@ completamente estable. Actualiza AUDIT_PROGRESS.md durante todo el proceso.
 ### 13.3 Continuar otro día (sesión nueva)
 
 ```
-Continúa la auditoría.
+Continua la auditoría.
 
 Lee nuevamente:
 - /docs/CLAUDE_ENTERPRISE_AUDIT.md
 - /docs/PROJECT_CONTEXT.md
 - /docs/AUDIT_PROGRESS.md
 
-Continúa exactamente desde el último punto registrado en AUDIT_PROGRESS.md.
+Continua exactamente desde el último punto registrado en AUDIT_PROGRESS.md.
 No vuelvas a analizar partes ya auditadas salvo que sea necesario.
 ```
 
@@ -532,6 +585,33 @@ Al iniciar cualquier sesión:
 4. ¿Leí `AUDIT_PROGRESS.md` y sé en qué punto estamos? → sí.
 5. ¿Cuál es la prioridad activa? → Promociones (salvo orden en contra).
 6. Responder `Contexto cargado correctamente` y esperar instrucciones.
+
+---
+
+## 15. DEFINICIÓN DE DONE (DoD) — CONSOLIDADA
+
+> Criterios únicos y no negociables. Una corrección, un módulo o la auditoría completa **solo están "hechos" si cumplen TODO lo siguiente**. Consolida lo que antes estaba disperso en §9.1, §8.2.7 y §12.
+
+**Una CORRECCIÓN está hecha cuando:**
+
+- [ ] El bug reportado ya no se reproduce (mismos pasos del hallazgo).
+- [ ] Sin errores nuevos en consola (JS) en carga ni interacción.
+- [ ] Sin regresiones: los comportamientos vigilados siguen idénticos.
+- [ ] Casos límite probados (vacío, datos inválidos, límites, `localStorage` no disponible).
+- [ ] Responsive e i18n (ES/EN) verificados si se tocó UI/texto.
+- [ ] Persistencia verificada (sobrevive a recarga; y a `localStorage` limpio si aplica).
+- [ ] Service Worker considerado si se tocaron assets (bump de versión indicado).
+- [ ] Registrada en `AUDIT_PROGRESS.md` con evidencia y en `CHANGELOG.md`.
+
+**Un Módulo está hecho cuando:** todas sus correcciones cumplen el DoD anterior y su estado en `AUDIT_PROGRESS.md` es **"estable y verificado"**.
+
+**La AUDITORÍA está hecha cuando:**
+
+- [ ] Todo funciona y el QA está aprobado en todos los módulos tocados.
+- [ ] Sin errores de consola / JS, sin regresiones.
+- [ ] Documentación al día: `AUDIT_PROGRESS.md`, `PROJECT_CONTEXT.md`, `CHANGELOG.md`.
+- [ ] Informes generados: `AUDIT_REPORT.md` (con **scorecard** §6.4) e `IMPROVEMENTS.md`.
+- [ ] El proyecto queda **estable** (prioridad de Promociones cerrada y verificada).
 
 ---
 

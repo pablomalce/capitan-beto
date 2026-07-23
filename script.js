@@ -6764,48 +6764,69 @@
   // ====================================================================
   // WHAT'S NEW · overlay premium de una sola vez (novedades de hoy)
   // ====================================================================
-  const WN_KEY = "cb.whatsnew.20260723.seen";
+  const WN_KEY = "cb.whatsnew.20260723b.seen";
 
   const WN_FEATURES = [
     {
       icon: "🧩",
       badge: "SECCIONES",
       color: "#1F4A2E",
-      title: "4 controles de color por sección",
-      body: "Cada sección ahora tiene fondo, título, subtítulo y texto de color <strong>totalmente independientes</strong>. Además campo <code>#HEX</code> para colores exactos."
+      title: "Color a medida en cada sección",
+      intro: "Personaliza fondo, título, subtítulo y texto de cada bloque por separado.",
+      steps: [
+        "Abre <strong>📡 Secciones</strong> en el menú lateral",
+        "Elige una sección y despliégala",
+        "Cambia los 4 colores o pega un código <code>#HEX</code>",
+        "Pulsa <strong>Guardar</strong> → se ve al instante en la web"
+      ]
+    },
+    {
+      icon: "🔥",
+      badge: "PROMOCIONES",
+      color: "#5c1a00",
+      title: "Publica promos en tu web",
+      intro: "Las promos que marques como LIVE aparecen solas en el sitio público.",
+      steps: [
+        "Abre <strong>📡 Promociones</strong> en el menú lateral",
+        "Crea o edita una promoción",
+        "Actívala como <strong>LIVE</strong> y guarda",
+        "Aparece en la web + badge <em>«PROMOS»</em> en el hero"
+      ]
+    },
+    {
+      icon: "✏️",
+      badge: "CONTENIDO",
+      color: "#1a1e3a",
+      title: "Edita más textos que nunca",
+      intro: "Ahora el subtítulo de Horarios y toda la tarjeta Pet-Friendly son editables.",
+      steps: [
+        "Abre <strong>📡 Contenido</strong> en el menú lateral",
+        "Edita el subtítulo de <strong>Horarios</strong>",
+        "En <strong>Pet-Friendly</strong> cambia textos y colores del botón",
+        "Pulsa <strong>Guardar</strong>"
+      ]
     },
     {
       icon: "⬛",
       badge: "DISEÑO",
       color: "#3a2a1a",
       title: "Bordes redondeados consistentes",
-      body: "Todas las secciones con fondo de color aplican el <strong>mismo radio de esquinas</strong> sin importar el tema elegido. Visualmente coherente en todos los diseños."
-    },
-    {
-      icon: "🔥",
-      badge: "PROMOCIONES",
-      color: "#5c1a00",
-      title: "Promos visibles en el sitio público",
-      body: "Las promos marcadas como <strong>LIVE</strong> aparecen en la sección pública del sitio. Un badge pulsante <em>«PROMOS»</em> en el hero lleva directo a ellas."
-    },
-    {
-      icon: "✏️",
-      badge: "CONTENIDO",
-      color: "#1a1e3a",
-      title: "Más textos editables que nunca",
-      body: "El subtítulo de <strong>Horarios</strong> es editable. La tarjeta CTA de <strong>Pet-Friendly</strong> tiene controles completos de texto <em>y</em> colores (fondo, título, subtexto, botón)."
+      intro: "Todas las secciones con fondo de color usan el mismo redondeo en cualquier tema.",
+      auto: "Ya está activo — no tienes que hacer nada. Cambia de tema y verás las esquinas siempre coherentes."
     },
     {
       icon: "🔗",
       badge: "HERO",
       color: "#2a1a00",
-      title: "Badge de promos → link inteligente",
-      body: "El badge del hero ya no muestra el nombre de la promo. Ahora es un <strong>enlace directo</strong> a la sección de Promociones. Se oculta solo cuando no hay promos activas."
+      title: "Badge del hero → link directo",
+      intro: "El badge del hero lleva directo a tus promociones.",
+      auto: "Aparece solo cuando hay promos <strong>LIVE</strong> y, al pulsarlo, baja a la sección de Promociones."
     }
   ];
 
-  function showWhatsNew() {
-    try { if (localStorage.getItem(WN_KEY)) return; } catch (_) {}
+  function showWhatsNew(force) {
+    if (!force) { try { if (localStorage.getItem(WN_KEY)) return; } catch (_) {} }
+    if (document.getElementById("wnOverlay")) return;
     const el = document.createElement("div");
     el.id = "wnOverlay";
     el.className = "wn-overlay";
@@ -6835,7 +6856,13 @@
                   <span class="wn-card-badge">${f.badge}</span>
                 </div>
                 <h3 class="wn-card-title">${f.title}</h3>
-                <p class="wn-card-body">${f.body}</p>
+                <p class="wn-card-intro">${f.intro}</p>
+                ${f.steps ? `
+                <div class="wn-card-howto">Cómo usarlo</div>
+                <ol class="wn-steps">
+                  ${f.steps.map(s => `<li><span class="wn-step-n"></span><span class="wn-step-txt">${s}</span></li>`).join("")}
+                </ol>` : `
+                <div class="wn-card-auto"><span class="wn-auto-check">✓</span><span>${f.auto}</span></div>`}
               </div>`).join("")}
           </div>
 
@@ -6845,7 +6872,14 @@
               <div class="wn-ig-icon">📸</div>
               <div>
                 <h3 class="wn-ig-title">Conectar Instagram con behold.so</h3>
-                <p class="wn-ig-subtitle">Sigue estos pasos para activar el feed de fotos en tu sitio</p>
+                <p class="wn-ig-subtitle">Guía paso a paso para mostrar tu feed de fotos en la web</p>
+              </div>
+            </div>
+
+            <div class="wn-ig-prereq">
+              <span class="wn-ig-prereq-icon">⚠️</span>
+              <div>
+                <strong>Antes de empezar:</strong> tu cuenta de Instagram debe ser <strong>Profesional</strong> o de <strong>Empresa</strong> (no personal). Es gratis: en la app de Instagram entra en <em>Configuración → Cuenta → Cambiar a cuenta profesional</em>.
               </div>
             </div>
 
@@ -7250,6 +7284,7 @@
   /* Global re-open hook */
   window.cbStartTour = () => showGuide(true);
   window.cbShowGuide = showGuide;
+  window.cbShowWhatsNew = () => showWhatsNew(true);
 
 
   // ====================================================================

@@ -1750,6 +1750,7 @@
     if (tab === "customers") renderCustomersPanel();
     if (tab === "design") renderDesignPanel();
     if (tab === "payments") renderPaymentsPanel();
+    if (tab === "channels") renderPaymentsPanel(); // pay-cards movidas a Canales
     if (tab === "pets") renderPetsModeration();
     if (tab === "backup") renderBackupPanel();
     if (tab === "stats") renderStatsPanel();
@@ -5211,8 +5212,10 @@
     setTimeout(initCountUp, 350);
     registerServiceWorker();
     initAnalytics();
+    initGoogleAds();
     initSentry();
     initBeholdFeed();
+    fetchRemoteIntegrations();
   };
 
   // ====================================================================
@@ -5246,6 +5249,7 @@
   // ============== ANALYTICS (GA4 + Consent Mode v2) ===================
   // ====================================================================
   function initAnalytics() {
+    if (initAnalytics._done) return;
     let analyticsId = "";
     try {
       const payments = JSON.parse(localStorage.getItem("cb.payments.v1") || "{}");
@@ -5254,6 +5258,7 @@
       }
     } catch (_) {}
     if (!analyticsId) return;
+    initAnalytics._done = true;
 
     // Consent Mode v2 — default DENIED, then update from cookie consent.
     window.dataLayer = window.dataLayer || [];
@@ -5305,6 +5310,7 @@
 
   // ============== SENTRY (error monitoring) ============================
   function initSentry() {
+    if (initSentry._done) return;
     let dsn = "";
     try {
       const payments = JSON.parse(localStorage.getItem("cb.payments.v1") || "{}");
@@ -5313,6 +5319,7 @@
       }
     } catch (_) {}
     if (!dsn) return;
+    initSentry._done = true;
 
     // Load Sentry SDK from CDN
     const s = document.createElement("script");
@@ -5335,6 +5342,39 @@
       });
     };
     document.head.appendChild(s);
+  }
+
+  // ============== GOOGLE ADS · conversion / remarketing tag ==========
+  function initGoogleAds() {
+    if (initGoogleAds._done) return;
+    let adsId = "";
+    try {
+      const payments = JSON.parse(localStorage.getItem("cb.payments.v1") || "{}");
+      if (payments.googleads && payments.googleads.enabled && payments.googleads.id) {
+        adsId = String(payments.googleads.id).trim();
+      }
+    } catch (_) {}
+    if (!adsId) return;
+    initGoogleAds._done = true;
+    // gtag.js puede ya estar cargado por GA4; si no, lo arrancamos.
+    if (typeof window.gtag !== "function") {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag("consent", "default", {
+        ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+        analytics_storage: "denied", functionality_storage: "granted", security_storage: "granted", wait_for_update: 500
+      });
+      try {
+        const consent = JSON.parse(localStorage.getItem("cb.cookies.v1") || "{}");
+        if (consent.marketing) window.gtag("consent", "update", { ad_storage: "granted", ad_user_data: "granted", ad_personalization: "granted" });
+      } catch (_) {}
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(adsId)}`;
+      document.head.appendChild(s);
+      window.gtag("js", new Date());
+    }
+    window.gtag("config", adsId);
   }
 
   // ============== BEHOLD.SO · Instagram feed ==========================
@@ -6914,12 +6954,34 @@
   // ============== PAYMENTS & INTEGRATIONS PANEL =======================
   // ====================================================================
   const PAYMENTS_KEY = "cb.payments.v1";
+  const INTEGRATIONS_SETTING_KEY = "site_integrations"; // clave en settings de Supabase
   function loadPayments() {
     try { return JSON.parse(localStorage.getItem(PAYMENTS_KEY) || "{}"); }
     catch (_) { return {}; }
   }
+  let __payPushTimer = null;
   function persistPayments(p) {
     try { localStorage.setItem(PAYMENTS_KEY, JSON.stringify(p)); } catch (_) {}
+    // Publicar integraciones al backend (solo admin; público solo lee)
+    if (window.cbBackend && window.cbBackend.setSetting) {
+      clearTimeout(__payPushTimer);
+      __payPushTimer = setTimeout(() => {
+        window.cbBackend.setSetting(INTEGRATIONS_SETTING_KEY, p).catch((e) => {
+          console.warn("No se pudo publicar integraciones en Supabase (¿admin?):", e && e.message);
+        });
+      }, 1200);
+    }
+  }
+  // Trae las integraciones publicadas y re-inicializa lo que aplique (GA4, Ads, behold).
+  function fetchRemoteIntegrations() {
+    if (!(window.cbBackend && window.cbBackend.getSetting)) return;
+    const run = () => window.cbBackend.getSetting(INTEGRATIONS_SETTING_KEY).then((remote) => {
+      if (!remote || typeof remote !== "object") return;
+      try { localStorage.setItem(PAYMENTS_KEY, JSON.stringify(remote)); } catch (_) {}
+      initAnalytics(); initGoogleAds(); initSentry(); initBeholdFeed();
+    }).catch(() => {});
+    if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 2500 });
+    else setTimeout(run, 900);
   }
   function renderPaymentsPanel() {
     const p = loadPayments();
@@ -6939,10 +7001,12 @@
     if (count) count.textContent = active;
   }
   function bindPaymentsPanel() {
-    // Limitamos al panel — los listeners globales costaban en cada click/change.
-    const panel = document.querySelector('[data-dash-panel="payments"]');
-    if (!panel) return;
-    panel.addEventListener("change", (e) => {
+    // Las pay-cards viven en Pagos & Integraciones y también en Canales (behold,
+    // mailchimp, analytics, googleads). Escuchamos en .dash-main para cubrir ambos.
+    const scope = document.querySelector(".dash-main") ||
+                  document.querySelector('[data-dash-panel="payments"]');
+    if (!scope) return;
+    scope.addEventListener("change", (e) => {
       const cb = e.target.closest("[data-pay-enabled]");
       if (!cb) return;
       const id = cb.getAttribute("data-pay-enabled");
@@ -6951,18 +7015,22 @@
       p[id].enabled = cb.checked;
       persistPayments(p);
       cb.closest(".pay-card")?.classList.toggle("pay-card--on", cb.checked);
+      // Re-init inmediato de la integración afectada
+      if (id === "behold") initBeholdFeed();
       renderPaymentsPanel();
       toast(state.lang === "es"
         ? `${id} ${cb.checked ? "activado" : "desactivado"}`
         : `${id} ${cb.checked ? "enabled" : "disabled"}`);
     });
-    panel.addEventListener("click", (e) => {
+    scope.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-pay-save]");
       if (!btn) return;
       const id = btn.getAttribute("data-pay-save");
       const p = loadPayments();
       if (!p[id]) p[id] = {};
-      panel.querySelectorAll(`[data-pay-field^="${id}."]`).forEach((el) => {
+      // Scope al propio card para funcionar en cualquier panel
+      const card = btn.closest(".pay-card") || scope;
+      card.querySelectorAll(`[data-pay-field^="${id}."]`).forEach((el) => {
         const field = el.getAttribute("data-pay-field").split(".")[1];
         p[id][field] = el.value;
       });
@@ -7370,12 +7438,14 @@
              💬 <strong>WhatsApp Business</strong> — número + saludo automático<br>
              📷 <strong>Instagram</strong> — perfil y enlace público<br>
              ⭐ <strong>Google Reseñas</strong> — URL "Dejá tu reseña"<br>
-             ✉️ <strong>Email + Google Calendar</strong> — buzón de reservas e invitaciones.`,
+             ✉️ <strong>Email + Google Calendar</strong> — buzón de reservas<br><br>
+             📣 <strong>Marketing & Analytics</strong> (abajo): feed de <strong>Instagram (behold)</strong>, <strong>Mailchimp</strong>, <strong>Google Analytics (GA4)</strong> y <strong>Google Ads</strong>.`,
         en: `In <strong>📡 Channels</strong> you connect how people reach you:<br><br>
              💬 <strong>WhatsApp Business</strong> — number + auto greeting<br>
              📷 <strong>Instagram</strong> — profile and public link<br>
              ⭐ <strong>Google Reviews</strong> — "Leave a review" URL<br>
-             ✉️ <strong>Email + Google Calendar</strong> — booking inbox and invites.`
+             ✉️ <strong>Email + Google Calendar</strong> — booking inbox<br><br>
+             📣 <strong>Marketing & Analytics</strong> (below): <strong>Instagram feed (behold)</strong>, <strong>Mailchimp</strong>, <strong>Google Analytics (GA4)</strong> and <strong>Google Ads</strong>.`
       },
       visual: "instagram",
       target: '[data-dash-tab="channels"]',
@@ -7387,16 +7457,16 @@
       tag: null,
       title: { es: "Pagos & Integraciones", en: "Payments & Integrations" },
       body: {
-        es: `En <strong>💳 Pagos & Integraciones</strong> están las conexiones externas:<br><br>
-             💳 <strong>Pagos:</strong> Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork<br>
-             📸 <strong>behold</strong> — feed de Instagram en el sitio<br>
-             ✉️ <strong>Mailchimp</strong> — campañas de email marketing<br>
-             📊 <strong>Analytics (GA4)</strong> — medición de Google · 🐛 <strong>Sentry</strong> — errores.`,
-        en: `<strong>💳 Payments & Integrations</strong> holds the external connections:<br><br>
-             💳 <strong>Payments:</strong> Stripe, Redsys, PayPal, Bizum, CoverManager, TheFork<br>
-             📸 <strong>behold</strong> — Instagram feed on the site<br>
-             ✉️ <strong>Mailchimp</strong> — email marketing campaigns<br>
-             📊 <strong>Analytics (GA4)</strong> — Google measurement · 🐛 <strong>Sentry</strong> — errors.`
+        es: `En <strong>💳 Pagos & Integraciones</strong> están las <strong>pasarelas de pago</strong> y reservas:<br><br>
+             💳 <strong>Pagos:</strong> Stripe, Redsys, PayPal, Bizum<br>
+             🍽️ <strong>Reservas:</strong> CoverManager, TheFork<br>
+             🐛 <strong>Sentry</strong> — monitoreo de errores del sitio.<br><br>
+             <em>Nota: el marketing (behold, Mailchimp, GA4, Google Ads) ahora vive en 📡 Canales.</em>`,
+        en: `<strong>💳 Payments & Integrations</strong> holds the <strong>payment gateways</strong> and bookings:<br><br>
+             💳 <strong>Payments:</strong> Stripe, Redsys, PayPal, Bizum<br>
+             🍽️ <strong>Bookings:</strong> CoverManager, TheFork<br>
+             🐛 <strong>Sentry</strong> — site error monitoring.<br><br>
+             <em>Note: marketing (behold, Mailchimp, GA4, Google Ads) now lives in 📡 Channels.</em>`
       },
       visual: "content",
       target: '[data-dash-tab="payments"]',
@@ -7413,19 +7483,19 @@
                <div class="guide-step-item"><span class="guide-step-num">1</span><span>Abre el enlace: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
                <div class="guide-step-item"><span class="guide-step-num">2</span><span>Conecta tu cuenta de Instagram (botón azul en su web)</span></div>
                <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copia el <strong>Feed ID</strong> que aparece en tu panel de behold.so</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Ve a <strong>💳 Pagos & Integraciones</strong> → tarjeta <em>Instagram Feed · behold</em> → pega el Feed ID y guarda</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Ve a <strong>📡 Canales</strong> → <em>Marketing & Analytics</em> → tarjeta <em>Instagram Feed · behold</em> → pega el Feed ID y guarda</span></div>
              </div>`,
         en: `To show your Instagram feed on the site, connect <strong>behold.so</strong>. <em>Requirement: a Professional or Business Instagram account.</em><br><br>
              <div class="guide-steps-list">
                <div class="guide-step-item"><span class="guide-step-num">1</span><span>Open the link: <a class="guide-link" href="https://services.behold.so/link/HSqsB" target="_blank" rel="noopener">services.behold.so/link/HSqsB →</a></span></div>
                <div class="guide-step-item"><span class="guide-step-num">2</span><span>Connect your Instagram account (blue button on their site)</span></div>
                <div class="guide-step-item"><span class="guide-step-num">3</span><span>Copy the <strong>Feed ID</strong> from your behold.so dashboard</span></div>
-               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Go to <strong>💳 Payments & Integrations</strong> → <em>Instagram Feed · behold</em> card → paste the Feed ID and save</span></div>
+               <div class="guide-step-item"><span class="guide-step-num">4</span><span>Go to <strong>📡 Channels</strong> → <em>Marketing & Analytics</em> → <em>Instagram Feed · behold</em> card → paste the Feed ID and save</span></div>
              </div>`
       },
       visual: "instagram",
-      target: '[data-dash-tab="payments"]',
-      dashTab: "payments"
+      target: '[data-dash-tab="channels"]',
+      dashTab: "channels"
     },
     {
       id: "tools",

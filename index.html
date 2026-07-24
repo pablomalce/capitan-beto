@@ -10,7 +10,7 @@
 
   <!-- ============ SECURITY HEADERS (meta-tag fallback) ============ -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com https://w.behold.so https://browser.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://accounts.google.com; font-src 'self' https://fonts.bunny.net; img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://*.supabase.co https://*.cdninstagram.com https://scontent.cdninstagram.com https://*.fbcdn.net; media-src 'self' blob:; connect-src 'self' https://formsubmit.co https://accounts.google.com https://*.supabase.co https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io; frame-src https://accounts.google.com https://drive.google.com https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co https://wa.me; upgrade-insecure-requests" />
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com https://w.behold.so https://browser.sentry-cdn.com https://www.googletagmanager.com https://www.googleadservices.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://accounts.google.com; font-src 'self' https://fonts.bunny.net; img-src 'self' data: blob: https://drive.google.com https://lh3.googleusercontent.com https://wsrv.nl https://images.unsplash.com https://*.googleusercontent.com https://*.supabase.co https://*.cdninstagram.com https://scontent.cdninstagram.com https://*.fbcdn.net https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.google.com https://googleads.g.doubleclick.net; media-src 'self' blob:; connect-src 'self' https://formsubmit.co https://accounts.google.com https://*.supabase.co https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://googleads.g.doubleclick.net https://www.google.com; frame-src https://accounts.google.com https://drive.google.com https://api.behold.so https://*.behold.so https://*.sentry.io https://o*.ingest.sentry.io; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co https://wa.me; upgrade-insecure-requests" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self), payment=()" />
@@ -1608,6 +1608,108 @@
               <a class="btn btn--ghost" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener" data-i18n="dash.ch.openCal">Abrir Google Calendar</a>
             </div>
           </div>
+
+          <h3 class="channels-subhead" style="grid-column:1/-1;margin:8px 0 -4px;font-size:14px;letter-spacing:.04em;color:var(--ink-mute)">📣 Marketing & Analytics</h3>
+
+          <!-- Instagram Feed · Behold.so -->
+          <div class="card pay-card" data-pay-id="behold">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--ig">📸</div>
+                <div>
+                  <h3>Instagram Feed · Behold.so</h3>
+                  <small>Muestra tus últimas fotos de Instagram en el sitio</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="behold" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Feed ID (lo encontrás en behold.so → tu feed → Settings)</small>
+              <input type="text" data-pay-field="behold.feedId" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="behold" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Mailchimp / Brevo · email marketing -->
+          <div class="card pay-card" data-pay-id="mailchimp">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--mailchimp">M</div>
+                <div>
+                  <h3>Mailchimp / Brevo</h3>
+                  <small data-i18n="dash.pay.mcDesc">Newsletter automática a clientes</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="mailchimp" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>API Key</small>
+              <input type="password" data-pay-field="mailchimp.apiKey" placeholder="••••••••" autocomplete="off" />
+            </label>
+            <label class="field">
+              <small>List ID / Audience</small>
+              <input type="text" data-pay-field="mailchimp.list" placeholder="abc123" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="mailchimp" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Google Analytics / Tag Manager -->
+          <div class="card pay-card" data-pay-id="analytics">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--ga">G</div>
+                <div>
+                  <h3>Google Analytics (GA4)</h3>
+                  <small data-i18n="dash.pay.gaDesc">Medición de tráfico y conversiones</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="analytics" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>Measurement ID (G-...) o GTM-ID</small>
+              <input type="text" data-pay-field="analytics.id" placeholder="G-XXXXXXXXXX" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="analytics" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Google Ads · conversion / remarketing -->
+          <div class="card pay-card" data-pay-id="googleads">
+            <div class="card__head">
+              <div class="pay-card__brand">
+                <div class="pay-logo pay-logo--ga">Ads</div>
+                <div>
+                  <h3>Google Ads</h3>
+                  <small>Etiqueta de conversión / remarketing para campañas</small>
+                </div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pay-enabled="googleads" />
+                <span></span>
+              </label>
+            </div>
+            <label class="field">
+              <small>ID de conversión (AW-...)</small>
+              <input type="text" data-pay-field="googleads.id" placeholder="AW-XXXXXXXXX" autocomplete="off" />
+            </label>
+            <div class="card__actions">
+              <button class="btn btn--primary btn--sm" data-pay-save="googleads" type="button" data-i18n="dash.pay.save">Guardar</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2066,80 +2168,7 @@
           </div>
 
           <!-- Mailchimp -->
-          <div class="card pay-card" data-pay-id="mailchimp">
-            <div class="card__head">
-              <div class="pay-card__brand">
-                <div class="pay-logo pay-logo--mailchimp">M</div>
-                <div>
-                  <h3>Mailchimp / Brevo</h3>
-                  <small data-i18n="dash.pay.mcDesc">Newsletter automática a clientes</small>
-                </div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" data-pay-enabled="mailchimp" />
-                <span></span>
-              </label>
-            </div>
-            <label class="field">
-              <small>API Key</small>
-              <input type="password" data-pay-field="mailchimp.apiKey" placeholder="••••••••" autocomplete="off" />
-            </label>
-            <label class="field">
-              <small>List ID / Audience</small>
-              <input type="text" data-pay-field="mailchimp.list" placeholder="abc123" autocomplete="off" />
-            </label>
-            <div class="card__actions">
-              <button class="btn btn--primary btn--sm" data-pay-save="mailchimp" type="button" data-i18n="dash.pay.save">Guardar</button>
-            </div>
-          </div>
-
-          <!-- Behold.so · Instagram feed -->
-          <div class="card pay-card" data-pay-id="behold">
-            <div class="card__head">
-              <div class="pay-card__brand">
-                <div class="pay-logo pay-logo--ig">📸</div>
-                <div>
-                  <h3>Instagram Feed · Behold.so</h3>
-                  <small>Muestra tus últimas fotos de Instagram en el sitio</small>
-                </div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" data-pay-enabled="behold" />
-                <span></span>
-              </label>
-            </div>
-            <label class="field">
-              <small>Feed ID (lo encontrás en behold.so → tu feed → Settings)</small>
-              <input type="text" data-pay-field="behold.feedId" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
-            </label>
-            <div class="card__actions">
-              <button class="btn btn--primary btn--sm" data-pay-save="behold" type="button" data-i18n="dash.pay.save">Guardar</button>
-            </div>
-          </div>
-
-          <!-- Google Analytics / Tag Manager -->
-          <div class="card pay-card" data-pay-id="analytics">
-            <div class="card__head">
-              <div class="pay-card__brand">
-                <div class="pay-logo pay-logo--ga">G</div>
-                <div>
-                  <h3>Google Analytics / Tag Manager</h3>
-                  <small data-i18n="dash.pay.gaDesc">Medición de tráfico y conversiones</small>
-                </div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" data-pay-enabled="analytics" />
-                <span></span>
-              </label>
-            </div>
-            <label class="field">
-              <small>Measurement ID (G-...) o GTM-ID</small>
-              <input type="text" data-pay-field="analytics.id" placeholder="G-XXXXXXXXXX" autocomplete="off" />
-            </label>
-            <div class="card__actions">
-              <button class="btn btn--primary btn--sm" data-pay-save="analytics" type="button" data-i18n="dash.pay.save">Guardar</button>
-            </div>
-          </div>
+          <!-- behold, Mailchimp, Analytics y Google Ads se movieron a 📡 Canales → Marketing & Analytics -->
         </div>
 
           <!-- SENTRY -->
@@ -2609,6 +2638,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="backend.js?v=8" defer></script>
-  <script src="script.js?v=105" defer></script>
+  <script src="script.js?v=106" defer></script>
 </body>
 </html>
